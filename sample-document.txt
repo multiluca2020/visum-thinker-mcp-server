@@ -1,0 +1,19 @@
+# Sample Document for Testing
+
+This is a sample text document that demonstrates the PDF loading capabilities.
+
+## Problem Statement
+We need to solve a complex mathematical optimization problem.
+
+## Methodology
+The approach involves:
+1. Data collection
+2. Model formulation  
+3. Algorithm implementation
+4. Results analysis
+
+## Results
+The experimental results show significant improvements over baseline methods.
+
+## Conclusion
+The proposed method offers a viable solution to the optimization challenge.

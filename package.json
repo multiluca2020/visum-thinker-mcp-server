@@ -1,0 +1,56 @@
+{
+  "name": "visum-thinker-mcp-server",
+  "version": "1.0.0",
+  "description": "Visum Thinker - MCP server for sequential thinking and PDF analysis",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "visum-thinker": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x build/index.js",
+    "dev": "npm run build && node build/index.js",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcp",
+    "sequential-thinking",
+    "reasoning",
+    "pdf-analysis",
+    "problem-solving",
+    "ai-assistant",
+    "model-context-protocol"
+  ],
+  "author": "",
+  "license": "MIT",
+  "homepage": "https://github.com/yourusername/visum-thinker-mcp-server#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/visum-thinker-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/visum-thinker-mcp-server/issues"
+  },
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE",
+    "KNOWLEDGE_TRANSFER.md",
+    "PDF_WORKFLOW.md",
+    "MULTIPLE_SERVERS.md",
+    "EXAMPLES.md"
+  ],
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^24.0.15",
+    "@types/pdf-parse": "^1.1.5",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.16.0",
+    "fs-extra": "^11.3.0",
+    "pdf-parse": "^1.1.1",
+    "zod": "^3.25.76"
+  }
+}

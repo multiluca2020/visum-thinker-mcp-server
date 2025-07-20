@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "visum-thinker": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/uovo/sequential_thinking/build/index.js"]
+    }
+  }
+}
