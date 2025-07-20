@@ -17,17 +17,27 @@ A Model Context Protocol (MCP) server that provides structured sequential thinki
 
 ## Installation
 
-### Prerequisites
+### Quick Installation
+
+```bash
+# Option 1: Install from NPM
+npm install -g visum-thinker-mcp-server
+
+# Option 2: Use with npx (no installation)
+npx visum-thinker-mcp-server
+
+# Option 3: Clone from GitHub
+git clone https://github.com/yourusername/visum-thinker-mcp-server.git
+cd visum-thinker-mcp-server
+npm install && npm run build
+```
+
+See [INSTALLATION.md](./INSTALLATION.md) for detailed setup instructions.
+
+## Prerequisites
 
 - Node.js 16 or higher
 - npm or yarn
-
-### Build the Server
-
-```bash
-npm install
-npm run build
-```
 
 ## Usage
 

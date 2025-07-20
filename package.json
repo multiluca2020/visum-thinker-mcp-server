@@ -36,6 +36,8 @@
     "build",
     "README.md",
     "LICENSE",
+    "INSTALLATION.md", 
+    "GITHUB_PUBLISHING.md",
     "KNOWLEDGE_TRANSFER.md",
     "PDF_WORKFLOW.md",
     "MULTIPLE_SERVERS.md",
