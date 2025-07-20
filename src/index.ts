@@ -49,6 +49,12 @@ interface ThinkingState {
       chunksUsed?: number;
       chunkSize?: number;
       summaryMode?: boolean;
+      comprehensiveKnowledge?: boolean;
+      files?: Array<{
+        filename: string;
+        pages: number;
+        sizeMB: number;
+      }>;
     };
   };
 }
@@ -69,7 +75,7 @@ async function initializeStorage() {
 // Save thinking state to disk
 async function saveThinkingState() {
   try {
-    await fsExtra.writeJson(STATE_FILE, thinkingState, { spaces: 2 });
+    fs.writeFileSync(STATE_FILE, JSON.stringify(thinkingState, null, 2));
     console.error('Thinking state saved to disk');
   } catch (error) {
     console.error('Error saving thinking state:', error);
@@ -79,8 +85,8 @@ async function saveThinkingState() {
 // Load thinking state from disk
 async function loadThinkingState(): Promise<boolean> {
   try {
-    if (await fsExtra.pathExists(STATE_FILE)) {
-      thinkingState = await fsExtra.readJson(STATE_FILE);
+    if (fs.existsSync(STATE_FILE)) {
+      thinkingState = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
       console.error('Thinking state loaded from disk');
       return true;
     }
@@ -94,11 +100,12 @@ async function loadThinkingState(): Promise<boolean> {
 // Export thinking state for transfer
 async function exportThinkingState(exportPath: string) {
   try {
-    await fsExtra.writeJson(exportPath, {
+    const exportData = {
       ...thinkingState,
       exportedAt: new Date().toISOString(),
       serverVersion: "1.0.0"
-    }, { spaces: 2 });
+    };
+    fs.writeFileSync(exportPath, JSON.stringify(exportData, null, 2));
     return true;
   } catch (error) {
     console.error('Error exporting thinking state:', error);
@@ -109,14 +116,51 @@ async function exportThinkingState(exportPath: string) {
 // Import thinking state from transfer
 async function importThinkingState(importPath: string): Promise<boolean> {
   try {
-    if (await fsExtra.pathExists(importPath)) {
-      const importedState = await fsExtra.readJson(importPath);
-      // Remove export metadata
-      delete importedState.exportedAt;
-      delete importedState.serverVersion;
-      thinkingState = importedState;
-      await saveThinkingState(); // Save to local storage
-      return true;
+    if (fs.existsSync(importPath)) {
+      const importedData = JSON.parse(fs.readFileSync(importPath, 'utf8'));
+      
+      // Check if this is a comprehensive knowledge base (new format)
+      if (importedData.files && importedData.totalPages && importedData.content) {
+        // This is a comprehensive knowledge base from process-pdf.js
+        console.error('Detected comprehensive knowledge base format');
+        
+        thinkingState.pdfContext = {
+          filename: `${importedData.files.length} merged documents`,
+          content: importedData.content,
+          pageCount: importedData.totalPages,
+          loadedAt: new Date(importedData.processedAt),
+          processingInfo: {
+            processedPages: `Multiple documents (${importedData.totalPages} total pages)`,
+            chunksUsed: importedData.files.length,
+            chunkSize: 0, // Variable chunk size
+            summaryMode: true,
+            comprehensiveKnowledge: true,
+            files: importedData.files.map((f: any) => ({
+              filename: f.filename,
+              pages: f.pages,
+              sizeMB: f.sizeMB
+            }))
+          }
+        };
+        
+        await saveThinkingState();
+        console.error('Comprehensive knowledge base imported successfully');
+        return true;
+        
+      } else if (importedData.thoughts && Array.isArray(importedData.thoughts)) {
+        // This is a standard thinking state export
+        const importedState = importedData;
+        // Remove export metadata
+        delete importedState.exportedAt;
+        delete importedState.serverVersion;
+        thinkingState = importedState;
+        await saveThinkingState(); // Save to local storage
+        return true;
+        
+      } else {
+        console.error('Invalid import data structure');
+        return false;
+      }
     }
     return false;
   } catch (error) {
@@ -891,8 +935,18 @@ server.tool(
           pdfLoaded: !!thinkingState.pdfContext,
           pdfFile: thinkingState.pdfContext?.filename,
           pdfPages: thinkingState.pdfContext?.pageCount,
+          isComprehensive: thinkingState.pdfContext?.processingInfo?.comprehensiveKnowledge || false,
+          fileCount: thinkingState.pdfContext?.processingInfo?.files?.length || 0,
           importedAt: new Date().toISOString()
         };
+
+        let knowledgeDescription = '';
+        if (stats.isComprehensive && thinkingState.pdfContext?.processingInfo?.files) {
+          knowledgeDescription += `\n**📚 Comprehensive Knowledge Base:**\n`;
+          thinkingState.pdfContext.processingInfo.files.forEach((file, index) => {
+            knowledgeDescription += `  ${index + 1}. ${file.filename} (${file.pages} pages, ${file.sizeMB.toFixed(1)}MB)\n`;
+          });
+        }
 
         return {
           content: [
@@ -901,9 +955,11 @@ server.tool(
               text: `✅ **Knowledge Imported Successfully**\n\n` +
                     `**Import Source:** ${importPath}\n` +
                     `**Thoughts Imported:** ${stats.thoughts}\n` +
-                    `**PDF Context:** ${stats.pdfLoaded ? `✅ ${stats.pdfFile} (${stats.pdfPages} pages)` : '❌ None'}\n` +
+                    `**PDF Context:** ${stats.pdfLoaded ? `✅ ${stats.pdfFile} (${stats.pdfPages?.toLocaleString()} pages)` : '❌ None'}\n` +
+                    `**Type:** ${stats.isComprehensive ? `🧠 Comprehensive Knowledge Base (${stats.fileCount} documents)` : '📄 Single PDF'}\n` +
+                    knowledgeDescription +
                     `**Imported At:** ${stats.importedAt}\n\n` +
-                    `*Your thinking session and PDF knowledge have been restored. You can continue where you left off.*`,
+                    `*Your ${stats.isComprehensive ? 'comprehensive knowledge base' : 'thinking session and PDF knowledge'} ${stats.isComprehensive ? 'is ready for advanced analysis' : 'have been restored'}. You can ${stats.isComprehensive ? 'now perform sequential thinking with access to all documents' : 'continue where you left off'}.*`,
             },
           ],
         };
