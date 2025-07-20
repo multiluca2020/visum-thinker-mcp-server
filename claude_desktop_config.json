@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "visum-thinker": {
+      "command": "node",
+      "args": [
+        "H:/visum-thinker-mcp-server/build/index.js"
+      ],
+      "cwd": "H:/visum-thinker-mcp-server",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

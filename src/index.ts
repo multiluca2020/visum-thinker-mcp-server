@@ -6,6 +6,7 @@ import { z } from "zod";
 import * as fs from "fs";
 import * as path from "path";
 import * as fsExtra from "fs-extra";
+import { VisumController } from "./visum-controller.js";
 
 // Dynamic import for pdf-parse to avoid startup issues
 let pdfParse: any = null;
@@ -66,6 +67,9 @@ let thinkingState: ThinkingState = {
   totalThoughts: 0,
   isComplete: false,
 };
+
+// Initialize Visum controller
+const visumController = new VisumController();
 
 // Ensure storage directory exists
 async function initializeStorage() {
@@ -984,6 +988,340 @@ server.tool(
       };
     }
   },
+);
+
+// =============================================================================
+// VISUM INTEGRATION TOOLS
+// =============================================================================
+
+// Check Visum availability
+server.tool(
+  "check_visum",
+  "Check if PTV Visum is installed and accessible on the local system",
+  {
+    customPath: z.string().optional().describe("Optional custom path to Visum executable (e.g., 'D:\\Software\\Visum\\Visum240.exe')"),
+  },
+  async ({ customPath }) => {
+    try {
+      const availability = await visumController.isVisumAvailable(customPath);
+      
+      if (availability.available) {
+        const installationsList = availability.installations?.map((inst, index) => 
+          `${index + 1}. ${inst.path} (Version: ${inst.version})`
+        ).join('\n') || '';
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Visum Available**\n\n` +
+                    `**Primary Installation:**\n` +
+                    `• **Path:** ${availability.path}\n` +
+                    `• **Version:** ${availability.version || 'Unknown'}\n` +
+                    `• **COM Registered:** ${availability.comRegistered ? '✅ Yes' : '❌ No'}\n\n` +
+                    `${availability.installations && availability.installations.length > 1 ? 
+                      `**All Found Installations:**\n${installationsList}\n\n` : ''
+                    }` +
+                    `${availability.error ? `**Note:** ${availability.error}\n\n` : ''}` +
+                    `*Ready to load models and execute transportation analysis.*`
+            }
+          ]
+        };
+      } else {
+        let message = `❌ **Visum Not Found**\n\n${availability.error}\n\n`;
+        
+        if (availability.suggestCustomPath) {
+          message += `**💡 Custom Installation Path**\n` +
+                    `If Visum is installed in a non-standard location, please provide the full path to the Visum executable.\n\n` +
+                    `**Examples:**\n` +
+                    `• \`D:\\Software\\PTV\\Visum\\Exe\\Visum240.exe\`\n` +
+                    `• \`C:\\MyPrograms\\Visum2024\\Visum240.exe\`\n` +
+                    `• \`E:\\Transportation\\Visum\\Visum230.exe\`\n\n` +
+                    `**Usage:** Use this tool again with the \`customPath\` parameter pointing to your Visum executable.\n\n`;
+        }
+        
+        message += `**Standard Installation Paths Checked:**\n` +
+                  `• C:\\Program Files\\PTV Vision\\PTV Visum 202X\\Exe\\VisumXXX.exe\n` +
+                  `• C:\\Program Files (x86)\\PTV Vision\\PTV Visum 202X\\Exe\\VisumXXX.exe\n\n` +
+                  `**COM Registration:** ${availability.comRegistered ? '✅ Available' : '❌ Not found'}`;
+
+        return {
+          content: [
+            {
+              type: "text", 
+              text: message
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Error checking Visum availability:**\n\n${error instanceof Error ? error.message : String(error)}\n\n` +
+                  `**Troubleshooting:**\n` +
+                  `• Check if you have permission to access the installation directories\n` +
+                  `• Try providing a custom path if Visum is installed elsewhere\n` +
+                  `• Ensure Visum is properly installed and not corrupted`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Initialize Visum COM connection
+server.tool(
+  "initialize_visum",
+  "Initialize connection to Visum COM interface for automation",
+  {},
+  async () => {
+    try {
+      const result = await visumController.initializeVisum();
+      
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Visum Initialized**\n\n` +
+                    `COM connection established successfully.\n` +
+                    `Visum is now ready for automation.\n\n` +
+                    `*You can now load models and execute procedures.*`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Initialization Failed**\n\n` +
+                    `Error: ${result.error}\n\n` +
+                    `*Make sure Visum is installed and you have COM automation permissions.*`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error initializing Visum: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Load Visum model
+server.tool(
+  "load_visum_model", 
+  "Load a Visum model file (.ver) for analysis and operations",
+  {
+    modelPath: z.string().describe("Full path to the Visum model file (.ver)"),
+  },
+  async ({ modelPath }) => {
+    try {
+      const result = await visumController.loadModel(modelPath);
+      
+      if (result.success && result.modelInfo) {
+        const info = result.modelInfo;
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Model Loaded Successfully**\n\n` +
+                    `**Model:** ${info.modelPath}\n` +
+                    `**Loaded At:** ${info.loadedAt}\n\n` +
+                    `**Network Statistics:**\n` +
+                    `• **Nodes:** ${info.nodes?.toLocaleString() || 'N/A'}\n` +
+                    `• **Links:** ${info.links?.toLocaleString() || 'N/A'}\n` +
+                    `• **Zones:** ${info.zones?.toLocaleString() || 'N/A'}\n\n` +
+                    `*Model is ready for analysis. You can now run procedures, get detailed statistics, or execute custom operations.*`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Failed to Load Model**\n\n` +
+                    `Error: ${result.error}\n\n` +
+                    `*Check that the file path is correct and the model file is valid.*`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error loading model: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Get network statistics
+server.tool(
+  "analyze_visum_network",
+  "Analyze the currently loaded Visum network and get detailed statistics",
+  {},
+  async () => {
+    try {
+      const result = await visumController.getNetworkStats();
+      
+      if (result.success && result.stats) {
+        const stats = result.stats;
+        return {
+          content: [
+            {
+              type: "text",
+              text: `📊 **Network Analysis Results**\n\n` +
+                    `**Infrastructure:**\n` +
+                    `• **Nodes:** ${stats.nodes?.toLocaleString() || 'N/A'}\n` +
+                    `• **Links:** ${stats.links?.toLocaleString() || 'N/A'}\n` +
+                    `• **Zones:** ${stats.zones?.toLocaleString() || 'N/A'}\n\n` +
+                    `**Public Transport:**\n` +
+                    `• **Lines:** ${stats.lines?.toLocaleString() || 'N/A'}\n` +
+                    `• **Stops:** ${stats.stops?.toLocaleString() || 'N/A'}\n` +
+                    `• **Time Profiles:** ${stats.timeProfiles?.toLocaleString() || 'N/A'}\n` +
+                    `• **Vehicle Journeys:** ${stats.vehicleJourneys?.toLocaleString() || 'N/A'}\n\n` +
+                    `*Network analysis complete. Use this data for sequential thinking about transportation optimization.*`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Network Analysis Failed**\n\n` +
+                    `Error: ${result.error}\n\n` +
+                    `*Make sure a model is loaded first using load_visum_model.*`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error analyzing network: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Run Visum procedure
+server.tool(
+  "run_visum_procedure",
+  "Execute a Visum procedure (like traffic assignment) by procedure number",
+  {
+    procedureNumber: z.number().int().positive().describe("Visum procedure number to execute"),
+    description: z.string().optional().describe("Optional description of what this procedure does"),
+  },
+  async ({ procedureNumber, description }) => {
+    try {
+      const result = await visumController.runProcedure(procedureNumber);
+      
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Procedure Executed Successfully**\n\n` +
+                    `**Procedure:** ${procedureNumber}${description ? ` (${description})` : ''}\n` +
+                    `**Status:** Completed\n\n` +
+                    `*Procedure execution finished. You can now analyze results or run additional procedures.*`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Procedure Execution Failed**\n\n` +
+                    `**Procedure:** ${procedureNumber}\n` +
+                    `**Error:** ${result.error}\n\n` +
+                    `*Check that the procedure number is valid and all required data is available.*`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error executing procedure: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Execute custom Visum script
+server.tool(
+  "execute_visum_script",
+  "Execute custom VBScript code in Visum for advanced operations",
+  {
+    script: z.string().describe("VBScript code to execute in Visum"),
+    description: z.string().optional().describe("Optional description of what this script does"),
+  },
+  async ({ script, description }) => {
+    try {
+      const result = await visumController.executeCustomScript(script);
+      
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Custom Script Executed**\n\n` +
+                    `${description ? `**Purpose:** ${description}\n` : ''}` +
+                    `**Status:** Completed successfully\n\n` +
+                    `**Result:** ${result.result || 'Script executed without output'}\n\n` +
+                    `*Custom script execution finished.*`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Script Execution Failed**\n\n` +
+                    `**Error:** ${result.error}\n\n` +
+                    `*Check your VBScript syntax and Visum object references.*`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error executing script: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
 );
 
 async function main() {

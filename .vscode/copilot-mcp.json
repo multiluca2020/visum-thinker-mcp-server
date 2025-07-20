@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "copilot": {
+    "mcp": {
+      "enabled": true,
+      "servers": {
+        "visum-thinker": {
+          "description": "Sequential Thinking & Visum Transportation Planning MCP Server",
+          "capabilities": [
+            "Step-by-step problem analysis and reasoning",
+            "PDF document loading and analysis", 
+            "PTV Visum transportation planning integration",
+            "Network analysis and traffic modeling",
+            "Transportation demand analysis",
+            "Intelligent Visum path learning and persistence"
+          ],
+          "tools": [
+            "sequential_thinking",
+            "load_pdf", 
+            "analyze_pdf_section",
+            "check_visum",
+            "load_visum_model",
+            "run_visum_calculation",
+            "get_network_statistics", 
+            "analyze_visum_matrices",
+            "export_visum_results"
+          ],
+          "prompt_hints": [
+            "Use sequential_thinking for complex problem breakdown",
+            "Load PDFs with load_pdf before analysis",
+            "Check Visum with check_visum before using transportation tools",
+            "Leverage intelligent path learning for custom Visum installations"
+          ]
+        }
+      }
+    }
+  }
+}

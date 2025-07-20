@@ -8,7 +8,7 @@
     "visum-thinker": "./build/index.js"
   },
   "scripts": {
-    "build": "tsc && chmod +x build/index.js",
+    "build": "tsc",
     "dev": "npm run build && node build/index.js",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -52,6 +52,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.16.0",
     "fs-extra": "^11.3.0",
+    "node-powershell": "^5.0.1",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^1.1.1",
     "zod": "^3.25.76"

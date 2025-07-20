@@ -14,6 +14,11 @@ A Model Context Protocol (MCP) server that provides structured sequential thinki
 - **Content Search**: Find relevant sections in PDFs based on queries and search terms
 - **Persistent Storage**: Auto-save state to disk, survive server restarts
 - **Knowledge Transfer**: Export/import thinking sessions between servers
+- **🚗 Visum Integration**: Complete PTV Visum COM API integration for transportation planning
+  - **Smart Path Learning**: Automatically discovers and remembers custom Visum installation paths
+  - **Zero Configuration**: Once set up, works seamlessly across server restarts
+  - **Demo Mode**: Full functionality testing without requiring Visum installation
+  - **Transportation Analysis**: Load models, run calculations, analyze networks and matrices
 
 ## Installation
 
@@ -121,6 +126,55 @@ Import thinking state and PDF knowledge from an exported file.
 
 **Parameters:**
 - `importPath` (string): Absolute path to the exported knowledge file to import
+
+### 🚗 Visum Transportation Planning Tools
+
+The server includes comprehensive PTV Visum integration with intelligent path learning:
+
+- **`check_visum`**: Check Visum availability and learn custom installation paths
+- **`load_visum_model`**: Load transportation models (.ver files)  
+- **`run_visum_calculation`**: Execute transportation calculations and analyses
+- **`get_network_statistics`**: Analyze network topology and characteristics
+- **`analyze_visum_matrices`**: Examine demand and flow matrices
+- **`export_visum_results`**: Export analysis results to various formats
+
+**Key Features:**
+- **🧠 Smart Path Learning**: Automatically remembers custom Visum installation paths
+- **🔄 Zero Setup**: Works seamlessly after initial path discovery
+- **🎯 Demo Mode**: Full testing capability without Visum installation
+- **📊 Complete Analysis**: All major transportation planning workflows supported
+
+See [VISUM-PATH-LEARNING.md](./VISUM-PATH-LEARNING.md) for detailed information about the intelligent path learning system.
+
+## 🤖 GitHub Copilot Integration
+
+The Sequential Thinking MCP Server includes comprehensive GitHub Copilot integration for enhanced AI-assisted development:
+
+### 🚀 Quick Start with Copilot
+1. **Server Status**: Ensure MCP server is running (`npm run dev`)
+2. **Open Copilot Chat**: `Ctrl+Shift+I` in VS Code
+3. **Test Integration**: Ask `@copilot List available MCP tools`
+4. **Start Solving**: `@copilot Use sequential thinking to solve [your problem]`
+
+### 🎯 Copilot Capabilities
+- **🧠 Sequential Thinking**: AI-guided step-by-step problem solving
+- **📄 PDF Analysis**: Intelligent document processing and analysis  
+- **🚗 Transportation Planning**: Expert Visum integration and workflow automation
+- **🔧 Smart Configuration**: Automatic Visum path learning and persistence
+- **💡 Context-Aware Suggestions**: Code completion with domain knowledge
+
+### 💬 Example Copilot Interactions
+```
+@copilot Can you use sequential thinking to analyze this transportation network problem?
+
+@copilot Check if Visum is available and help me load a network model
+
+@copilot Use the PDF analysis tools to extract data from this traffic report
+
+@copilot Create a complete workflow for transportation demand analysis
+```
+
+See [COPILOT-INTEGRATION.md](./COPILOT-INTEGRATION.md) for comprehensive setup and usage guide.
 
 ## Development
 
