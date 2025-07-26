@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server that provides structured sequential thinking capabilities for problem-solving and analysis. This server enables AI assistants to break down complex problems into manageable steps, revise thoughts, and explore alternative reasoning paths.
 
+<a href="https://glama.ai/mcp/servers/@multiluca2020/visum-thinker-mcp-server">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@multiluca2020/visum-thinker-mcp-server/badge" alt="Visum Thinker Server MCP server" />
+</a>
+
 ## Features
 
 - **Step-by-step reasoning**: Break down complex problems into sequential thoughts
