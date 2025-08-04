@@ -16,11 +16,19 @@ interface VisumConfig {
 // Visum integration class using PowerShell COM
 export class VisumController {
   private visumPaths = [
+    // Known H: drive paths (discovered from user's system)
+    'H:\\Program Files\\PTV Vision\\PTV Visum 2025\\Exe\\Visum250.exe',
+    'H:\\Program Files\\PTV Vision\\PTV Visum 2024\\Exe\\Visum240.exe',
+    'H:\\Program Files\\PTV Vision\\PTV Visum 2023\\Exe\\Visum230.exe',
+    'H:\\Program Files\\PTV Vision\\PTV Visum 2022\\Exe\\Visum220.exe',
+    'H:\\Program Files\\PTV Vision\\PTV Visum 2021\\Exe\\Visum210.exe',
+    // Standard C: drive paths
+    'C:\\Program Files\\PTV Vision\\PTV Visum 2025\\Exe\\Visum250.exe',
     'C:\\Program Files\\PTV Vision\\PTV Visum 2024\\Exe\\Visum240.exe',
     'C:\\Program Files\\PTV Vision\\PTV Visum 2023\\Exe\\Visum230.exe', 
     'C:\\Program Files\\PTV Vision\\PTV Visum 2022\\Exe\\Visum220.exe',
     'C:\\Program Files\\PTV Vision\\PTV Visum 2021\\Exe\\Visum210.exe',
-    'C:\\Program Files\\PTV Vision\\PTV Visum 2025\\Exe\\Visum250.exe',
+    'C:\\Program Files (x86)\\PTV Vision\\PTV Visum 2025\\Exe\\Visum250.exe',
     'C:\\Program Files (x86)\\PTV Vision\\PTV Visum 2024\\Exe\\Visum240.exe',
     'C:\\Program Files (x86)\\PTV Vision\\PTV Visum 2023\\Exe\\Visum230.exe',
     'C:\\Program Files (x86)\\PTV Vision\\PTV Visum 2022\\Exe\\Visum220.exe',
@@ -33,6 +41,45 @@ export class VisumController {
   private comAvailable: boolean | null = null;
   private demoMode: boolean = false; // Enable demo mode when Visum is not available
   private customVisumPath: string | null = null; // Store custom Visum path
+  private visumLogDirs: { log: string; temp: string; work: string } | null = null; // Store configured directories
+
+  // Create comprehensive log directories for Visum to prevent crashes
+  private async createVisumDirectories(): Promise<{ log: string; temp: string; work: string }> {
+    const tempDir = process.env.TEMP || 'C:\\temp';
+    const baseDir = path.join(tempDir, 'VisumMCP');
+    const logDir = path.join(baseDir, 'logs');
+    const tempVisumDir = path.join(baseDir, 'temp');
+    const workDir = path.join(baseDir, 'work');
+
+    try {
+      // Create all directories
+      await fs.promises.mkdir(logDir, { recursive: true });
+      await fs.promises.mkdir(tempVisumDir, { recursive: true });
+      await fs.promises.mkdir(workDir, { recursive: true });
+
+      // Set permissions (Windows)
+      if (process.platform === 'win32') {
+        try {
+          const { spawn } = await import('child_process');
+          const icacls = spawn('icacls', [baseDir, '/grant', `${process.env.USERNAME}:F`, '/T'], { 
+            stdio: 'ignore' 
+          });
+          icacls.on('exit', () => {
+            console.error(`Visum directories created with full permissions: ${baseDir}`);
+          });
+        } catch (permError) {
+          // Continue without setting permissions
+          console.error('Note: Could not set directory permissions, Visum may have limited access');
+        }
+      }
+
+      this.visumLogDirs = { log: logDir, temp: tempVisumDir, work: workDir };
+      return this.visumLogDirs;
+    } catch (error) {
+      console.error(`Error creating Visum directories: ${error}`);
+      throw error;
+    }
+  }
 
   // Load configuration from file
   private loadConfig(): VisumConfig {
@@ -128,6 +175,9 @@ export class VisumController {
     installations?: Array<{path: string, version: string}>;
     error?: string;
     suggestCustomPath?: boolean;
+    pathSource?: 'learned-preferred' | 'learned-known' | 'discovered';
+    totalKnownPaths?: number;
+    lastConfigUpdate?: string;
   }> {
     try {
       // Start with known installations from config
@@ -228,6 +278,11 @@ export class VisumController {
           return b.version.localeCompare(a.version);
         });
 
+        // Check if this path was learned from previous interactions
+        const config = this.loadConfig();
+        const isLearnedPath = config.knownInstallations.some(known => known.path === installations[0].path);
+        const isPreferredPath = config.preferredPath === installations[0].path;
+
         return { 
           available: true, 
           path: installations[0].path, 
@@ -235,7 +290,11 @@ export class VisumController {
           comRegistered: comCheck.registered,
           installations,
           error: comCheck.registered ? undefined : 'COM objects not registered - you may need to run Visum as Administrator once to register COM components',
-          suggestCustomPath: false
+          suggestCustomPath: false,
+          // Add metadata about learned information
+          pathSource: isLearnedPath ? (isPreferredPath ? 'learned-preferred' : 'learned-known') : 'discovered',
+          totalKnownPaths: config.knownInstallations.length,
+          lastConfigUpdate: config.lastUpdated
         };
       } else {
         return { 
@@ -414,83 +473,309 @@ export class VisumController {
 
     const script = `
       try {
-        # Create temp directory for logs if needed
+        Write-Host "=== Visum COM Initialization with Anti-Close Protection ==="
+        
+        # Step 1: Kill any existing Visum processes that might interfere
+        Write-Host "Cleaning up any existing Visum processes..."
+        Get-Process -Name "Visum*" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Milliseconds 1000
+        
+        # Step 2: Create comprehensive log directory structure
         $tempDir = $env:TEMP
         $logDir = Join-Path $tempDir "VisumMCP"
-        if (-not (Test-Path $logDir)) {
-          New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+        $visumLogDir = Join-Path $logDir "logs"
+        $visumTempDir = Join-Path $logDir "temp"
+        $visumWorkDir = Join-Path $logDir "work"
+        
+        @($logDir, $visumLogDir, $visumTempDir, $visumWorkDir) | ForEach-Object {
+          if (-not (Test-Path $_)) {
+            New-Item -ItemType Directory -Path $_ -Force | Out-Null
+            Write-Host "Created: $_"
+          }
+          # Ensure write permissions
+          try {
+            $testFile = Join-Path $_ "test.tmp"
+            "test" | Out-File -FilePath $testFile -Force
+            Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+            Write-Host "Verified write access: $_"
+          } catch {
+            Write-Host "Warning: Limited write access to $_"
+          }
         }
         
-        # Set environment variables to avoid log directory issues
-        $env:VISUM_LOG_DIR = $logDir
-        $env:VISUM_TEMP_DIR = $logDir
+        # Step 3: Configure comprehensive environment to prevent crashes
+        $originalEnv = @{
+          TEMP = $env:TEMP
+          TMP = $env:TMP
+          APPDATA = $env:APPDATA
+          LOCALAPPDATA = $env:LOCALAPPDATA
+        }
         
-        Write-Host "Creating Visum COM object..."
-        $visum = New-Object -ComObject "Visum.Visum" -ErrorAction Stop
+        # Set all possible Visum environment variables
+        $env:VISUM_LOG_DIR = $visumLogDir
+        $env:VISUM_TEMP_DIR = $visumTempDir  
+        $env:VISUM_WORK_DIR = $visumWorkDir
+        $env:VISUM_USER_DIR = $logDir
+        $env:VISUM_SYSTEM_DIR = $logDir
+        $env:VISUM_INI_DIR = $logDir
+        $env:VISUM_DATA_DIR = $logDir
+        $env:VISUM_CONFIG_DIR = $logDir
+        $env:TMP = $visumTempDir
+        $env:TEMP = $visumTempDir
         
-        if ($visum) {
-          Write-Host "SUCCESS: Visum COM object created"
-          
-          # Try to set automation mode (may not be available in all versions)
+        # Create Visum-specific folders that it expects
+        $visumFolders = @(
+          (Join-Path $env:APPDATA "PTV AG"),
+          (Join-Path $env:APPDATA "PTV AG\\PTV Visum"),
+          (Join-Path $env:LOCALAPPDATA "PTV AG"),
+          (Join-Path $env:LOCALAPPDATA "PTV AG\\PTV Visum"),
+          (Join-Path $visumLogDir "PTV Visum")
+        )
+        
+        foreach ($folder in $visumFolders) {
           try {
-            $visum.SetAttValue('AppMode', 1)
-            Write-Host "Visum set to automation mode"
+            if (-not (Test-Path $folder)) {
+              New-Item -ItemType Directory -Path $folder -Force | Out-Null
+              Write-Host "Created Visum folder: $folder"
+            }
           } catch {
-            Write-Host "Warning: Could not set automation mode (may not be supported): $($_.Exception.Message)"
+            Write-Host "Could not create $folder : $($_.Exception.Message)"
+          }
+        }
+        
+        Write-Host "Environment configured for maximum stability"
+        
+        # Step 4: Registry configuration for stability
+        try {
+          $regPaths = @(
+            "HKCU:\\Software\\PTV AG",
+            "HKCU:\\Software\\PTV AG\\PTV Visum"
+          )
+          
+          foreach ($regPath in $regPaths) {
+            if (-not (Test-Path $regPath)) {
+              New-Item -Path $regPath -Force | Out-Null
+              Write-Host "Created registry path: $regPath"
+            }
           }
           
-          # Get version info if possible
-          try {
-            $version = $visum.GetAttValue('VersionStr')
-            Write-Host "Visum version: $version"
-          } catch {
-            Write-Host "Could not retrieve version information"
+          # Set critical registry values to prevent crashes
+          $regValues = @{
+            "LogDir" = $visumLogDir
+            "TempDir" = $visumTempDir
+            "WorkingDirectory" = $visumWorkDir
+            "UserDirectory" = $logDir
+            "DisableErrorReporting" = 1
+            "SuppressDialogs" = 1
+            "AutomationMode" = 1
           }
           
-          # Test basic functionality
+          foreach ($key in $regValues.Keys) {
+            try {
+              Set-ItemProperty -Path "HKCU:\\Software\\PTV AG\\PTV Visum" -Name $key -Value $regValues[$key] -ErrorAction SilentlyContinue
+              Write-Host "Set registry: $key = $($regValues[$key])"
+            } catch {
+              Write-Host "Could not set registry $key : $($_.Exception.Message)"
+            }
+          }
+          
+        } catch {
+          Write-Host "Registry configuration failed (continuing): $($_.Exception.Message)"
+        }
+        
+        # Step 5: Enhanced COM object creation with persistent connection
+        Write-Host "Creating Visum COM object with persistence logic..."
+        
+        $visum = $null
+        $initSuccess = $false
+        $attempts = 0
+        $maxAttempts = 5
+        $comCreated = $false
+        
+        while (-not $initSuccess -and $attempts -lt $maxAttempts) {
+          $attempts++
+          Write-Host "=== Attempt $attempts of $maxAttempts ==="
+          
           try {
-            $netCount = 0
-            if ($visum.Net) {
-              Write-Host "Network object accessible"
+            # Force cleanup before each attempt
+            [System.GC]::Collect()
+            [System.GC]::WaitForPendingFinalizers()
+            [System.GC]::Collect()
+            
+            Write-Host "Creating COM object..."
+            $visum = New-Object -ComObject "Visum.Visum" -ErrorAction Stop
+            $comCreated = $true
+            Write-Host "COM object created successfully"
+            
+            # CRITICAL: Immediate persistence check
+            if ($visum -ne $null) {
+              Write-Host "Testing COM object persistence..."
+              
+              # Test 1: Basic version access
+              $version = "Unknown"
+              try {
+                $version = $visum.VersionNumber
+                Write-Host "Version retrieved: $version"
+              } catch {
+                Write-Host "Version test failed: $($_.Exception.Message)"
+                throw "Version test failed"
+              }
+              
+              # Test 2: Network object access
+              try {
+                $netExists = ($visum.Net -ne $null)
+                Write-Host "Network object accessible: $netExists"
+                if (-not $netExists) {
+                  throw "Network object not accessible"
+                }
+              } catch {
+                Write-Host "Network test failed: $($_.Exception.Message)"
+                throw "Network test failed"
+              }
+              
+              # Test 3: Set automation mode IMMEDIATELY
+              try {
+                $visum.SetAttValue('AppMode', 1)
+                Write-Host "Automation mode set successfully"
+              } catch {
+                Write-Host "Automation mode failed: $($_.Exception.Message)"
+                # Don't fail here, continue
+              }
+              
+              # Test 4: Configure directories via COM BEFORE any other operation
+              try {
+                if ($visum.IO -ne $null) {
+                  $visum.IO.SetTempPath($visumTempDir)
+                  Write-Host "IO temp path set: $visumTempDir"
+                }
+                
+                # Set all system directories
+                $visum.SetSysAttValue("TempDir", $visumTempDir)
+                $visum.SetSysAttValue("LogDir", $visumLogDir) 
+                $visum.SetSysAttValue("WorkingDir", $visumWorkDir)
+                Write-Host "System directories configured via COM"
+                
+              } catch {
+                Write-Host "Directory config failed: $($_.Exception.Message)"
+                # Don't fail here as some Visum versions don't support this
+              }
+              
+              # Test 5: CRITICAL PERSISTENCE TEST - wait and retest
+              Write-Host "Performing persistence test (waiting 2 seconds)..."
+              Start-Sleep -Seconds 2
+              
+              try {
+                # Test if object is still responsive after wait
+                $testVersion = $visum.VersionNumber
+                $testNet = ($visum.Net -ne $null)
+                
+                if ($testVersion -eq $version -and $testNet) {
+                  Write-Host "PERSISTENCE TEST PASSED - Object is stable"
+                  $initSuccess = $true
+                } else {
+                  Write-Host "PERSISTENCE TEST FAILED - Object became unstable"
+                  throw "Object lost stability"
+                }
+                
+              } catch {
+                Write-Host "Persistence test failed: $($_.Exception.Message)"
+                throw "Stability check failed"
+              }
+              
+            } else {
+              throw "COM object creation returned null"
             }
             
-            @{
-              "success" = $true
-              "message" = "Visum COM initialized successfully"
-              "logDir" = $logDir
-              "demoMode" = $false
-            } | ConvertTo-Json
-            
           } catch {
-            Write-Host "Warning: Some network functions may not be available: $($_.Exception.Message)"
-            @{
-              "success" = $true
-              "message" = "Visum COM initialized with limited functionality"
-              "warning" = $_.Exception.Message
-              "logDir" = $logDir
-              "demoMode" = $false
-            } | ConvertTo-Json
+            $error = $_.Exception.Message
+            Write-Host "Attempt $attempts failed: $error"
+            
+            # Cleanup failed attempt
+            if ($visum -ne $null) {
+              try {
+                [System.Runtime.InteropServices.Marshal]::ReleaseComObject($visum) | Out-Null
+                Write-Host "Released failed COM object"
+              } catch {
+                Write-Host "Could not release COM object: $($_.Exception.Message)"
+              }
+              $visum = $null
+            }
+            
+            # Longer wait before retry for stability
+            if ($attempts -lt $maxAttempts) {
+              $waitTime = $attempts * 1000  # Increasing wait time
+              Write-Host "Waiting $waitTime ms before retry..."
+              Start-Sleep -Milliseconds $waitTime
+            }
+          }
+        }
+        
+        # Restore original environment
+        foreach ($key in $originalEnv.Keys) {
+          Set-Item -Path "Env:$key" -Value $originalEnv[$key]
+        }
+        
+        if ($initSuccess -and $visum -ne $null) {
+          Write-Host "SUCCESS: Visum COM object is stable and persistent"
+          
+          # Final verification
+          try {
+            $finalVersion = $visum.VersionNumber
+            $finalNet = ($visum.Net -ne $null)
+            Write-Host "Final verification - Version: $finalVersion, Network: $finalNet"
+          } catch {
+            Write-Host "Warning: Final verification had issues: $($_.Exception.Message)"
           }
           
+          @{
+            "success" = $true
+            "message" = "Visum COM initialized with anti-close protection"
+            "version" = $version
+            "logDir" = $visumLogDir
+            "tempDir" = $visumTempDir
+            "workDir" = $visumWorkDir
+            "attempts" = $attempts
+            "demoMode" = $false
+            "stabilityTest" = "passed"
+            "persistence" = "verified"
+          } | ConvertTo-Json
+          
         } else {
-          Write-Error "Failed to create Visum COM object"
+          Write-Host "FAILED: Could not create persistent Visum COM object"
+          
+          @{
+            "success" = $false
+            "error" = "Failed to create persistent COM object after $maxAttempts attempts"
+            "attempts" = $attempts
+            "comCreated" = $comCreated
+            "troubleshooting" = @(
+              "1. **License Issue**: Check if Visum license is valid and not expired",
+              "2. **Admin Rights**: Run PowerShell as Administrator and try again", 
+              "3. **COM Registration**: Run 'regsvr32 [VisumPath]\\VisumCom.dll' as Admin",
+              "4. **Process Cleanup**: Restart Windows to clear any stuck Visum processes",
+              "5. **Antivirus**: Temporarily disable antivirus COM blocking",
+              "6. **Manual Test**: Try opening Visum manually to verify it works",
+              "7. **Version**: Some Visum versions have COM issues - try different version"
+            )
+            "demoMode" = $false
+          } | ConvertTo-Json
+          
           exit 1
         }
         
       } catch {
-        $errorMsg = $_.Exception.Message
-        Write-Error "Failed to create Visum COM object: $errorMsg"
+        $criticalError = $_.Exception.Message
+        Write-Host "CRITICAL ERROR: $criticalError"
         
-        # Provide detailed troubleshooting information
         @{
           "success" = $false
-          "error" = $errorMsg
+          "error" = "Critical initialization error: $criticalError"
           "troubleshooting" = @(
-            "1. Ensure Visum is properly installed",
-            "2. Run Visum manually as Administrator at least once",
-            "3. Check if Visum COM components are registered",
-            "4. Verify Visum license is valid",
-            "5. Try restarting Windows after Visum installation"
+            "1. Verify Visum is properly installed and licensed",
+            "2. Run this script as Administrator", 
+            "3. Check Windows Event Viewer for detailed error information",
+            "4. Temporarily disable antivirus and firewall",
+            "5. Try rebooting after fresh Visum installation"
           )
           "demoMode" = $false
         } | ConvertTo-Json
@@ -538,7 +823,7 @@ export class VisumController {
     return result;
   }
 
-  // Load a Visum model (enhanced with demo mode)
+  // Load a Visum model (enhanced with demo mode and log directory configuration)
   async loadModel(modelPath: string): Promise<{ success: boolean; modelInfo?: any; error?: string }> {
     // Demo mode simulation
     if (this.demoMode) {
@@ -561,9 +846,39 @@ export class VisumController {
       return { success: false, error: `Model file not found: ${modelPath}` };
     }
 
+    // Ensure Visum directories are created before loading model
+    let dirs;
+    try {
+      dirs = await this.createVisumDirectories();
+    } catch (dirError) {
+      console.error('Warning: Could not create Visum directories, continuing anyway');
+      dirs = { log: 'C:\\temp\\VisumMCP\\logs', temp: 'C:\\temp\\VisumMCP\\temp', work: 'C:\\temp\\VisumMCP\\work' };
+    }
+
     const script = `
       try {
+        # Set environment variables for safe directory access
+        $env:VISUM_LOG_DIR = "${dirs.log.replace(/\\/g, '\\\\')}"
+        $env:VISUM_TEMP_DIR = "${dirs.temp.replace(/\\/g, '\\\\')}"
+        $env:VISUM_WORK_DIR = "${dirs.work.replace(/\\/g, '\\\\')}"
+        $env:TMP = "${dirs.temp.replace(/\\/g, '\\\\')}"
+        $env:TEMP = "${dirs.temp.replace(/\\/g, '\\\\')}"
+        
         $visum = New-Object -ComObject "Visum.Visum"
+        
+        # Configure Visum directories before loading model
+        try {
+          if ($visum.IO) {
+            $visum.IO.SetTempPath("${dirs.temp.replace(/\\/g, '\\\\')}")
+          }
+          $visum.SetSysAttValue("TempDir", "${dirs.temp.replace(/\\/g, '\\\\')}")
+          $visum.SetSysAttValue("LogDir", "${dirs.log.replace(/\\/g, '\\\\')}")
+          Write-Host "Configured Visum directories before model loading"
+        } catch {
+          Write-Host "Note: Could not pre-configure Visum directories: $($_.Exception.Message)"
+        }
+        
+        Write-Host "Loading model: ${modelPath}"
         $visum.LoadVersion("${modelPath.replace(/\\/g, '\\\\')}")
         
         # Get basic model information
@@ -577,6 +892,8 @@ export class VisumController {
           "links" = $linkCount  
           "zones" = $zoneCount
           "loadedAt" = (Get-Date).ToString()
+          "logDir" = "${dirs.log.replace(/\\/g, '\\\\')}"
+          "tempDir" = "${dirs.temp.replace(/\\/g, '\\\\')}"
           "demoMode" = $false
         }
         
@@ -755,6 +1072,28 @@ export class VisumController {
       demoMode: this.demoMode,
       reason: this.demoMode ? 'Visum COM objects not available' : undefined,
       comAvailable: this.comAvailable ?? undefined
+    };
+  }
+
+  // Get information about configured Visum directories
+  getVisumDirectories(): { log: string; temp: string; work: string } | null {
+    return this.visumLogDirs;
+  }
+
+  // Get comprehensive status including directories
+  getStatus(): { 
+    demoMode: boolean; 
+    comAvailable: boolean | null;
+    currentModel: string | null;
+    directories: { log: string; temp: string; work: string } | null;
+    customPath: string | null;
+  } {
+    return {
+      demoMode: this.demoMode,
+      comAvailable: this.comAvailable,
+      currentModel: this.currentModel,
+      directories: this.visumLogDirs,
+      customPath: this.customVisumPath
     };
   }
 }

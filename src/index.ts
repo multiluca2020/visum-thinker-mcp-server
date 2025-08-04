@@ -1010,20 +1010,40 @@ server.tool(
           `${index + 1}. ${inst.path} (Version: ${inst.version})`
         ).join('\n') || '';
 
+        // Create informative message about path source
+        let pathSourceInfo = '';
+        if (availability.pathSource === 'learned-preferred') {
+          pathSourceInfo = `📚 **Remembered Installation** (Preferred path from previous setup)\n`;
+        } else if (availability.pathSource === 'learned-known') {
+          pathSourceInfo = `📚 **Remembered Installation** (Known from previous discovery)\n`;
+        } else {
+          pathSourceInfo = `🔍 **Newly Discovered Installation**\n`;
+        }
+
+        let configInfo = '';
+        if (availability.totalKnownPaths && availability.totalKnownPaths > 0) {
+          configInfo = `\n**MCP Server Memory:**\n` +
+                      `• **Known Installations:** ${availability.totalKnownPaths}\n` +
+                      `• **Last Updated:** ${new Date(availability.lastConfigUpdate || '').toLocaleString()}\n` +
+                      `• **Configuration:** Persistent across conversations and server restarts\n`;
+        }
+
         return {
           content: [
             {
               type: "text",
               text: `✅ **Visum Available**\n\n` +
+                    pathSourceInfo +
                     `**Primary Installation:**\n` +
                     `• **Path:** ${availability.path}\n` +
                     `• **Version:** ${availability.version || 'Unknown'}\n` +
-                    `• **COM Registered:** ${availability.comRegistered ? '✅ Yes' : '❌ No'}\n\n` +
+                    `• **COM Registered:** ${availability.comRegistered ? '✅ Yes' : '❌ No'}\n` +
+                    configInfo +
                     `${availability.installations && availability.installations.length > 1 ? 
-                      `**All Found Installations:**\n${installationsList}\n\n` : ''
+                      `\n**All Found Installations:**\n${installationsList}\n` : ''
                     }` +
-                    `${availability.error ? `**Note:** ${availability.error}\n\n` : ''}` +
-                    `*Ready to load models and execute transportation analysis.*`
+                    `${availability.error ? `\n**Note:** ${availability.error}\n` : ''}` +
+                    `\n*Ready to load models and execute transportation analysis.*`
             }
           ]
         };
@@ -1317,6 +1337,162 @@ server.tool(
           {
             type: "text",
             text: `Error executing script: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Get current Visum session status and COM connection details
+server.tool(
+  "get_visum_status",
+  "Get the current status of Visum COM connection and active session",
+  {},
+  async () => {
+    try {
+      const status = visumController.getStatus();
+      
+      let statusInfo = `🔍 **Current Visum Session Status**\n\n`;
+      
+      statusInfo += `**COM Connection:**\n`;
+      statusInfo += `• **COM Available:** ${status.comAvailable === true ? '✅ Yes' : status.comAvailable === false ? '❌ No' : '❓ Unknown'}\n`;
+      statusInfo += `• **Demo Mode:** ${status.demoMode ? '✅ Active (No UI)' : '❌ Inactive'}\n`;
+      
+      if (status.currentModel) {
+        statusInfo += `\n**Loaded Model:**\n`;
+        statusInfo += `• **Path:** ${status.currentModel}\n`;
+      } else {
+        statusInfo += `\n**Model Status:** ❌ No model currently loaded\n`;
+      }
+      
+      if (status.customPath) {
+        statusInfo += `\n**Visum Installation:**\n`;
+        statusInfo += `• **Path:** ${status.customPath}\n`;
+      }
+      
+      if (status.directories) {
+        statusInfo += `\n**Working Directories:**\n`;
+        statusInfo += `• **Log:** ${status.directories.log}\n`;
+        statusInfo += `• **Temp:** ${status.directories.temp}\n`;
+        statusInfo += `• **Work:** ${status.directories.work}\n`;
+      }
+      
+      statusInfo += `\n**What "Visum Opened" Means:**\n`;
+      statusInfo += `🔹 **COM Interface Active:** Visum's automation interface is running\n`;
+      statusInfo += `🔹 **Background Process:** Visum runs without visible UI in automation mode\n`;
+      statusInfo += `🔹 **Ready for Commands:** Can load models, run procedures, analyze data\n`;
+      statusInfo += `🔹 **Memory Resident:** Faster subsequent operations\n\n`;
+      
+      if (!status.currentModel) {
+        statusInfo += `**Next Steps:**\n`;
+        statusInfo += `1. **Load a Model:** Use \`load_visum_model\` with your .ver file path\n`;
+        statusInfo += `2. **Analyze Network:** Once loaded, use \`analyze_visum_network\`\n`;
+        statusInfo += `3. **Run Procedures:** Execute traffic assignments or other operations\n`;
+        statusInfo += `4. **Custom Scripts:** Run VBScript for advanced automation\n`;
+      } else {
+        statusInfo += `**Available Actions:**\n`;
+        statusInfo += `✅ Network analysis\n`;
+        statusInfo += `✅ Procedure execution\n`;
+        statusInfo += `✅ Custom scripting\n`;
+        statusInfo += `✅ Data extraction\n`;
+      }
+      
+      statusInfo += `\n**Important Notes:**\n`;
+      statusInfo += `• Visum COM automation runs **silently in the background**\n`;
+      statusInfo += `• You won't see a Visum window - this is normal!\n`;
+      statusInfo += `• The process is ready to receive commands through this MCP server\n`;
+      statusInfo += `• If you want to see Visum GUI, open it separately from Start menu\n`;
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: statusInfo
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Error getting Visum status:**\n\n${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Get MCP server's stored Visum configuration and learning data
+server.tool(
+  "get_visum_memory",
+  "Get information about what Visum installations and configurations the MCP server remembers",
+  {},
+  async () => {
+    try {
+      const status = visumController.getStatus();
+      const availability = await visumController.isVisumAvailable();
+      
+      let memoryInfo = `🧠 **MCP Server Memory Status**\n\n`;
+      
+      if (availability.totalKnownPaths && availability.totalKnownPaths > 0) {
+        memoryInfo += `**Learned Visum Installations:** ${availability.totalKnownPaths}\n`;
+        
+        if (availability.installations && availability.installations.length > 0) {
+          memoryInfo += `**Known Paths:**\n`;
+          availability.installations.forEach((inst, index) => {
+            const isPreferred = inst.path === status.customPath;
+            memoryInfo += `${index + 1}. ${inst.path}\n   └─ Version: ${inst.version}${isPreferred ? ' (Preferred)' : ''}\n`;
+          });
+        }
+        
+        memoryInfo += `\n**Configuration Details:**\n`;
+        memoryInfo += `• **Last Updated:** ${new Date(availability.lastConfigUpdate || '').toLocaleString()}\n`;
+        memoryInfo += `• **Current Status:** ${availability.available ? '✅ Available' : '❌ Not Available'}\n`;
+        memoryInfo += `• **Path Source:** ${availability.pathSource || 'Unknown'}\n`;
+        memoryInfo += `• **Demo Mode:** ${status.demoMode ? '✅ Active' : '❌ Inactive'}\n`;
+        
+        if (status.directories) {
+          memoryInfo += `\n**Configured Directories:**\n`;
+          memoryInfo += `• **Log Dir:** ${status.directories.log}\n`;
+          memoryInfo += `• **Temp Dir:** ${status.directories.temp}\n`;
+          memoryInfo += `• **Work Dir:** ${status.directories.work}\n`;
+        }
+        
+        memoryInfo += `\n**Memory Persistence:**\n`;
+        memoryInfo += `✅ Survives server restarts\n`;
+        memoryInfo += `✅ Survives conversation changes\n`;
+        memoryInfo += `✅ Shared between AI clients\n`;
+        memoryInfo += `✅ Automatic path learning enabled\n`;
+        
+        memoryInfo += `\n*The MCP server remembers your Visum installation and you should not need to provide the path again.*`;
+      } else {
+        memoryInfo += `**No Learned Installations**\n\n`;
+        memoryInfo += `The MCP server has not yet learned any Visum installation paths.\n`;
+        memoryInfo += `Use the \`check_visum\` tool with a custom path to teach the server about your installation.\n`;
+        memoryInfo += `\n**Once learned, the server will remember:**\n`;
+        memoryInfo += `• Your Visum installation path\n`;
+        memoryInfo += `• Version information\n`;
+        memoryInfo += `• Preferences and settings\n`;
+        memoryInfo += `• Directory configurations\n`;
+      }
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: memoryInfo
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Error retrieving MCP memory:**\n\n${error instanceof Error ? error.message : String(error)}`
           }
         ]
       };
