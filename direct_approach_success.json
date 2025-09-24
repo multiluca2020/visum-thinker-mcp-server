@@ -1,0 +1,40 @@
+{
+  "approach": "Direct VisumPy Manager",
+  "success": true,
+  "average_time_ms": 3.7560000000000002,
+  "consistent_data": true,
+  "instance_info": {
+    "active": true,
+    "nodes": 166561,
+    "links": 409842,
+    "zones": 797,
+    "project": "H:\\go\\italferr2025\\Campoleone\\100625_Versione_base_v0.3_sub_ok_priv.ver"
+  },
+  "test_results": [
+    {
+      "test": 1,
+      "time_ms": 8.17,
+      "nodes": 166561
+    },
+    {
+      "test": 2,
+      "time_ms": 6.5,
+      "nodes": 166561
+    },
+    {
+      "test": 3,
+      "time_ms": 4.11,
+      "nodes": 166561
+    },
+    {
+      "test": 4,
+      "time_ms": 0.0,
+      "nodes": 166561
+    },
+    {
+      "test": 5,
+      "time_ms": 0.0,
+      "nodes": 166561
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": 1758705468.8945904,
+  "test_type": "DirectVisumManager_Persistence_Test",
+  "script1": {
+    "found_status": false
+  },
+  "script2": {
+    "found_results": false
+  },
+  "script3": {
+    "found_results": false
+  },
+  "instance_persistence": {
+    "error": "No instance IDs found"
+  },
+  "data_consistency": {
+    "error": "No node counts found"
+  }
+}

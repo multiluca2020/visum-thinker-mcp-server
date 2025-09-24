@@ -1,0 +1,2 @@
+HWND: 199116, PID: 20064, Title: test-admin-com.py - visum-thinker-mcp-server - Visual Studio Code
+HWND: 1443590, PID: 30620, Title: PTV Visum Expert 2025 (SP 1-9) - [Start page]

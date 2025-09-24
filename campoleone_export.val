@@ -1,0 +1,33 @@
+
+! Visum VAL Script - Estrazione Dati Rete Dettagliata
+! Progetto: Campoleone Italferr 2025
+! Data: 2025-08-05
+
+PRINT("Inizio estrazione dati rete...")
+
+! Export Nodes with detailed attributes
+PRINT("Esportazione nodi...")
+EXPORT NETWORK NODES TO FILE "campoleone_nodes.csv" INCLUDEHEADER FORMAT CSV
+
+! Export Links with all technical attributes
+PRINT("Esportazione link...")
+EXPORT NETWORK LINKS TO FILE "campoleone_links.csv" INCLUDEHEADER FORMAT CSV
+
+! Export Link Types
+PRINT("Esportazione tipi link...")
+EXPORT NETWORK LINKTYPES TO FILE "campoleone_linktypes.csv" INCLUDEHEADER FORMAT CSV
+
+! Export Zones
+PRINT("Esportazione zone...")
+EXPORT NETWORK ZONES TO FILE "campoleone_zones.csv" INCLUDEHEADER FORMAT CSV
+
+! Export Vol-Cap Functions
+PRINT("Esportazione funzioni volume-capacità...")
+EXPORT NETWORK VOLCAPFORMULAS TO FILE "campoleone_volcap.csv" INCLUDEHEADER FORMAT CSV
+
+! Export Time Slices
+PRINT("Esportazione fasce temporali...")
+EXPORT NETWORK TIMESLICES TO FILE "campoleone_timeslices.csv" INCLUDEHEADER FORMAT CSV
+
+PRINT("Estrazione completata! File salvati nella directory corrente.")
+PRINT("Aprire i file CSV per analisi dettagliata.")

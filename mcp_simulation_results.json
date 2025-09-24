@@ -1,0 +1,187 @@
+{
+  "simulation_timestamp": 1758705891.4415638,
+  "scenario": "MCP Tools Same Process Simulation",
+  "total_calls": 8,
+  "successful_calls": 8,
+  "assessment": "COMPLETE_SUCCESS",
+  "instance_persistence": true,
+  "data_consistency": true,
+  "performance": {
+    "average_time_ms": 10095.587285714284,
+    "first_call_time_ms": 70341.702,
+    "subsequent_avg_time_ms": 54.56816666666668
+  },
+  "detailed_results": [
+    {
+      "success": true,
+      "tool": "visum_network_stats",
+      "call_number": 1,
+      "analysis_result": {
+        "network_stats": {
+          "nodes": 166561,
+          "links": 409842,
+          "zones": 797,
+          "timestamp": 1758705888.0987473
+        }
+      },
+      "execution_time_ms": 70341.702,
+      "initialization_time_s": 68.57499885559082,
+      "timestamp": 1758705888.0987473,
+      "instance_id": 2299458134224
+    },
+    {
+      "success": true,
+      "tool": "visum_node_analysis",
+      "call_number": 2,
+      "analysis_result": {
+        "node_analysis": {
+          "total_nodes": 166561,
+          "sample_nodes": [
+            [
+              1,
+              5.0
+            ],
+            [
+              2,
+              6.0
+            ],
+            [
+              3,
+              7.0
+            ],
+            [
+              4,
+              8.0
+            ],
+            [
+              5,
+              9.0
+            ],
+            [
+              6,
+              10.0
+            ],
+            [
+              7,
+              11.0
+            ],
+            [
+              8,
+              12.0
+            ],
+            [
+              9,
+              13.0
+            ],
+            [
+              10,
+              14.0
+            ]
+          ],
+          "sample_size": 10
+        }
+      },
+      "execution_time_ms": 294.264,
+      "initialization_time_s": 68.57499885559082,
+      "timestamp": 1758705889.3936367,
+      "instance_id": 2299458134224
+    },
+    {
+      "success": true,
+      "tool": "visum_connectivity_analysis",
+      "call_number": 3,
+      "analysis_result": {
+        "connectivity": {
+          "nodes": 166561,
+          "links": 409842,
+          "average_degree": 4.92,
+          "density": 3e-05
+        }
+      },
+      "execution_time_ms": 14.098,
+      "initialization_time_s": 68.57499885559082,
+      "timestamp": 1758705890.4091816,
+      "instance_id": 2299458134224
+    },
+    {
+      "success": true,
+      "tool": "visum_rapid_call_1",
+      "call_number": 4,
+      "analysis_result": {
+        "rapid_test": {
+          "nodes": 166561,
+          "call_number": 1,
+          "timestamp": 1758705891.4116952
+        }
+      },
+      "execution_time_ms": 0.0,
+      "initialization_time_s": 68.57499885559082,
+      "timestamp": 1758705891.4116952,
+      "instance_id": 2299458134224
+    },
+    {
+      "success": true,
+      "tool": "visum_rapid_call_2",
+      "call_number": 5,
+      "analysis_result": {
+        "rapid_test": {
+          "nodes": 166561,
+          "call_number": 2,
+          "timestamp": 1758705891.421234
+        }
+      },
+      "execution_time_ms": 4.434,
+      "initialization_time_s": 68.57499885559082,
+      "timestamp": 1758705891.421234,
+      "instance_id": 2299458134224
+    },
+    {
+      "success": true,
+      "tool": "visum_rapid_call_3",
+      "call_number": 6,
+      "analysis_result": {
+        "rapid_test": {
+          "nodes": 166561,
+          "call_number": 3,
+          "timestamp": 1758705891.426854
+        }
+      },
+      "execution_time_ms": 4.783,
+      "initialization_time_s": 68.57499885559082,
+      "timestamp": 1758705891.426854,
+      "instance_id": 2299458134224
+    },
+    {
+      "success": true,
+      "tool": "visum_rapid_call_4",
+      "call_number": 7,
+      "analysis_result": {
+        "rapid_test": {
+          "nodes": 166561,
+          "call_number": 4,
+          "timestamp": 1758705891.431855
+        }
+      },
+      "execution_time_ms": 4.03,
+      "initialization_time_s": 68.57499885559082,
+      "timestamp": 1758705891.431855,
+      "instance_id": 2299458134224
+    },
+    {
+      "success": true,
+      "tool": "visum_rapid_call_5",
+      "call_number": 8,
+      "analysis_result": {
+        "rapid_test": {
+          "nodes": 166561,
+          "call_number": 5,
+          "timestamp": 1758705891.4386253
+        }
+      },
+      "execution_time_ms": 5.8,
+      "initialization_time_s": 68.57499885559082,
+      "timestamp": 1758705891.4386253,
+      "instance_id": 2299458134224
+    }
+  ]
+}

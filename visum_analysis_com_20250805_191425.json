@@ -1,0 +1,28 @@
+{
+  "timestamp": "20250805_191425",
+  "project": "Campoleone Italferr 2025",
+  "method": "win32com Python API",
+  "project_info": true,
+  "network_overview": {
+    "nodes": 0,
+    "links": 0,
+    "zones": 0,
+    "link_types": 1,
+    "transport_systems": 4,
+    "volcap_formulas": 0
+  },
+  "sample_nodes": [],
+  "sample_links": [],
+  "link_types": [
+    {
+      "id": 1.0,
+      "name": ""
+    }
+  ],
+  "summary": {
+    "total_nodes_analyzed": 0,
+    "total_links_analyzed": 0,
+    "total_link_types": 1,
+    "analysis_successful": true
+  }
+}

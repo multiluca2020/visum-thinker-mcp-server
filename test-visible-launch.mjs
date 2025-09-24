@@ -23,19 +23,29 @@ async function testVisibleLaunch() {
       $visumPath = "H:\\Program Files\\PTV Vision\\PTV Visum 2025\\Exe\\Visum250.exe"
       
       if (Test-Path $visumPath) {
-        # Force Visum to start visibly with WindowStyle Normal
-        Write-Host "Launching Visum with visible window..."
-        $process = Start-Process -FilePath $visumPath -WindowStyle Normal -PassThru
-        Write-Host "Process started with ID: $($process.Id)"
+        # Launch Visum with the specific project file
+        $projectFile = "H:\\go\\italferr2025\\Campoleone\\100625_Versione_base_v0.3_sub_ok_priv.ver"
         
-        Start-Sleep -Seconds 3  # Wait for initial startup
+        if (Test-Path $projectFile) {
+          Write-Host "Launching Visum with project: $projectFile"
+          $process = Start-Process -FilePath $visumPath -ArgumentList $projectFile -WindowStyle Normal -PassThru
+          Write-Host "Process started with ID: $($process.Id)"
+          Write-Host "Project loaded: $projectFile"
+        } else {
+          Write-Host "Launching Visum without project (file not found)"
+          $process = Start-Process -FilePath $visumPath -WindowStyle Normal -PassThru
+          Write-Host "Process started with ID: $($process.Id)"
+        }
+        
+        Start-Sleep -Seconds 5  # Wait longer for project loading
         
         @{
           success = $true
-          message = "Visum started visibly"
+          message = "Visum started visibly with project"
           processId = $process.Id
           windowStyle = "Normal"
           visible = $true
+          projectLoaded = $(Test-Path $projectFile)
         } | ConvertTo-Json
       } else {
         @{
@@ -100,31 +110,88 @@ async function verifyVisum() {
   console.log("\n🔍 Verifica che Visum sia effettivamente lanciato...");
   
   const checkScript = `
-    Get-Process -Name "Visum250" -ErrorAction SilentlyContinue | 
-    Select-Object ProcessName, Id, StartTime, MainWindowTitle | 
-    ConvertTo-Json
+    # Check process
+    $process = Get-Process -Name "Visum250" -ErrorAction SilentlyContinue
+    if ($process) {
+      Write-Host "Process found: $($process.ProcessName) ID:$($process.Id)"
+      Write-Host "Main Window: $($process.MainWindowTitle)"
+      
+      # Try to connect via COM to get actual network stats
+      try {
+        Write-Host "Attempting COM connection..."
+        $visum = [System.Runtime.InteropServices.Marshal]::GetActiveObject("Visum.Visum")
+        
+        if ($visum -and $visum.Net) {
+          $nodeCount = $visum.Net.Nodes.Count
+          $linkCount = $visum.Net.Links.Count
+          $zoneCount = $visum.Net.Zones.Count
+          
+          Write-Host "✅ Network Statistics:"
+          Write-Host "  Nodes: $nodeCount"
+          Write-Host "  Links: $linkCount" 
+          Write-Host "  Zones: $zoneCount"
+          
+          @{
+            processFound = $true
+            processId = $process.Id
+            mainWindow = $process.MainWindowTitle
+            comConnected = $true
+            networkStats = @{
+              nodes = $nodeCount
+              links = $linkCount
+              zones = $zoneCount
+            }
+          } | ConvertTo-Json -Depth 3
+        } else {
+          Write-Host "❌ COM connected but no network data"
+          @{
+            processFound = $true
+            processId = $process.Id
+            mainWindow = $process.MainWindowTitle
+            comConnected = $false
+            error = "No network data available"
+          } | ConvertTo-Json
+        }
+      } catch {
+        Write-Host "❌ COM connection failed: $($_.Exception.Message)"
+        @{
+          processFound = $true
+          processId = $process.Id
+          mainWindow = $process.MainWindowTitle
+          comConnected = $false
+          comError = $_.Exception.Message
+        } | ConvertTo-Json
+      }
+    } else {
+      Write-Host "❌ No Visum process found"
+      @{ processFound = $false } | ConvertTo-Json
+    }
   `;
   
   const powershell = spawn('powershell', ['-ExecutionPolicy', 'Bypass', '-Command', checkScript]);
   
   let output = '';
   powershell.stdout.on('data', (data) => {
-    output += data.toString();
+    const text = data.toString();
+    output += text;
+    console.log("📤", text.trim());
   });
   
   return new Promise((resolve) => {
     powershell.on('close', () => {
       try {
-        if (output.trim()) {
-          const processes = JSON.parse(output.trim());
-          console.log("✅ Visum processi trovati:", processes);
-          resolve(processes);
+        const jsonStart = output.indexOf('{');
+        if (jsonStart !== -1) {
+          const jsonStr = output.substring(jsonStart);
+          const result = JSON.parse(jsonStr);
+          console.log("✅ Risultato verifica:", result);
+          resolve(result);
         } else {
-          console.log("❌ Nessun processo Visum trovato");
+          console.log("❌ Nessun JSON trovato nell'output");
           resolve(null);
         }
       } catch (e) {
-        console.log("⚠️ Errore verifica:", e.message);
+        console.log("⚠️ Errore parsing JSON:", e.message);
         resolve(null);
       }
     });

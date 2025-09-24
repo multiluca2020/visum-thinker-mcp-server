@@ -1,0 +1,10 @@
+{
+  "timestamp": 1758704377.4496055,
+  "method": "Persistent VisumPy instance",
+  "api": "VisumPy_Persistent_Global",
+  "consistency_check": "passed",
+  "instance_reuse": "confirmed",
+  "nodes": 166561,
+  "persistence_seconds": 10,
+  "status": "PERSISTENT_INSTANCE_SUCCESS"
+}

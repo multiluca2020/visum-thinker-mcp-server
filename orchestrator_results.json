@@ -1,0 +1,56 @@
+{
+  "test_timestamp": 1758705468.8975952,
+  "test_type": "Extended DirectVisumManager Persistence Test",
+  "script_results": [
+    {
+      "script": "test-script1-init.py",
+      "success": false,
+      "return_code": 1,
+      "execution_time": 0.06765913963317871,
+      "stdout": "=== SCRIPT 1: INIZIALIZZAZIONE DIRECTVISUMMANAGER ===\n",
+      "stderr": "Traceback (most recent call last):\n  File \"H:\\visum-thinker-mcp-server\\test-script1-init.py\", line 109, in <module>\n    print(f\"\\u23f0 Script 1 started at: {time.strftime('%H:%M:%S')}\")\n  File \"encodings\\cp1252.py\", line 19, in encode\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u23f0' in position 0: character maps to <undefined>\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"H:\\visum-thinker-mcp-server\\test-script1-init.py\", line 161, in <module>\n    print(f\"\\u274c Script 1 error: {e}\")\n  File \"encodings\\cp1252.py\", line 19, in encode\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u274c' in position 0: character maps to <undefined>\n"
+    },
+    {
+      "script": "test-script2-network.py",
+      "success": false,
+      "return_code": 1,
+      "execution_time": 0.06529951095581055,
+      "stdout": "=== SCRIPT 2: TEST PERSISTENZA - ANALISI RETE ===\n",
+      "stderr": "Traceback (most recent call last):\n  File \"H:\\visum-thinker-mcp-server\\test-script2-network.py\", line 130, in <module>\n    print(f\"\\u23f0 Script 2 started at: {time.strftime('%H:%M:%S')}\")\n  File \"encodings\\cp1252.py\", line 19, in encode\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u23f0' in position 0: character maps to <undefined>\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"H:\\visum-thinker-mcp-server\\test-script2-network.py\", line 182, in <module>\n    print(f\"\\u274c Script 2 error: {e}\")\n  File \"encodings\\cp1252.py\", line 19, in encode\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u274c' in position 0: character maps to <undefined>\n"
+    },
+    {
+      "script": "test-script3-advanced.py",
+      "success": false,
+      "return_code": 1,
+      "execution_time": 0.06496071815490723,
+      "stdout": "=== SCRIPT 3: ANALISI NODI AVANZATA ===\n",
+      "stderr": "Traceback (most recent call last):\n  File \"H:\\visum-thinker-mcp-server\\test-script3-advanced.py\", line 200, in <module>\n    print(f\"\\u23f0 Script 3 started at: {time.strftime('%H:%M:%S')}\")\n  File \"encodings\\cp1252.py\", line 19, in encode\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u23f0' in position 0: character maps to <undefined>\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"H:\\visum-thinker-mcp-server\\test-script3-advanced.py\", line 255, in <module>\n    print(f\"\\u274c Script 3 error: {e}\")\n  File \"encodings\\cp1252.py\", line 19, in encode\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u274c' in position 0: character maps to <undefined>\n"
+    }
+  ],
+  "analysis": {
+    "timestamp": 1758705468.8945904,
+    "test_type": "DirectVisumManager_Persistence_Test",
+    "script1": {
+      "found_status": false
+    },
+    "script2": {
+      "found_results": false
+    },
+    "script3": {
+      "found_results": false
+    },
+    "instance_persistence": {
+      "error": "No instance IDs found"
+    },
+    "data_consistency": {
+      "error": "No node counts found"
+    }
+  },
+  "summary": {
+    "total_scripts": 3,
+    "successful_scripts": 0,
+    "all_successful": false,
+    "instance_persistent": false,
+    "data_consistent": false
+  }
+}

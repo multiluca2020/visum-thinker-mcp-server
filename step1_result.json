@@ -1,0 +1,12 @@
+{
+  "timestamp": 1758701273.819344,
+  "step": "1_launch_project",
+  "success": true,
+  "project_loaded": true,
+  "project_path": "H:\\go\\italferr2025\\Campoleone\\100625_Versione_base_v0.3_sub_ok_priv.ver",
+  "network": {
+    "nodes": 166561,
+    "links": 409842,
+    "zones": 797
+  }
+}
