@@ -9,13 +9,19 @@ import * as os from "os";
 import { spawn } from "child_process";
 
 import { SimpleVisumController } from "./simple-visum-controller.js";
+import { PersistentVisumController } from "./persistent-visum-controller.js";
+import { ProjectInstanceManager } from "./project-instance-manager.js";
+import { ProjectServerManager } from "./project-server-manager.js";
 
 // =============================================================================
 // INITIALIZATION
 // =============================================================================
 
-// Initialize Simple Visum controller with singleton pattern
-const visumController = SimpleVisumController.getInstance();
+// Initialize controllers with singleton pattern
+const visumController = PersistentVisumController.getInstance();
+const legacyController = SimpleVisumController.getInstance(); // For backward compatibility
+const projectManager = ProjectInstanceManager.getInstance(); // Project-specific instances
+const serverManager = ProjectServerManager.getInstance(); // TCP server manager
 
 // 🔧 CONFIGURAZIONE VISUM MCP TOOLS
 const VISUM_MCP_CONFIG = {
@@ -666,14 +672,16 @@ server.tool(
           content: [
             {
               type: "text",
-              text: `✅ **Statistiche Rete**\n\n` +
+              text: `✅ **Statistiche Rete PERSISTENTE**\n\n` +
                     `**Riepilogo Rete:**\n` +
-                    `• **Nodi:** ${result.nodes?.toLocaleString() || 'N/A'}\n` +
-                    `• **Link:** ${result.links?.toLocaleString() || 'N/A'}\n` +
-                    `• **Zone:** ${result.zones?.toLocaleString() || 'N/A'}\n\n` +
-                    `**Performance:**\n` +
-                    `• **Tempo Esecuzione:** ${result.executionTimeMs?.toFixed(3) || 'N/A'}ms\n\n` +
-                    `*Dati rete recuperati da istanza VisumPy attiva*`
+                    `• **Nodi:** ${result.result?.nodes?.toLocaleString() || 'N/A'}\n` +
+                    `• **Link:** ${result.result?.links?.toLocaleString() || 'N/A'}\n` +
+                    `• **Zone:** ${result.result?.zones?.toLocaleString() || 'N/A'}\n\n` +
+                    `**Performance ULTRA-VELOCE:**\n` +
+                    `• **Tempo Query:** ${result.result?.query_time_ms?.toFixed(3) || 'N/A'}ms\n` +
+                    `• **Tempo Totale:** ${result.executionTimeMs?.toFixed(3) || 'N/A'}ms\n` +
+                    `• **Persistente:** ${result.result?.persistent ? '✅ SÌ' : '❌ NO'}\n\n` +
+                    `*Dati recuperati da istanza VisumPy PERSISTENTE - Ultra-veloce!*`
             }
           ]
         };
@@ -709,26 +717,36 @@ server.tool(
   {},
   async () => {
     try {
+      // First check persistent process health
+      const healthResult = await visumController.checkInstanceHealth();
       const statsResult = await visumController.getNetworkStats();
       
-      if (statsResult.success) {
-        const isHealthy = statsResult.nodes && statsResult.nodes > 0;
-        const performance = statsResult.executionTimeMs && statsResult.executionTimeMs < 1000 ? 'Eccellente' :
-                           statsResult.executionTimeMs && statsResult.executionTimeMs < 5000 ? 'Buona' : 'Lenta';
+      if (statsResult.success && healthResult.success) {
+        const nodes = statsResult.result?.nodes || 0;
+        const isHealthy = nodes > 0;
+        const isPersistent = statsResult.result?.persistent === true;
+        const queryTime = statsResult.result?.query_time_ms || 0;
+        const performance = queryTime < 50 ? 'Ultra-Veloce 🚀' :
+                           queryTime < 200 ? 'Veloce ⚡' :
+                           queryTime < 1000 ? 'Normale' : 'Lenta';
         
         return {
           content: [
             {
               type: "text", 
-              text: `${isHealthy ? '✅' : '⚠️'} **Controllo Salute Istanza VisumPy**\n\n` +
-                    `**Stato:** ${isHealthy ? 'Sano' : 'Attenzione'}\n` +
+              text: `${isHealthy ? '🚀' : '⚠️'} **Controllo Salute Istanza VisumPy PERSISTENTE**\n\n` +
+                    `**Stato:** ${isHealthy ? 'ATTIVO e PERSISTENTE ✅' : 'Attenzione ⚠️'}\n` +
                     `**Performance:** ${performance}\n` +
-                    `**Tempo Risposta:** ${statsResult.executionTimeMs?.toFixed(3) || 'N/A'}ms\n\n` +
+                    `**Tempo Query:** ${queryTime.toFixed(1)}ms\n` +
+                    `**Tempo Totale:** ${statsResult.executionTimeMs?.toFixed(3) || 'N/A'}ms\n` +
+                    `**Persistente:** ${isPersistent ? '✅ SÌ' : '❌ NO'}\n\n` +
                     `**Dettagli Istanza:**\n` +
-                    `• **Nodi Disponibili:** ${statsResult.nodes?.toLocaleString() || 'N/A'}\n` +
-                    `• **Link Disponibili:** ${statsResult.links?.toLocaleString() || 'N/A'}\n` +
-                    `• **Zone Disponibili:** ${statsResult.zones?.toLocaleString() || 'N/A'}\n\n` +
-                    `*${isHealthy ? 'Istanza pronta per analisi' : 'Istanza potrebbe necessitare reinizializzazione'}*`
+                    `• **Nodi Disponibili:** ${nodes.toLocaleString()}\n` +
+                    `• **Link Disponibili:** ${statsResult.result?.links?.toLocaleString() || 'N/A'}\n` +
+                    `• **Zone Disponibili:** ${statsResult.result?.zones?.toLocaleString() || 'N/A'}\n` +
+                    `• **Richieste Processate:** ${healthResult.result?.requestCount || 0}\n` +
+                    `• **Progetto Caricato:** ${healthResult.result?.projectLoaded ? '✅ SÌ' : '❌ NO'}\n\n` +
+                    `*${isHealthy && isPersistent ? '🚀 Istanza persistente pronta - Performance ultra-veloce garantita!' : 'Istanza potrebbe necessitare reinizializzazione'}*`
             }
           ]
         };
@@ -758,6 +776,467 @@ server.tool(
 );
 
 // =============================================================================
+// PROJECT-SPECIFIC INSTANCE MANAGEMENT TOOLS
+// =============================================================================
+
+// Start Project Instance Tool
+server.tool(
+  "project_start_instance",
+  "Start dedicated persistent instance for specific Visum project",
+  {
+    projectId: z.string().describe("Project identifier (campoleone, testProject, etc.)")
+  },
+  async ({ projectId }) => {
+    try {
+      const result = await projectManager.startProjectInstance(projectId);
+      
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `🚀 **Istanza Progetto Avviata**\n\n✅ ${result.message}\n\n📊 **Network Stats:**\n- Nodi: ${result.stats?.nodes}\n- Link: ${result.stats?.links}\n- Zone: ${result.stats?.zones}\n\n🔄 L'istanza è ora attiva e pronta per ricevere comandi.`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore Avvio Istanza**\n\n${result.message}`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Execute Project Analysis Tool
+server.tool(
+  "project_execute_analysis",
+  "Execute analysis on specific project instance with ultra-fast performance",
+  {
+    projectId: z.string().describe("Project identifier to execute analysis on"),
+    analysisCode: z.string().describe("Python code to execute on the project instance"),
+    description: z.string().optional().describe("Optional description of the analysis")
+  },
+  async ({ projectId, analysisCode, description }) => {
+    try {
+      const result = await projectManager.executeProjectAnalysis(projectId, analysisCode, description);
+      
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `🚀 **Analisi Completata** (${result.projectInfo?.projectName})\n\n⚡ **Tempo esecuzione:** ${result.executionTimeMs}ms\n\n📊 **Risultati:**\n\`\`\`json\n${JSON.stringify(result.result, null, 2)}\n\`\`\``
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore Analisi**\n\n${result.error}`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Get Instances Status Tool
+server.tool(
+  "project_instances_status",
+  "Get status of all active project instances",
+  {},
+  async () => {
+    try {
+      const status = projectManager.getInstancesStatus();
+      const instanceCount = Object.keys(status).length;
+      
+      if (instanceCount === 0) {
+        return {
+          content: [
+            {
+              type: "text", 
+              text: `📊 **Status Istanze Progetto**\n\n❌ Nessuna istanza attiva.`
+            }
+          ]
+        };
+      }
+
+      let statusText = `📊 **Status Istanze Progetto** (${instanceCount} attive)\n\n`;
+      
+      for (const [projectId, info] of Object.entries(status)) {
+        const uptime = Math.floor((info.uptime || 0) / 1000);
+        const lastUsed = info.lastUsed ? Math.floor((Date.now() - info.lastUsed) / 1000) : 'Mai';
+        
+        statusText += `🔧 **${info.name}**\n`;
+        statusText += `   • ID: ${projectId}\n`;
+        statusText += `   • Status: ${info.isActive ? '✅ Attiva' : '❌ Inattiva'}\n`;
+        statusText += `   • Uptime: ${uptime}s\n`;
+        statusText += `   • Ultimo uso: ${lastUsed}s fa\n`;
+        statusText += `   • Network: ${info.stats?.nodes} nodi, ${info.stats?.links} link\n\n`;
+      }
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: statusText
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Project Health Check Tool
+server.tool(
+  "project_health_check",
+  "Check health of specific project instance",
+  {
+    projectId: z.string().describe("Project identifier to check health for")
+  },
+  async ({ projectId }) => {
+    try {
+      const result = await projectManager.checkProjectHealth(projectId);
+      
+      if (result.success) {
+        const health = result.health;
+        const uptime = Math.floor((health.uptime || 0) / 1000);
+        
+        return {
+          content: [
+            {
+              type: "text", 
+              text: `💚 **Health Check - ${health.projectName}**\n\n✅ **Status:** Salutare\n🔄 **Uptime:** ${uptime}s\n⚡ **Performance:** ${health.response_time_ms}ms\n📊 **Memory Usage:** ${health.memory_mb}MB\n📂 **Progetto Caricato:** ${health.project_loaded ? '✅' : '❌'}\n🔗 **Network:** ${health.network_ready ? '✅' : '❌'}`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Health Check Fallito**\n\n${result.error}`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Shutdown Project Instance Tool
+server.tool(
+  "project_shutdown_instance",
+  "Shutdown specific project instance",
+  {
+    projectId: z.string().describe("Project identifier to shutdown")
+  },
+  async ({ projectId }) => {
+    try {
+      const result = await projectManager.shutdownProjectInstance(projectId);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: result.success ? 
+              `🔚 **Istanza Terminata**\n\n✅ ${result.message}` :
+              `❌ **Errore Terminazione**\n\n${result.message}`
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// =============================================================================
+// PROJECT TCP SERVER MANAGEMENT TOOLS
+// =============================================================================
+
+// Open Project with TCP Server Tool
+server.tool(
+  "project_open",
+  "Open a Visum project with dedicated TCP server for ultra-fast client communication",
+  {
+    projectPath: z.string().describe("Full path to the Visum project file (.ver)")
+  },
+  async ({ projectPath }) => {
+    try {
+      const result = await serverManager.openProject(projectPath);
+      
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `🚀 **Progetto Aperto con Server TCP**\n\n✅ ${result.message}\n\n📊 **Dettagli Server:**\n- **ID Progetto:** ${result.projectId}\n- **Nome:** ${result.serverInfo.projectName}\n- **Porta TCP:** ${result.serverInfo.port}\n- **PID:** ${result.serverInfo.pid}\n- **Status:** ${result.serverInfo.status}\n\n🔗 **Connessione Client:**\n- Host: localhost\n- Porta: ${result.serverInfo.port}\n\n⚡ Server pronto per ricevere comandi ultra-veloci dai client TCP!`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore Apertura Progetto**\n\n${result.message}`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Save Project Tool
+server.tool(
+  "project_save",
+  "Save the currently opened project in its TCP server",
+  {
+    projectId: z.string().describe("Project ID to save"),
+    saveAs: z.string().optional().describe("Optional: Save with a different filename")
+  },
+  async ({ projectId, saveAs }) => {
+    try {
+      const result = await serverManager.saveProject(projectId, saveAs);
+      
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `💾 **Progetto Salvato**\n\n✅ ${result.message}${saveAs ? `\n\n📁 Salvato come: ${saveAs}` : ''}`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore Salvataggio**\n\n${result.message || result.error}`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Close Project Tool
+server.tool(
+  "project_close",
+  "Close a project TCP server with optional save",
+  {
+    projectId: z.string().describe("Project ID to close"),
+    save: z.boolean().optional().describe("Save project before closing (default: false)")
+  },
+  async ({ projectId, save }) => {
+    try {
+      const result = await serverManager.closeProject(projectId, save || false);
+      
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `🔚 **Progetto Chiuso**\n\n✅ ${result.message}`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore Chiusura**\n\n${result.message}`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Execute Project Command Tool
+server.tool(
+  "project_execute",
+  "Execute a command on a project TCP server",
+  {
+    projectId: z.string().describe("Project ID to execute command on"),
+    code: z.string().describe("Python code to execute in the Visum context"),
+    description: z.string().describe("Description of what the code does")
+  },
+  async ({ projectId, code, description }) => {
+    try {
+      const result = await serverManager.executeCommand(projectId, code, description);
+      
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `⚡ **Comando Eseguito**\n\n✅ ${description}\n\n📊 **Risultato:**\n\`\`\`json\n${JSON.stringify(result.result, null, 2)}\n\`\`\`\n\n⏱️ **Performance:**\n- Tempo risposta: ${result.responseTimeMs}ms\n- Esecuzione VisumPy: ${result.executionTimeMs}ms`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore Esecuzione**\n\n${result.error}`
+            }
+          ]
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Project Status Tool
+server.tool(
+  "project_status",
+  "Get status of all active project TCP servers",
+  {},
+  async () => {
+    try {
+      const projects = serverManager.getActiveProjects();
+      
+      if (projects.length === 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `📊 **Status Server Progetti**\n\n❌ Nessun progetto attivo.`
+            }
+          ]
+        };
+      }
+      
+      let statusText = `📊 **Status Server Progetti** (${projects.length} attivi)\n\n`;
+      
+      projects.forEach((project, index) => {
+        statusText += `**${index + 1}. ${project.projectName}**\n`;
+        statusText += `   • ID: ${project.projectId}\n`;
+        statusText += `   • Porta TCP: ${project.port}\n`;
+        statusText += `   • PID: ${project.pid}\n`;
+        statusText += `   • Status: ${project.status}\n`;
+        statusText += `   • Avviato: ${project.startTime}\n`;
+        statusText += `   • Path: \`${project.projectPath}\`\n\n`;
+      });
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: statusText
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// =============================================================================
 // SERVER STARTUP
 // =============================================================================
 
@@ -777,14 +1256,22 @@ async function main() {
     
     console.error("🚀 Sequential Thinking MCP Server with VisumPy Integration running on stdio");
     console.error("📋 Available Tools:");
+    console.error("   🧠 Thinking Tools:");
     console.error("   • sequential_thinking - Step-by-step reasoning");
     console.error("   • reset_thinking - Clear thinking state");
     console.error("   • get_thinking_summary - View current progress");
+    console.error("   🚧 Legacy Visum Tools:");
     console.error("   • visum_launch_project - Launch Visum projects");
     console.error("   • visum_network_analysis - Comprehensive network analysis");
     console.error("   • visum_network_stats - Quick network statistics");
     console.error("   • visum_custom_analysis - Execute custom Python code");
     console.error("   • visum_health_check - Check VisumPy instance status");
+    console.error("   🎯 Project-Specific Instance Tools:");
+    console.error("   • project_start_instance - Start dedicated project instance");
+    console.error("   • project_execute_analysis - Execute ultra-fast analysis");
+    console.error("   • project_instances_status - View all active instances");
+    console.error("   • project_health_check - Check project instance health");
+    console.error("   • project_shutdown_instance - Shutdown specific instance");
     
   } catch (error) {
     console.error("❌ Fatal error starting server:", error);

@@ -1,0 +1,11 @@
+{
+  "pid": 5600,
+  "port": 7892,
+  "host": "localhost",
+  "startTime": 1758849031946,
+  "startTimeString": "26/09/2025, 11:10:31",
+  "nodes": 166561,
+  "links": 409842,
+  "zones": 797,
+  "status": "listening"
+}

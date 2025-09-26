@@ -1,72 +1,45 @@
-// Quick test of enhanced MCP server
-import { spawn } from 'child_process';
+// Script veloce per testare l'istanza Visum attiva
+// Uso: node quick-test.mjs
 
-console.log("Testing Enhanced MCP Server Communication...\n");
+import { PersistentVisumController } from './build/persistent-visum-controller.js';
 
-function testServerResponse() {
-  return new Promise((resolve) => {
-    const child = spawn('node', ['enhanced-visum-mcp.mjs'], { 
-      stdio: ['pipe', 'pipe', 'pipe'],
-      cwd: process.cwd()
-    });
+console.log('⚡ QUICK TEST - Istanza Visum Attiva');
+console.log('=' .repeat(40));
 
-    let output = '';
-    child.stdout.on('data', (data) => {
-      output += data.toString();
-    });
+const controller = PersistentVisumController.getInstance();
 
-    child.stderr.on('data', (data) => {
-      console.log('Server stderr:', data.toString());
-    });
+async function quickTest() {
+  try {
+    console.log('🔍 Testing network stats...');
+    const start = Date.now();
+    
+    const result = await controller.executeCustomCode(`
+# Quick Network Stats
+import time
+start_time = time.time()
 
-    child.on('close', () => {
-      try {
-        const response = JSON.parse(output.trim());
-        resolve(response);
-      } catch (error) {
-        resolve({ error: 'Failed to parse response', raw: output });
-      }
-    });
-
-    // Send initialize request
-    const initRequest = {
-      jsonrpc: "2.0",
-      id: 1,
-      method: "initialize",
-      params: {
-        protocolVersion: "2024-11-05",
-        capabilities: {},
-        clientInfo: {
-          name: "test-client",
-          version: "1.0.0"
-        }
-      }
-    };
-
-    child.stdin.write(JSON.stringify(initRequest) + '\n');
-    child.stdin.end();
-
-    // Timeout after 5 seconds
-    setTimeout(() => {
-      child.kill();
-      resolve({ error: 'Timeout - server not responding' });
-    }, 5000);
-  });
+result = {
+    'nodes': visum.Net.Nodes.Count,
+    'links': visum.Net.Links.Count, 
+    'zones': visum.Net.Zones.Count,
+    'query_time_ms': (time.time() - start_time) * 1000,
+    'timestamp': time.time()
 }
+`, 'Quick Network Test');
 
-async function runQuickTest() {
-  console.log("🔍 Testing MCP server response...");
-  const result = await testServerResponse();
-  
-  if (result.error) {
-    console.log("❌ Server test failed:", result.error);
-    if (result.raw) {
-      console.log("Raw output:", result.raw);
+    const totalTime = Date.now() - start;
+    
+    if (result.success) {
+      console.log(`✅ Success! Total time: ${totalTime}ms`);
+      console.log(`� VisumPy query time: ${result.result.query_time_ms.toFixed(3)}ms`);
+      console.log(`📊 Network: ${result.result.nodes} nodes, ${result.result.links} links, ${result.result.zones} zones`);
+    } else {
+      console.log(`❌ Error: ${result.error}`);
     }
-  } else {
-    console.log("✅ Server responded correctly");
-    console.log("Server info:", result.result?.serverInfo?.name || "Unknown");
+    
+  } catch (error) {
+    console.error('❌ Exception:', error.message);
   }
 }
 
-runQuickTest().catch(console.error);
+quickTest().catch(console.error);
