@@ -45,7 +45,7 @@ export class ProjectInstanceManager {
   };
 
   private constructor() {
-    console.error("🏗️ Project Instance Manager initialized");
+    console.error("INIT: Project Instance Manager initialized");
   }
 
   public static getInstance(): ProjectInstanceManager {

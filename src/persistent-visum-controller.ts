@@ -45,7 +45,7 @@ export class PersistentVisumController {
     this.defaultProject = "H:\\go\\italferr2025\\Campoleone\\100625_Versione_base_v0.3_sub_ok_priv.ver";
     this.projectPath = projectPath;
     
-    console.error("🏗️ PersistentVisumController initialized" + (projectPath ? ` for project: ${projectPath}` : ""));
+    console.error("INIT: PersistentVisumController initialized" + (projectPath ? ` for project: ${projectPath}` : ""));
     
     // Ensure temp directory exists
     if (!fs.existsSync(this.tempDir)) {
@@ -542,7 +542,7 @@ if __name__ == "__main__":
           success: false,
           message: "Initialization timeout - process may still be starting"
         });
-      }, 120000); // 2 minute timeout
+      }, 900000); // 15 minuti timeout per progetti ultra-grandi (Campoleone 166K nodi)
 
       // Handle init complete response
       const initHandler = (response: any) => {
@@ -907,7 +907,7 @@ if __name__ == "__main__":
           });
           this.initializationResolver = null;
         }
-      }, 180000); // 3 minutes timeout - more generous
+      }, 900000); // 15 minuti timeout per progetti ultra-grandi (Campoleone 166K nodi)
     });
   }
 

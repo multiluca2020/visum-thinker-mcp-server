@@ -1,8 +1,13 @@
 // PROJECT SERVER MANAGER - Gestisce server TCP dedicati per ogni progetto Visum
 import { spawn } from 'child_process';
 import { writeFileSync, readFileSync, existsSync, unlinkSync } from 'fs';
-import { join, basename } from 'path';
+import { join, basename, dirname } from 'path';
 import { createServer } from 'net';
+import { fileURLToPath } from 'url';
+
+// Per supporto ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export class ProjectServerManager {
   private static instance: ProjectServerManager;
@@ -82,10 +87,10 @@ export class ProjectServerManager {
 
     // Avvia nuovo server per il progetto
     const port = this.nextPort++;
-    const serverScript = join(process.cwd(), 'project-tcp-server.mjs');
+    const serverScript = join(__dirname, '..', 'project-tcp-server.mjs');
     
-    console.log(`🚀 Avvio server per progetto: ${basename(projectPath)}`);
-    console.log(`📡 Porta TCP: ${port}`);
+    console.error(`STARTING: server for project: ${basename(projectPath)}`);
+    console.error(`TCP: Porta TCP: ${port}`);
     
     const serverProcess = spawn('node', [serverScript, projectPath, port.toString(), projectId], {
       detached: true,
@@ -118,11 +123,11 @@ export class ProjectServerManager {
             projectId
           });
         }
-      }, 120000); // 2 minuti timeout
+      }, 300000); // 5 minuti timeout per progetti grandi
 
       serverProcess.stdout.on('data', (data) => {
         const output = data.toString();
-        console.log(`📊 Server ${projectId}:`, output.trim());
+        console.error(`SERVER: ${projectId}:`, output.trim());
         
         if (output.includes('SERVER PRONTO PER CLIENT TCP') && !initialized) {
           initialized = true;
@@ -143,11 +148,17 @@ export class ProjectServerManager {
       });
 
       serverProcess.stderr.on('data', (data) => {
-        console.error(`❌ Server ${projectId} error:`, data.toString().trim());
+        const message = data.toString().trim();
+        // Distingui tra messaggi informativi e veri errori
+        if (message.includes('INIT:') || message.includes('Creating') || message.includes('Starting') || message.includes('Python:')) {
+          console.error(`INFO: Server ${projectId}:`, message);
+        } else {
+          console.error(`ERROR: Server ${projectId} error:`, message);
+        }
       });
 
       serverProcess.on('exit', (code) => {
-        console.log(`🔴 Server ${projectId} terminato con codice ${code}`);
+        console.error(`TERMINATED: Server ${projectId} terminato con codice ${code}`);
         this.activeServers.delete(projectId);
         this.saveRegistry();
       });
@@ -179,12 +190,12 @@ export class ProjectServerManager {
       };
     }
 
-    console.log(`🔴 Chiusura progetto: ${serverInfo.projectName}`);
+    console.error(`CLOSING: Chiusura progetto: ${serverInfo.projectName}`);
 
     try {
       // Salva se richiesto
       if (save) {
-        console.log('💾 Salvataggio progetto...');
+        console.error('SAVING: Salvataggio progetto...');
         await this.saveProject(projectId);
       }
 
@@ -277,7 +288,7 @@ export class ProjectServerManager {
   }
 
   async shutdownAll() {
-    console.log('🔴 Chiusura tutti i server progetti...');
+    console.error('SHUTDOWN: Chiusura tutti i server progetti...');
     
     const promises = [];
     for (const projectId of this.activeServers.keys()) {
@@ -291,6 +302,6 @@ export class ProjectServerManager {
       unlinkSync(this.registryFile);
     }
     
-    console.log('✅ Tutti i server progetti chiusi');
+    console.error('SUCCESS: Tutti i server progetti chiusi');
   }
 }

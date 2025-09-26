@@ -13,8 +13,8 @@ if (!projectPath || !port || !projectId) {
   process.exit(1);
 }
 
-console.log(`🖥️ PROJECT TCP SERVER: ${basename(projectPath)}`);
-console.log(`📡 Porta: ${port} | ID: ${projectId}`);
+console.log(`PROJECT TCP SERVER: ${basename(projectPath)}`);
+console.log(`Porta: ${port} | ID: ${projectId}`);
 console.log('=' .repeat(50));
 
 class ProjectTcpServer {
@@ -31,11 +31,10 @@ class ProjectTcpServer {
   }
 
   async start() {
-    console.log(`🚀 Inizializzazione progetto: ${this.projectName}`);
+    console.log(`INIT: Inizializzazione progetto: ${this.projectName}`);
     
-    // Inizializza controller Visum per questo progetto
-    this.controller = PersistentVisumController.getInstance();
-    this.controller.setDefaultProject(this.projectPath);
+    // Inizializza controller Visum per questo progetto con projectPath
+    this.controller = new PersistentVisumController(this.projectPath);
     
     const result = await this.controller.startPersistentVisumProcess();
     
@@ -49,7 +48,7 @@ class ProjectTcpServer {
       zones: result.zones
     };
     
-    console.log(`✅ Progetto caricato:`);
+    console.log(`SUCCESS: Progetto caricato:`);
     console.log(`   📊 ${result.nodes} nodi, ${result.links} link, ${result.zones} zone`);
     
     // Crea server TCP dedicato per questo progetto
@@ -97,7 +96,7 @@ class ProjectTcpServer {
             }
           }
         } catch (error) {
-          console.error(`❌ Errore parsing messaggio Client ${clientId}:`, error.message);
+          console.error(`ERROR: parsing messaggio Client ${clientId}:`, error.message);
           this.sendToClient(socket, {
             type: 'error',
             message: `Formato messaggio non valido: ${error.message}`
@@ -114,7 +113,7 @@ class ProjectTcpServer {
       });
       
       socket.on('error', (error) => {
-        console.error(`❌ Errore Client ${clientId}:`, error.message);
+        console.error(`ERROR: Client ${clientId}:`, error.message);
         this.clients.delete(clientId);
       });
     });
@@ -219,11 +218,11 @@ class ProjectTcpServer {
             savedAs: message.saveAs
           });
           
-          console.log(`💾 Salvataggio progetto: ${saveResult.success ? '✅' : '❌'}`);
+          console.log(`SAVE: Salvataggio progetto: ${saveResult.success ? 'SUCCESS' : 'ERROR'}`);
           break;
           
         case 'shutdown':
-          console.log(`🔴 Shutdown richiesto da Client ${clientId}`);
+          console.log(`SHUTDOWN: richiesto da Client ${clientId}`);
           this.sendToClient(socket, {
             type: 'shutdown_ack',
             requestId: message.requestId,
@@ -244,7 +243,7 @@ class ProjectTcpServer {
           });
       }
     } catch (error) {
-      console.error(`❌ Errore gestione messaggio Client ${clientId}:`, error.message);
+      console.error(`ERROR: gestione messaggio Client ${clientId}:`, error.message);
       this.sendToClient(socket, {
         type: 'error',
         requestId: message.requestId,
@@ -268,7 +267,7 @@ class ProjectTcpServer {
     // Chiudi server
     if (this.server) {
       this.server.close(() => {
-        console.log(`✅ Server progetto ${this.projectName} chiuso`);
+        console.log(`SUCCESS: Server progetto ${this.projectName} chiuso`);
         process.exit(0);
       });
     } else {
@@ -280,6 +279,13 @@ class ProjectTcpServer {
 // Avvia server progetto
 const server = new ProjectTcpServer(projectPath, port, projectId);
 server.start().catch((error) => {
-  console.error('❌ Errore avvio server progetto:', error.message);
+  console.error('ERROR: avvio server progetto:', error.message);
+  
+  // Log dettagliato per debug
+  if (error.message.includes('timeout') || error.message.includes('Timeout')) {
+    console.error('TIMEOUT: Il progetto è troppo grande e richiede più tempo per caricarsi');
+    console.error('SUGGERIMENTO: Aumentare il timeout nel PersistentVisumController');
+  }
+  
   process.exit(1);
 });

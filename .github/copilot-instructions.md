@@ -18,13 +18,19 @@ You can find more info and examples at https://modelcontextprotocol.io/llms-full
 
 ## Tools Provided
 
-1. **sequential_thinking**: Main tool for step-by-step reasoning with support for:
+1. **project_open**: 🚀 **DEFAULT TOOL** for opening Visum projects
+   - ALWAYS use this tool when asked to open/load/launch any Visum project
+   - Creates dedicated TCP server for ultra-fast communication
+   - Supports large projects (Campoleone: 166K nodes, 409K links)
+   - Provides immediate MCP response with background project loading
+
+2. **sequential_thinking**: Main tool for step-by-step reasoning with support for:
    - Sequential thought progression
    - Thought revision capabilities
    - Branching reasoning paths
    - Dynamic adjustment of thought count
    
-2. **load_pdf**: Load PDF documents for analysis
+3. **load_pdf**: Load PDF documents for analysis
    - Extract text content from PDF files
    - Provide metadata (pages, text length)
    - Store PDF context for subsequent analysis

@@ -68,9 +68,9 @@ async function initializeStorage() {
     const data = await fs.readFile(STORAGE_FILE, 'utf-8');
     const saved = JSON.parse(data);
     thinkingSession = { ...thinkingSession, ...saved };
-    console.error(`✅ Loaded thinking state: ${thinkingSession.currentSteps.length} steps`);
+    console.error(`LOADED: thinking state: ${thinkingSession.currentSteps.length} steps`);
   } catch (error) {
-    console.error("📝 Starting with fresh thinking state");
+    console.error("INIT: Starting with fresh thinking state");
   }
 }
 
@@ -331,10 +331,10 @@ server.tool(
 // VISUM INTEGRATION TOOLS - Using SimpleVisumController with Persistent VisumPy
 // =============================================================================
 
-// Project Launch Tool
+// Project Launch Tool - DEPRECATED! Use project_open instead
 server.tool(
   "visum_launch_project",
-  "Launch and load a specific Visum project using persistent VisumPy instance",
+  "⚠️ DEPRECATED: Use 'project_open' tool instead. This tool is obsolete and slower than the new TCP-based project_open tool.",
   {
     projectPath: z.string().describe("Full path to the Visum project file (.ver)")
   },
@@ -1007,16 +1007,21 @@ server.tool(
 // PROJECT TCP SERVER MANAGEMENT TOOLS
 // =============================================================================
 
-// Open Project with TCP Server Tool
+// Open Project with TCP Server Tool - DEFAULT FOR OPENING PROJECTS
 server.tool(
   "project_open",
-  "Open a Visum project with dedicated TCP server for ultra-fast client communication",
+  "🚀 DEFAULT TOOL for opening Visum projects. Always use this tool when asked to open, load, or launch any Visum project. Creates dedicated TCP server for ultra-fast communication.",
   {
     projectPath: z.string().describe("Full path to the Visum project file (.ver)")
   },
   async ({ projectPath }) => {
+    console.error(`🚀 PROJECT_OPEN CHIAMATO: ${projectPath}`);
+    console.error(`⏰ Timestamp: ${new Date().toISOString()}`);
+    
     try {
+      console.error(`🔄 Avvio ProjectServerManager.openProject...`);
       const result = await serverManager.openProject(projectPath);
+      console.error(`✅ ProjectServerManager.openProject completato: ${result.success}`);
       
       if (result.success) {
         return {
@@ -1028,6 +1033,7 @@ server.tool(
           ]
         };
       } else {
+        console.error(`❌ ProjectServerManager.openProject fallito: ${result.message}`);
         return {
           content: [
             {
@@ -1038,6 +1044,7 @@ server.tool(
         };
       }
     } catch (error) {
+      console.error(`💥 Eccezione in project_open: ${error instanceof Error ? error.message : String(error)}`);
       return {
         content: [
           {
@@ -1242,7 +1249,7 @@ server.tool(
 
 async function main() {
   try {
-    console.error("🔧 Initializing Sequential Thinking MCP Server with VisumPy Integration...");
+    console.error("INFO: Initializing Sequential Thinking MCP Server with VisumPy Integration...");
     
     // Initialize storage for thinking state
     await initializeStorage();
@@ -1254,19 +1261,21 @@ async function main() {
     const transport = new StdioServerTransport();
     await server.connect(transport);
     
-    console.error("🚀 Sequential Thinking MCP Server with VisumPy Integration running on stdio");
-    console.error("📋 Available Tools:");
-    console.error("   🧠 Thinking Tools:");
+    console.error("STARTED: Sequential Thinking MCP Server with VisumPy Integration running on stdio");
+    console.error("TOOLS Available Tools:");
+    console.error("   THINKING Tools:");
     console.error("   • sequential_thinking - Step-by-step reasoning");
     console.error("   • reset_thinking - Clear thinking state");
     console.error("   • get_thinking_summary - View current progress");
-    console.error("   🚧 Legacy Visum Tools:");
-    console.error("   • visum_launch_project - Launch Visum projects");
+    console.error("   PROJECT Tools (NEW - TCP SERVERS):");
+    console.error("   • project_open - 🚀 DEFAULT: Open projects with TCP server");
+    console.error("   LEGACY Visum Tools:");
+    console.error("   • visum_launch_project - ⚠️ DEPRECATED: Use project_open instead");
     console.error("   • visum_network_analysis - Comprehensive network analysis");
     console.error("   • visum_network_stats - Quick network statistics");
     console.error("   • visum_custom_analysis - Execute custom Python code");
     console.error("   • visum_health_check - Check VisumPy instance status");
-    console.error("   🎯 Project-Specific Instance Tools:");
+    console.error("   PROJECT-SPECIFIC Instance Tools:");
     console.error("   • project_start_instance - Start dedicated project instance");
     console.error("   • project_execute_analysis - Execute ultra-fast analysis");
     console.error("   • project_instances_status - View all active instances");
