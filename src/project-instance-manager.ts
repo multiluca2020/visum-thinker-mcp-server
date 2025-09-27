@@ -145,20 +145,10 @@ export class ProjectInstanceManager {
     const instance = this.projectInstances.get(projectId);
     
     if (!instance || !instance.isActive) {
-      // Prova ad avviare l'istanza automaticamente
-      console.error(`⚠️ Instance for ${projectId} not active, starting automatically...`);
-      const startResult = await this.startProjectInstance(projectId);
-      
-      if (!startResult.success) {
-        return {
-          success: false,
-          error: `Instance not available and auto-start failed: ${startResult.message}`
-        };
-      }
-
-      // Riprendi l'istanza appena avviata
-      const newInstance = this.projectInstances.get(projectId)!;
-      return this.executeOnInstance(newInstance, analysisCode, description);
+      return {
+        success: false,
+        error: `Instance '${projectId}' is not active. Use 'project_start_instance' to start it first.`
+      };
     }
 
     return this.executeOnInstance(instance, analysisCode, description);

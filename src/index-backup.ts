@@ -822,203 +822,25 @@ server.tool(
   }
 );
 
-/**
- * Genera codice Python automaticamente basato sulla richiesta di analisi
- */
-function generateAnalysisCode(analysisRequest: string, returnFormat: string): string {
-  const request = analysisRequest.toLowerCase();
-  
-  // Network Statistics
-  if (request.includes('statistic') || request.includes('network') || request.includes('count') || request.includes('summary')) {
-    return `
-# Network Statistics Analysis
-try:
-    num_nodes = visum.Net.Nodes.Count
-    num_links = visum.Net.Links.Count
-    num_zones = visum.Net.Zones.Count
-    num_connectors = getattr(visum.Net, 'Connectors', None)
-    connector_count = num_connectors.Count if num_connectors else 0
-    
-    result = {
-        'network_summary': {
-            'nodes': num_nodes,
-            'links': num_links,
-            'zones': num_zones,
-            'connectors': connector_count
-        },
-        'network_density': round(num_links / max((num_nodes * (num_nodes - 1) / 2), 1), 6),
-        'avg_degree': round((num_links * 2) / max(num_nodes, 1), 2)
-    }
-except Exception as e:
-    result = {'error': str(e)}
-`;
-  }
-  
-  // Node Analysis
-  if (request.includes('node') || request.includes('nod')) {
-    const sampleSize = returnFormat === 'detailed' ? '100' : '10';
-    return `
-# Node Distribution Analysis
-try:
-    nodes_data = visum.Net.Nodes.GetMultiAttValues(['No', 'XCoord', 'YCoord'])
-    
-    total_nodes = len(nodes_data[0])
-    sample_size = min(${sampleSize}, total_nodes)
-    
-    # Sample nodes
-    sample_nodes = []
-    for i in range(sample_size):
-        sample_nodes.append({
-            'id': nodes_data[0][i],
-            'x': nodes_data[1][i],
-            'y': nodes_data[2][i]
-        })
-    
-    # Bounding box
-    x_coords = [x for x in nodes_data[1] if x is not None]
-    y_coords = [y for y in nodes_data[2] if y is not None]
-    
-    result = {
-        'total_nodes': total_nodes,
-        'sample_nodes': sample_nodes,
-        'bounding_box': {
-            'min_x': min(x_coords) if x_coords else None,
-            'max_x': max(x_coords) if x_coords else None,
-            'min_y': min(y_coords) if y_coords else None,
-            'max_y': max(y_coords) if y_coords else None
-        } if x_coords and y_coords else None
-    }
-except Exception as e:
-    result = {'error': str(e)}
-`;
-  }
-  
-  // Link Analysis
-  if (request.includes('link') || request.includes('edge') || request.includes('connection')) {
-    const sampleSize = returnFormat === 'detailed' ? '50' : '10';
-    return `
-# Link Analysis
-try:
-    links_data = visum.Net.Links.GetMultiAttValues(['No', 'FromNodeNo', 'ToNodeNo', 'Length'])
-    
-    total_links = len(links_data[0])
-    sample_size = min(${sampleSize}, total_links)
-    
-    sample_links = []
-    lengths = []
-    
-    for i in range(sample_size):
-        length = links_data[3][i]
-        sample_links.append({
-            'id': links_data[0][i],
-            'from_node': links_data[1][i],
-            'to_node': links_data[2][i],
-            'length': length
-        })
-        if length is not None:
-            lengths.append(length)
-    
-    result = {
-        'total_links': total_links,
-        'sample_links': sample_links,
-        'length_stats': {
-            'avg_length': round(sum(lengths) / len(lengths), 2) if lengths else None,
-            'min_length': min(lengths) if lengths else None,
-            'max_length': max(lengths) if lengths else None,
-            'total_length': round(sum(lengths), 2) if lengths else None
-        } if lengths else None
-    }
-except Exception as e:
-    result = {'error': str(e)}
-`;
-  }
-  
-  // Zone Analysis
-  if (request.includes('zone') || request.includes('zon')) {
-    return `
-# Zone Analysis
-try:
-    zones_data = visum.Net.Zones.GetMultiAttValues(['No', 'XCoord', 'YCoord'])
-    
-    total_zones = len(zones_data[0])
-    sample_size = min(20, total_zones)
-    
-    sample_zones = []
-    for i in range(sample_size):
-        sample_zones.append({
-            'id': zones_data[0][i],
-            'x': zones_data[1][i],
-            'y': zones_data[2][i]
-        })
-    
-    result = {
-        'total_zones': total_zones,
-        'sample_zones': sample_zones
-    }
-except Exception as e:
-    result = {'error': str(e)}
-`;
-  }
-  
-  // Default: comprehensive analysis
-  return `
-# Comprehensive Network Analysis
-try:
-    # Basic counts
-    num_nodes = visum.Net.Nodes.Count
-    num_links = visum.Net.Links.Count
-    num_zones = visum.Net.Zones.Count
-    
-    # Sample data
-    if num_nodes > 0:
-        nodes_sample = visum.Net.Nodes.GetMultiAttValues(['No', 'XCoord', 'YCoord'])
-        sample_nodes = [{
-            'id': nodes_sample[0][i],
-            'x': nodes_sample[1][i],
-            'y': nodes_sample[2][i]
-        } for i in range(min(5, len(nodes_sample[0])))]
-    else:
-        sample_nodes = []
-    
-    result = {
-        'analysis_type': 'comprehensive',
-        'request': '${analysisRequest}',
-        'network_summary': {
-            'nodes': num_nodes,
-            'links': num_links,
-            'zones': num_zones
-        },
-        'sample_data': {
-            'nodes': sample_nodes
-        }
-    }
-except Exception as e:
-    result = {'error': str(e), 'analysis_type': 'failed', 'request': '${analysisRequest}'}
-`;
-}
-
 // Execute Project Analysis Tool
 server.tool(
   "project_execute_analysis",
-  "Execute intelligent analysis on specific project instance with ultra-fast performance. Automatically generates Python code based on analysis request.",
+  "Execute analysis on specific project instance with ultra-fast performance",
   {
     projectId: z.string().describe("Project identifier to execute analysis on"),
-    analysisRequest: z.string().describe("Natural language description of the analysis you want to perform (e.g., 'get network statistics', 'analyze node distribution', 'check link lengths')"),
-    returnFormat: z.enum(["summary", "detailed", "raw"]).optional().default("summary").describe("Format of results: summary (key metrics), detailed (comprehensive), raw (full data)")
+    analysisCode: z.string().describe("Python code to execute on the project instance"),
+    description: z.string().optional().describe("Optional description of the analysis")
   },
-  async ({ projectId, analysisRequest, returnFormat = "summary" }) => {
+  async ({ projectId, analysisCode, description }) => {
     try {
-      // Generate appropriate Python code based on the analysis request
-      const analysisCode = generateAnalysisCode(analysisRequest, returnFormat);
-      
-      const result = await projectManager.executeProjectAnalysis(projectId, analysisCode, analysisRequest);
+      const result = await projectManager.executeProjectAnalysis(projectId, analysisCode, description);
       
       if (result.success) {
         return {
           content: [
             {
               type: "text",
-              text: `🚀 **Analisi Completata** (${result.projectInfo?.projectName})\n\n📋 **Richiesta:** ${analysisRequest}\n\n⚡ **Tempo esecuzione:** ${result.executionTimeMs}ms\n\n📊 **Risultati:**\n\`\`\`json\n${JSON.stringify(result.result, null, 2)}\n\`\`\``
+              text: `🚀 **Analisi Completata** (${result.projectInfo?.projectName})\n\n⚡ **Tempo esecuzione:** ${result.executionTimeMs}ms\n\n📊 **Risultati:**\n\`\`\`json\n${JSON.stringify(result.result, null, 2)}\n\`\`\``
             }
           ]
         };
@@ -1027,7 +849,7 @@ server.tool(
           content: [
             {
               type: "text",
-              text: `❌ **Errore Analisi**\n\n**Richiesta:** ${analysisRequest}\n**Errore:** ${result.error}`
+              text: `❌ **Errore Analisi**\n\n${result.error}`
             }
           ]
         };
@@ -1447,10 +1269,12 @@ async function main() {
     console.error("   • get_thinking_summary - View current progress");
     console.error("   PROJECT Tools (NEW - TCP SERVERS):");
     console.error("   • project_open - 🚀 DEFAULT: Open projects with TCP server");
-    console.error("   • project_save - Save project via TCP server");
-    console.error("   • project_close - Close project TCP server");
-    console.error("   • project_execute - Execute commands via TCP");
-    console.error("   • project_status - View all active TCP servers");
+    console.error("   LEGACY Visum Tools:");
+    console.error("   • visum_launch_project - ⚠️ DEPRECATED: Use project_open instead");
+    console.error("   • visum_network_analysis - Comprehensive network analysis");
+    console.error("   • visum_network_stats - Quick network statistics");
+    console.error("   • visum_custom_analysis - Execute custom Python code");
+    console.error("   • visum_health_check - Check VisumPy instance status");
     console.error("   PROJECT-SPECIFIC Instance Tools:");
     console.error("   • project_start_instance - Start dedicated project instance");
     console.error("   • project_execute_analysis - Execute ultra-fast analysis");
