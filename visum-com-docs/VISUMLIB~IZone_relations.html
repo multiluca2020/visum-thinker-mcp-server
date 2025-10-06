@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>IZone  Relations</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~IZone_relations"/>
+    <meta name="Description" content="IZone provides access to a single zone and all of its properties" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~IZone"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~IZone.html">IZone </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">IZone  Relations</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <a class="PageLink" href="VISUMLIB~IZone.html">Overview</a>&nbsp;<!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <DIV id=relationsSummarySectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Summary</SPAN></DIV>
+<DIV id=relationsSummarySectionContent class=SectionContent>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Role name</TH>
+<TH>Related class</TH>
+<TH>Cardinality</TH></TR>
+<TR>
+<TD><A href="#RelatAssociatedLocations">AssociatedLocations</A></TD>
+<TD><A href="VISUMLIB~ILocation.html">ILocation</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatContainedNodes">ContainedNodes</A></TD>
+<TD><A href="VISUMLIB~INode.html">INode</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatDestConnectors">DestConnectors</A></TD>
+<TD><A href="VISUMLIB~IODConnector.html">IODConnector</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatDestinationODPairs">DestinationODPairs</A></TD>
+<TD><A href="VISUMLIB~IODPair.html">IODPair</A></TD>
+<TD>1..*</TD></TR>
+<TR>
+<TD><A href="#RelatDestPaths">DestPaths</A></TD>
+<TD><A href="VISUMLIB~IPath.html">IPath</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatMainZone">MainZone</A></TD>
+<TD><A href="VISUMLIB~IMainZone.html">IMainZone</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatNetwork">Network</A></TD>
+<TD><A href="VISUMLIB~INet.html">INet</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatOrigConnectors">OrigConnectors</A></TD>
+<TD><A href="VISUMLIB~IODConnector.html">IODConnector</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatOriginODPairs">OriginODPairs</A></TD>
+<TD><A href="VISUMLIB~IODPair.html">IODPair</A></TD>
+<TD>1..*</TD></TR>
+<TR>
+<TD><A href="#RelatOrigPaths">OrigPaths</A></TD>
+<TD><A href="VISUMLIB~IPath.html">IPath</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatPOIs">POIs</A></TD>
+<TD><A href="VISUMLIB~IPOI.html">IPOI</A></TD>
+<TD>0..*</TD></TR></TBODY></TABLE></DIV>
+<DIV id=relationsRelationsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Relations</SPAN></DIV>
+<DIV id=relationsRelationsSectionContent class=SectionContent>
+<DIV><A name=RelatAssociatedLocations></A>
+<DIV id=AssociatedLocationsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>AssociatedLocations</SPAN></DIV>
+<DIV id=AssociatedLocationsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ZugeordneteStandorte</TD>
+<TD>Zugeordnete Standorte</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>AssociatedLocations</TD>
+<TD>Associated locations</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>EmplacementsAssignés</TD>
+<TD>Emplacements assignés</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatContainedNodes></A>
+<DIV id=ContainedNodesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ContainedNodes</SPAN></DIV>
+<DIV id=ContainedNodesSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EnthalteneKnoten</TD>
+<TD>Enthaltene Knoten</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ContainedNodes</TD>
+<TD>Contained nodes</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NœudsContenus</TD>
+<TD>Nœuds contenus</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatDestConnectors></A>
+<DIV id=DestConnectorsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>DestConnectors</SPAN></DIV>
+<DIV id=DestConnectorsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Zielanbindungen</TD>
+<TD>Ziel-Anbindungen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>DestConnectors</TD>
+<TD>Destination connectors</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ConnecteursA</TD>
+<TD>Connecteurs en attraction</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatDestinationODPairs></A>
+<DIV id=DestinationODPairsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>DestinationODPairs</SPAN></DIV>
+<DIV id=DestinationODPairsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ZielBezirksbeziehungen</TD>
+<TD>Ziel-Bezirksbeziehungen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>DestinationODPairs</TD>
+<TD>Destination OD pairs</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>RelZonesDest</TD>
+<TD>Relations de zones de destination</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatDestPaths></A>
+<DIV id=DestPathsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>DestPaths</SPAN></DIV>
+<DIV id=DestPathsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Zielwege</TD>
+<TD>Ziel-Wege</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>DestPaths</TD>
+<TD>Destination paths</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CheminsDest</TD>
+<TD>Chemins de destination</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatMainZone></A>
+<DIV id=MainZoneSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MainZone</SPAN></DIV>
+<DIV id=MainZoneSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Oberbezirk</TD>
+<TD>Oberbezirk</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MainZone</TD>
+<TD>Main zone</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Macrozone</TD>
+<TD>Macrozone</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatNetwork></A>
+<DIV id=NetworkSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Network</SPAN></DIV>
+<DIV id=NetworkSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Netz</TD>
+<TD>Netz</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Network</TD>
+<TD>Network</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Réseau</TD>
+<TD>Réseau</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatOrigConnectors></A>
+<DIV id=OrigConnectorsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>OrigConnectors</SPAN></DIV>
+<DIV id=OrigConnectorsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Quellanbindungen</TD>
+<TD>Quell-Anbindungen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>OrigConnectors</TD>
+<TD>Origin connectors</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ConnecteursE</TD>
+<TD>Connecteurs en émission</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatOriginODPairs></A>
+<DIV id=OriginODPairsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>OriginODPairs</SPAN></DIV>
+<DIV id=OriginODPairsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>QuellBezirksbeziehungen</TD>
+<TD>Quell-Bezirksbeziehungen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>OriginODPairs</TD>
+<TD>Origin OD pairs</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>RelationsZonesOrig</TD>
+<TD>Relations de zones d’origine</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatOrigPaths></A>
+<DIV id=OrigPathsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>OrigPaths</SPAN></DIV>
+<DIV id=OrigPathsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Quellwege</TD>
+<TD>Quell-Wege</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>OrigPaths</TD>
+<TD>Origin paths</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CheminsOrig</TD>
+<TD>Chemins d’origine</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatPOIs></A>
+<DIV id=POIsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>POIs</SPAN></DIV>
+<DIV id=POIsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>POIs</TD>
+<TD>Points of Interest</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>POIs</TD>
+<TD>Points of interest</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>PointsIntérêt</TD>
+<TD>Points d’intérêt</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV></DIV>
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~IZone.html">IZone</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IZone_attributes.html">IZone Attributes</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IZone_relations.html">IZone Relations</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IZone_referencedby.html">IZone ReferencedBy</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

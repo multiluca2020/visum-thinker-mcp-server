@@ -56,30 +56,45 @@ operation_name = "PrT Assignment (auto-created)"
 
 print(f"Operazione configurata: {operation_name}", file=sys.stderr)
 
-# 6. ESEGUI LA PROCEDURA
-print(f"Esecuzione procedura PrT Assignment...", file=sys.stderr)
+# 6. FASI 1 e 2 COMPLETATE - NON ESEGUIAMO
+print(f"Procedura PrT Assignment creata e configurata!", file=sys.stderr)
+print(f"FASE 1: Creazione operazione - COMPLETATA", file=sys.stderr)
+print(f"FASE 2: Configurazione parametri - COMPLETATA", file=sys.stderr)
+print(f"FASE 3: Esecuzione - SALTATA (da fare manualmente o via API)", file=sys.stderr)
 
+# 7. VERIFICA FINALE
+# Verifichiamo che l'operazione sia stata davvero creata
+verification = None
 try:
-    # Esegui l'intera sequenza di procedure
-    visum.Procedures.Execute()
-    
-    execution_result = "success"
-    print(f"Procedura eseguita con successo!", file=sys.stderr)
-except Exception as exec_error:
-    execution_result = f"error: {str(exec_error)}"
-    print(f"Errore esecuzione: {exec_error}", file=sys.stderr)
+    created_op = visum.Procedures.Operations.ItemByKey(new_position)
+    verification = {
+        "exists": True,
+        "type": created_op.AttValue("OPERATIONTYPE"),
+        "params_accessible": True
+    }
+    print(f"Verifica: operazione {new_position} esiste con tipo {verification['type']}", file=sys.stderr)
+except Exception as e:
+    verification = {
+        "exists": False,
+        "error": str(e)
+    }
+    print(f"Verifica fallita: {e}", file=sys.stderr)
 
-# 7. RITORNA RISULTATO COMPLETO
+# 8. RITORNA RISULTATO COMPLETO
 result = {
     "status": "ok",
+    "phase_1_creation": "completed",
+    "phase_2_configuration": "completed",
+    "phase_3_execution": "skipped",
     "created": True,
     "position": new_position,
     "operation_type": operation_type,
     "operation_name": operation_name,
     "config_type": config_type,
-    "execution": execution_result,
     "params_accessible": True,
-    "params_type": str(type(params))
+    "params_type": str(type(params)),
+    "verification": verification,
+    "note": "Procedura creata in coda. Eseguire manualmente da Visum o via visum.Procedures.Execute()"
 }
 `;
 
@@ -118,14 +133,32 @@ client.on('data', (data) => {
         if (response.success) {
             const res = response.result;
             console.log('✅ SUCCESSO!\n');
-            console.log(`📍 Posizione: ${res.position}`);
-            console.log(`🔧 Tipo operazione: ${res.operation_type} (${res.config_type})`);
-            console.log(`📝 Nome: ${res.operation_name}`);
-            console.log(`⚙️ Parametri accessibili: ${res.params_accessible ? '✅ SI' : '❌ NO'}`);
-            console.log(`🚀 Esecuzione: ${res.execution === 'success' ? '✅ COMPLETATA' : '⚠️ ' + res.execution}`);
-            console.log(`\n📋 Tipo parametri: ${res.params_type}`);
+            
+            console.log('📋 FASI COMPLETATE:');
+            console.log(`   ✅ FASE 1 (Creazione): ${res.phase_1_creation}`);
+            console.log(`   ✅ FASE 2 (Configurazione): ${res.phase_2_configuration}`);
+            console.log(`   ⏭️  FASE 3 (Esecuzione): ${res.phase_3_execution}`);
+            
+            console.log('\n📊 DETTAGLI OPERAZIONE:');
+            console.log(`   📍 Posizione: ${res.position} (in coda a tutte le procedure)`);
+            console.log(`   🔧 Tipo operazione: ${res.operation_type} (${res.config_type})`);
+            console.log(`   📝 Nome: ${res.operation_name}`);
+            console.log(`   ⚙️ Parametri accessibili: ${res.params_accessible ? '✅ SI' : '❌ NO'}`);
+            console.log(`   � Tipo parametri: ${res.params_type}`);
+            
+            if (res.verification) {
+                console.log('\n🔍 VERIFICA:');
+                console.log(`   Operazione esiste: ${res.verification.exists ? '✅ SI' : '❌ NO'}`);
+                if (res.verification.exists) {
+                    console.log(`   Tipo verificato: ${res.verification.type}`);
+                }
+            }
+            
+            console.log('\n💡 NOTA:');
+            console.log(`   ${res.note}`);
             
             console.log('\n🎉 PROCEDURA PRT ASSIGNMENT CREATA E CONFIGURATA!');
+            console.log('🎯 API FUNZIONANTE: operation.PrTAssignmentParameters');
         } else {
             console.log('❌ ERRORE!\n');
             console.log(`Messaggio: ${response.error}`);

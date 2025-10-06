@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>GenerateModelTransferFileBetweenVersionFiles Method</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~IVisum~GenerateModelTransferFileBetweenVersionFiles"/>
+    <meta name="Description" content="Generates a model transfer file for transfering model data from one network to another" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~IVisum_methods"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ > <a href="VISUMLIB~IVisum.html">IVisum </a>
+ &gt; <a href="VISUMLIB~IVisum~GenerateModelTransferFileBetweenVersionFiles.html">GenerateModelTransferFileBetweenVersionFiles Method</a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">GenerateModelTransferFileBetweenVersionFiles Method</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+<div id="BaseVersionFilePopupContent" class="PopupContent">
+Base version file
+</div>
+<div id="TargetVersionFilePopupContent" class="PopupContent">
+Target version file
+</div>
+<div id="OutputFilePopupContent" class="PopupContent">
+Path + name of the resulting model transfer file (*.tra)
+</div>
+<div id="LayoutFilePopupContent" class="PopupContent">
+*.net file prividing the layout (tables, attributes) to be used in the comparison
+</div>
+<div id="NonDefaultOnlyPopupContent" class="PopupContent">
+Controls wheter only non-default attribute values will be captured by the comparison
+</div>
+<div id="NonEmptyTablesOnlyPopupContent" class="PopupContent">
+Controls whether only non-empty tables will be captured by the comparison
+</div>
+<div id="WriteLayoutIntoModelTransferFilePopupContent" class="PopupContent">
+Controls whether the Model Transfer File shall include information about the layout used for its generation
+</div>
+
+    <div id="BodyContent">
+        <div class="SectionHeading" id="descriptionSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Summary</span></div><div id="descriptionSectionContent" class="SectionContent"><div class="DescriptionContent">Generates a model transfer file for transfering model data from one network to another</div></div>
+            <div class="SectionHeading" id="syntaxSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Syntax</span></div><div id="syntaxSectionContent" class="SectionContent"><div class=LanguageSpecific id=Syntax_VB><table class="syntaxtable" width="100%" cellpadding="0" cellspacing="0"><tr><th>Visual Basic</th></tr><tr><td><pre><pre><span style="color: #0000FF; ">Public</span> <span style="color: #0000FF; ">Sub</span> GenerateModelTransferFileBetweenVersionFiles( _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="BaseVersionFilePopupLink" data-popupcontentsource="#BaseVersionFilePopupContent" data-popupshowevent="click mouseenter">BaseVersionFile</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="TargetVersionFilePopupLink" data-popupcontentsource="#TargetVersionFilePopupContent" data-popupshowevent="click mouseenter">TargetVersionFile</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="OutputFilePopupLink" data-popupcontentsource="#OutputFilePopupContent" data-popupshowevent="click mouseenter">OutputFile</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="LayoutFilePopupLink" data-popupcontentsource="#LayoutFilePopupContent" data-popupshowevent="click mouseenter">LayoutFile</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span> = <span style="color: #800000; ">&quot;&quot;</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="NonDefaultOnlyPopupLink" data-popupcontentsource="#NonDefaultOnlyPopupContent" data-popupshowevent="click mouseenter">NonDefaultOnly</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span> = <span style="color: #0000FF; ">False</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="NonEmptyTablesOnlyPopupLink" data-popupcontentsource="#NonEmptyTablesOnlyPopupContent" data-popupshowevent="click mouseenter">NonEmptyTablesOnly</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span> = <span style="color: #0000FF; ">True</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="WriteLayoutIntoModelTransferFilePopupLink" data-popupcontentsource="#WriteLayoutIntoModelTransferFilePopupContent" data-popupshowevent="click mouseenter">WriteLayoutIntoModelTransferFile</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span> = <span style="color: #0000FF; ">True</span> _
+) </pre></pre></tr></table></div></div>
+            <div class="SectionHeading" id="parametersSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Parameters</span></div><div id="parametersSectionContent" class="SectionContent"><table><tr><th>Name</th><th>Value type</th><th>Description</th></tr>
+<tr><td>BaseVersionFile</td><td>String</td><td>Base version file</td></tr>
+<tr><td>TargetVersionFile</td><td>String</td><td>Target version file</td></tr>
+<tr><td>OutputFile</td><td>String</td><td>Path + name of the resulting model transfer file (*.tra)</td></tr>
+<tr><td>LayoutFile</td><td>String</td><td>*.net file prividing the layout (tables, attributes) to be used in the comparison</td></tr>
+<tr><td>NonDefaultOnly</td><td>Boolean</td><td>Controls wheter only non-default attribute values will be captured by the comparison</td></tr>
+<tr><td>NonEmptyTablesOnly</td><td>Boolean</td><td>Controls whether only non-empty tables will be captured by the comparison</td></tr>
+<tr><td>WriteLayoutIntoModelTransferFile</td><td>Boolean</td><td>Controls whether the Model Transfer File shall include information about the layout used for its generation</td></tr>
+</table></div>
+            
+            <div class="SectionHeading" id="remarksSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Description</span></div><div id="remarksSectionContent" class="SectionContent">The generated model transfer file contains the updates required to generate the target network out of the base network</div>
+            
+            
+            
+            
+            
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~IVisum.html">IVisum </a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IVisum.html">IVisum Members</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

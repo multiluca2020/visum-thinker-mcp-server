@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>IRidershipData  Relations</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~IRidershipData_relations"/>
+    <meta name="Description" content="IRidershipData Interface" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~IRidershipData"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~IRidershipData.html">IRidershipData </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">IRidershipData  Relations</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <a class="PageLink" href="VISUMLIB~IRidershipData.html">Overview</a>&nbsp;<!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <DIV id=relationsSummarySectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Summary</SPAN></DIV>
+<DIV id=relationsSummarySectionContent class=SectionContent>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Role name</TH>
+<TH>Related class</TH>
+<TH>Cardinality</TH></TR>
+<TR>
+<TD><A href="#RelatAlightStop">AlightStop</A></TD>
+<TD><A href="VISUMLIB~IStop.html">IStop</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatAlightVehJourneyItem">AlightVehJourneyItem</A></TD>
+<TD><A href="VISUMLIB~IVehicleJourneyItem.html">IVehicleJourneyItem</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatBoardStop">BoardStop</A></TD>
+<TD><A href="VISUMLIB~IStop.html">IStop</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatBoardVehJourneyItem">BoardVehJourneyItem</A></TD>
+<TD><A href="VISUMLIB~IVehicleJourneyItem.html">IVehicleJourneyItem</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatDestZone">DestZone</A></TD>
+<TD><A href="VISUMLIB~IZone.html">IZone</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatEffUsedDestZone">EffUsedDestZone</A></TD>
+<TD><A href="VISUMLIB~IZone.html">IZone</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatEffUsedOrigZone">EffUsedOrigZone</A></TD>
+<TD><A href="VISUMLIB~IZone.html">IZone</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatInputStop">InputStop</A></TD>
+<TD><A href="VISUMLIB~IStop.html">IStop</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatNetwork">Network</A></TD>
+<TD><A href="VISUMLIB~INet.html">INet</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatOrigZone">OrigZone</A></TD>
+<TD><A href="VISUMLIB~IZone.html">IZone</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatRidershipDataSet">RidershipDataSet</A></TD>
+<TD><A href="VISUMLIB~IRidershipData.html">IRidershipData</A></TD>
+<TD>1..*</TD></TR>
+<TR>
+<TD><A href="#RelatSurveyLine">SurveyLine</A></TD>
+<TD><A href="VISUMLIB~ILine.html">ILine</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatSurveyLineDir">SurveyLineDir</A></TD>
+<TD><A href="VISUMLIB~IDirection.html">IDirection</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatSurveyLineRoute">SurveyLineRoute</A></TD>
+<TD><A href="VISUMLIB~ILineRoute.html">ILineRoute</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatSurveyTimeProfile">SurveyTimeProfile</A></TD>
+<TD><A href="VISUMLIB~ITimeProfile.html">ITimeProfile</A></TD>
+<TD>0..1</TD></TR>
+<TR>
+<TD><A href="#RelatSurveyVehJourney">SurveyVehJourney</A></TD>
+<TD><A href="VISUMLIB~IVehicleJourney.html">IVehicleJourney</A></TD>
+<TD>0..1</TD></TR></TBODY></TABLE></DIV>
+<DIV id=relationsRelationsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Relations</SPAN></DIV>
+<DIV id=relationsRelationsSectionContent class=SectionContent>
+<DIV><A name=RelatAlightStop></A>
+<DIV id=AlightStopSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>AlightStop</SPAN></DIV>
+<DIV id=AlightStopSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AusstiegsHaltestelle</TD>
+<TD>Ausstiegs-Haltestelle</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>AlightStop</TD>
+<TD>Stop for alighting</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatAlightVehJourneyItem></A>
+<DIV id=AlightVehJourneyItemSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>AlightVehJourneyItem</SPAN></DIV>
+<DIV id=AlightVehJourneyItemSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AusstiegsFplFahrtElement</TD>
+<TD>Austiegs-Fahrplanfahrtelement</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>AlightVehJourneyItem</TD>
+<TD>Vehicle journey item for alighting</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatBoardStop></A>
+<DIV id=BoardStopSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>BoardStop</SPAN></DIV>
+<DIV id=BoardStopSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EinstiegsHaltestelle</TD>
+<TD>Einstiegs-Haltestelle</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>BoardStop</TD>
+<TD>Stop for boarding</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatBoardVehJourneyItem></A>
+<DIV id=BoardVehJourneyItemSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>BoardVehJourneyItem</SPAN></DIV>
+<DIV id=BoardVehJourneyItemSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EinstiegsFplFahrtElement</TD>
+<TD>Einstiegs-Fahrplanfahrtelement</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>BoardVehJourneyItem</TD>
+<TD>Vehicle journey item for boarding</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatDestZone></A>
+<DIV id=DestZoneSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>DestZone</SPAN></DIV>
+<DIV id=DestZoneSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Zielbezirk</TD>
+<TD>Ziel-Bezirk</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>DestZone</TD>
+<TD>Destination zone</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ZoneDestination</TD>
+<TD>Zone de destination</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatEffUsedDestZone></A>
+<DIV id=EffUsedDestZoneSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EffUsedDestZone</SPAN></DIV>
+<DIV id=EffUsedDestZoneSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EffektiverZielbezirk</TD>
+<TD>Effektiv verwendeter Ziel-Bezirk</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EffUsedDestZone</TD>
+<TD>Effectively used destination zone</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatEffUsedOrigZone></A>
+<DIV id=EffUsedOrigZoneSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EffUsedOrigZone</SPAN></DIV>
+<DIV id=EffUsedOrigZoneSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EffektiverQuellbezirk</TD>
+<TD>Effektiv verwendeter Quell-Bezirk</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EffUsedOrigZone</TD>
+<TD>Effectively used origin zone</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatInputStop></A>
+<DIV id=InputStopSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>InputStop</SPAN></DIV>
+<DIV id=InputStopSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EingabeHaltestelle</TD>
+<TD>Eingabe-Haltestelle</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>InputStop</TD>
+<TD>Input stop</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatNetwork></A>
+<DIV id=NetworkSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Network</SPAN></DIV>
+<DIV id=NetworkSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Netz</TD>
+<TD>Netz</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Network</TD>
+<TD>Network</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Réseau</TD>
+<TD>Réseau</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatOrigZone></A>
+<DIV id=OrigZoneSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>OrigZone</SPAN></DIV>
+<DIV id=OrigZoneSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Quellbezirk</TD>
+<TD>Quell-Bezirk</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>OrigZone</TD>
+<TD>Origin zone</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ZoneOrigine</TD>
+<TD>Zone d’origine</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatRidershipDataSet></A>
+<DIV id=RidershipDataSetSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>RidershipDataSet</SPAN></DIV>
+<DIV id=RidershipDataSetSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Fahrgastdatensatz</TD>
+<TD>Fahrgastdatensatz</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>RidershipDataSet</TD>
+<TD>Ridership data set</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatSurveyLine></A>
+<DIV id=SurveyLineSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SurveyLine</SPAN></DIV>
+<DIV id=SurveyLineSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ErfLinie</TD>
+<TD>Linie des erfassten Teilwegs</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SurveyLine</TD>
+<TD>Survey leg line</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatSurveyLineDir></A>
+<DIV id=SurveyLineDirSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SurveyLineDir</SPAN></DIV>
+<DIV id=SurveyLineDirSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ErfLinieRichtung</TD>
+<TD>Richtung des erfassten Teilwegs</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SurveyLineDir</TD>
+<TD>Survey leg line direction</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatSurveyLineRoute></A>
+<DIV id=SurveyLineRouteSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SurveyLineRoute</SPAN></DIV>
+<DIV id=SurveyLineRouteSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ErfLr</TD>
+<TD>Linienroute des erfassten Teilwegs</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SurveyLineRoute</TD>
+<TD>Survey leg line route</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatSurveyTimeProfile></A>
+<DIV id=SurveyTimeProfileSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SurveyTimeProfile</SPAN></DIV>
+<DIV id=SurveyTimeProfileSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ErfFzp</TD>
+<TD>Fahzeitprofil des erfassten Teilwegs</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SurveyTimeProfile</TD>
+<TD>Suvey leg time profile</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatSurveyVehJourney></A>
+<DIV id=SurveyVehJourneySectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SurveyVehJourney</SPAN></DIV>
+<DIV id=SurveyVehJourneySectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ErfFplFahrtNr</TD>
+<TD>Fahrplanfahrt-Nummer des erfassten Teilwegs</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SurveyVehJourney</TD>
+<TD>Survey leg vehicle journey</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV></DIV>
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~IRidershipData.html">IRidershipData</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IRidershipData_attributes.html">IRidershipData Attributes</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IRidershipData_relations.html">IRidershipData Relations</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IRidershipData_referencedby.html">IRidershipData ReferencedBy</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,84 @@
+﻿/* This StyleSheet contains custom styles for this project */
+
+body
+{
+	background-color: #ffffff;
+	font-size: 9pt;
+	font-family: Arial;
+	margin-left: 8px;
+	margin-right: 8px;
+}
+
+.BreadcrumbsContainer
+{
+    background-color: #C30014;
+    border-bottom: 0 solid black;
+    color: #DCDCDC;
+    font-family: Arial;
+    font-size: 8pt;
+    margin-bottom: 5px;
+    margin-top: 0;
+    padding-bottom: 2px;
+    padding-top: 2px;
+	
+	/* fixes for dx.com.2012.css */
+	padding-left: 0px;
+	border-top: none;
+}
+
+.BreadcrumbsContainer table
+{
+    border-spacing: 0;
+    border-style: none;
+}
+
+.BreadcrumbsContainer table td
+{
+	font-size: 8pt;
+    padding-left: 0px;
+    border-style: none;
+	
+	/* fixes for dx.com.2012.css */
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+.BreadcrumbsContainer a
+{
+	color: #FFFFFF;
+	text-decoration: underline;
+}
+
+.SubSectionHeading
+{
+	font-size: 10pt;
+}
+
+/* ptv.css: h4 */
+#PageTitleText
+{
+    font-family: Arial;
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 2pt;
+    margin-top: 10pt;
+    text-align: left;
+}
+
+/* fixes for dx.com.2012.css */
+#PageTitle, h1, h2, h3, h4, .SectionHeading, .SeeAlsoSubHeading
+{
+	color: black;
+}
+
+/* fixes for dx.com.2012.css */
+#BeforeHeaderContent  {
+	padding: 0px;
+	margin: 0px;
+}
+
+/* fixes for dx.com.2012.css */
+#BeforeHeaderContent, #HeaderContent, #AfterHeaderContent, #BodyContent, #FooterContent {
+	margin-left: 0px;
+	margin-right: 0px;
+}

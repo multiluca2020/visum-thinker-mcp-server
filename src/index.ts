@@ -1700,7 +1700,7 @@ try:
             'y': nodes_sample[2][i]
         } for i in range(min(5, len(nodes_sample[0])))]
     else:
-        sample_nodes = []
+        sample_nodes = []        {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "instance_cleanup", "arguments": {"force": true}}}
     
     result = {
         'analysis_type': 'comprehensive',

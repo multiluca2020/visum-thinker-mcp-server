@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>SetChainedUpSection Method</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~IVehicleJourneySection~SetChainedUpSection"/>
+    <meta name="Description" content="Defines a forced chaining between the current and the given vehicle journey section for the specified day." />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~IVehicleJourneySection_methods"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ > <a href="VISUMLIB~IVehicleJourneySection.html">IVehicleJourneySection </a>
+ &gt; <a href="VISUMLIB~IVehicleJourneySection~SetChainedUpSection.html">SetChainedUpSection Method</a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">SetChainedUpSection Method</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+<div id="ChainedUpSectionPopupContent" class="PopupContent">
+Vehicle journey section to chain this section with
+</div>
+<div id="DayIndexPopupContent" class="PopupContent">
+Index of the day for the chaining
+</div>
+<div id="ForcedChainPopupContent" class="PopupContent">
+Defines whether the chaining is a forced chaining
+</div>
+<div id="PassengerTripChainPopupContent" class="PopupContent">
+Defines whether the chaining is a passenger trip chain
+</div>
+
+    <div id="BodyContent">
+        <div class="SectionHeading" id="descriptionSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Summary</span></div><div id="descriptionSectionContent" class="SectionContent"><div class="DescriptionContent">Defines a forced chaining between the current and the given vehicle journey section for the specified day.</div></div>
+            <div class="SectionHeading" id="syntaxSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Syntax</span></div><div id="syntaxSectionContent" class="SectionContent"><div class=LanguageSpecific id=Syntax_VB><table class="syntaxtable" width="100%" cellpadding="0" cellspacing="0"><tr><th>Visual Basic</th></tr><tr><td><pre><pre><span style="color: #0000FF; ">Public</span> <span style="color: #0000FF; ">Sub</span> SetChainedUpSection( _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="ChainedUpSectionPopupLink" data-popupcontentsource="#ChainedUpSectionPopupContent" data-popupshowevent="click mouseenter">ChainedUpSection</a></i> <span style="color: #0000FF; ">As</span> <a href="VISUMLIB~IVehicleJourneySection.html">IVehicleJourneySection</a>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="DayIndexPopupLink" data-popupcontentsource="#DayIndexPopupContent" data-popupshowevent="click mouseenter">DayIndex</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Integer</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="ForcedChainPopupLink" data-popupcontentsource="#ForcedChainPopupContent" data-popupshowevent="click mouseenter">ForcedChain</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span> = <span style="color: #0000FF; ">True</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="PassengerTripChainPopupLink" data-popupcontentsource="#PassengerTripChainPopupContent" data-popupshowevent="click mouseenter">PassengerTripChain</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span> = <span style="color: #0000FF; ">False</span> _
+) </pre></pre></tr></table></div></div>
+            <div class="SectionHeading" id="parametersSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Parameters</span></div><div id="parametersSectionContent" class="SectionContent"><table><tr><th>Name</th><th>Value type</th><th>Description</th></tr>
+<tr><td>ChainedUpSection</td><td><a href="VISUMLIB~IVehicleJourneySection.html">IVehicleJourneySection</a></td><td>Vehicle journey section to chain this section with</td></tr>
+<tr><td>DayIndex</td><td>Integer</td><td>Index of the day for the chaining</td></tr>
+<tr><td>ForcedChain</td><td>Boolean</td><td>Defines whether the chaining is a forced chaining</td></tr>
+<tr><td>PassengerTripChain</td><td>Boolean</td><td>Defines whether the chaining is a passenger trip chain</td></tr>
+</table></div>
+            
+            
+            
+            
+            
+            
+            
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~IVehicleJourneySection.html">IVehicleJourneySection </a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IVehicleJourneySection.html">IVehicleJourneySection Members</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

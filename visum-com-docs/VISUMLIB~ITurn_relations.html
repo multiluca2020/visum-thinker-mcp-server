@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>ITurn  Relations</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~ITurn_relations"/>
+    <meta name="Description" content="ITurn provides access to a single turn and all of its properties" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~ITurn"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~ITurn.html">ITurn </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">ITurn  Relations</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <a class="PageLink" href="VISUMLIB~ITurn.html">Overview</a>&nbsp;<!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <DIV id=relationsSummarySectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Summary</SPAN></DIV>
+<DIV id=relationsSummarySectionContent class=SectionContent>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Role name</TH>
+<TH>Related class</TH>
+<TH>Cardinality</TH></TR>
+<TR>
+<TD><A href="#RelatBlockItems">BlockItems</A></TD>
+<TD><A href="VISUMLIB~IBlockItem.html">IBlockItem</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatEmptyTripBlockItems">EmptyTripBlockItems</A></TD>
+<TD><A href="VISUMLIB~IBlockItem.html">IBlockItem</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatFromLink">FromLink</A></TD>
+<TD><A href="VISUMLIB~ILink.html">ILink</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatFromNode">FromNode</A></TD>
+<TD><A href="VISUMLIB~INode.html">INode</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatLaneTurns">LaneTurns</A></TD>
+<TD><A href="VISUMLIB~ILaneTurn.html">ILaneTurn</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatLineRouteItems">LineRouteItems</A></TD>
+<TD><A href="VISUMLIB~ILineRouteItem.html">ILineRouteItem</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatLineRoutes">LineRoutes</A></TD>
+<TD><A href="VISUMLIB~ILineRoute.html">ILineRoute</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatNetwork">Network</A></TD>
+<TD><A href="VISUMLIB~INet.html">INet</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatPathItems">PathItems</A></TD>
+<TD><A href="VISUMLIB~IPathItem.html">IPathItem</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatReverseTurn">ReverseTurn</A></TD>
+<TD><A href="VISUMLIB~ITurn.html">ITurn</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatToLink">ToLink</A></TD>
+<TD><A href="VISUMLIB~ILink.html">ILink</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatToNode">ToNode</A></TD>
+<TD><A href="VISUMLIB~INode.html">INode</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatVehJourneyBlockItems">VehJourneyBlockItems</A></TD>
+<TD><A href="VISUMLIB~IBlockItem.html">IBlockItem</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatViaNode">ViaNode</A></TD>
+<TD><A href="VISUMLIB~INode.html">INode</A></TD>
+<TD>1..1</TD></TR></TBODY></TABLE></DIV>
+<DIV id=relationsRelationsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Relations</SPAN></DIV>
+<DIV id=relationsRelationsSectionContent class=SectionContent>
+<DIV><A name=RelatBlockItems></A>
+<DIV id=BlockItemsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>BlockItems</SPAN></DIV>
+<DIV id=BlockItemsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Umlaufelemente</TD>
+<TD>Umlaufelemente</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>BlockItems</TD>
+<TD>Block items</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ÉlémRotation</TD>
+<TD>Éléments de rotation</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatEmptyTripBlockItems></A>
+<DIV id=EmptyTripBlockItemsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EmptyTripBlockItems</SPAN></DIV>
+<DIV id=EmptyTripBlockItemsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Leerfahrtumlaufelemente</TD>
+<TD>Leerfahrt-Umlaufelemente</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EmptyTripBlockItems</TD>
+<TD>Empty trip block items</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ÉlémRotationServVide</TD>
+<TD>Éléments de rotation Service à vide</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatFromLink></A>
+<DIV id=FromLinkSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>FromLink</SPAN></DIV>
+<DIV id=FromLinkSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>VonStrecke</TD>
+<TD>Von-Strecke</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>FromLink</TD>
+<TD>From link</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TronçonOrig</TD>
+<TD>Tronçon d’origine</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatFromNode></A>
+<DIV id=FromNodeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>FromNode</SPAN></DIV>
+<DIV id=FromNodeSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>VonKnoten</TD>
+<TD>Von-Knoten</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>FromNode</TD>
+<TD>From node</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NœudOrig</TD>
+<TD>Nœud d’origine</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatLaneTurns></A>
+<DIV id=LaneTurnsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>LaneTurns</SPAN></DIV>
+<DIV id=LaneTurnsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Fahrstreifenabbieger</TD>
+<TD>Fahrstreifenabbieger</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>LaneTurns</TD>
+<TD>Lane turns</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>VoiesTournantes</TD>
+<TD>Voies tournantes</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatLineRouteItems></A>
+<DIV id=LineRouteItemsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>LineRouteItems</SPAN></DIV>
+<DIV id=LineRouteItemsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Linienroutenelemente</TD>
+<TD>Linienroutenelemente</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>LineRouteItems</TD>
+<TD>Line route items</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TracésItinLigne</TD>
+<TD>Tracés d’itinéraire de ligne</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatLineRoutes></A>
+<DIV id=LineRoutesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>LineRoutes</SPAN></DIV>
+<DIV id=LineRoutesSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Linienrouten</TD>
+<TD>Linienrouten</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>LineRoutes</TD>
+<TD>Line routes</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ItinsLigne</TD>
+<TD>Itinéraires de ligne</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatNetwork></A>
+<DIV id=NetworkSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Network</SPAN></DIV>
+<DIV id=NetworkSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Netz</TD>
+<TD>Netz</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Network</TD>
+<TD>Network</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Réseau</TD>
+<TD>Réseau</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatPathItems></A>
+<DIV id=PathItemsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>PathItems</SPAN></DIV>
+<DIV id=PathItemsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Wegelemente</TD>
+<TD>Wegelemente</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>PathItems</TD>
+<TD>Path items</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ÉlémChemin</TD>
+<TD>Éléments de chemin</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatReverseTurn></A>
+<DIV id=ReverseTurnSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ReverseTurn</SPAN></DIV>
+<DIV id=ReverseTurnSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>GegenrichtungAbb</TD>
+<TD>Gegenrichtung Abbieger</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ReverseTurn</TD>
+<TD>Reverse turn</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>SensInverseMvtN</TD>
+<TD>Sens inverse mouvement au nœud</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatToLink></A>
+<DIV id=ToLinkSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ToLink</SPAN></DIV>
+<DIV id=ToLinkSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>NachStrecke</TD>
+<TD>Nach-Strecke</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ToLink</TD>
+<TD>To link</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TronçonDest</TD>
+<TD>Tronçon de destination</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatToNode></A>
+<DIV id=ToNodeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ToNode</SPAN></DIV>
+<DIV id=ToNodeSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>NachKnoten</TD>
+<TD>Nach-Knoten</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ToNode</TD>
+<TD>To node</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NœudDest</TD>
+<TD>Nœud de destination</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatVehJourneyBlockItems></A>
+<DIV id=VehJourneyBlockItemsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>VehJourneyBlockItems</SPAN></DIV>
+<DIV id=VehJourneyBlockItemsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>FplFahrtUmlaufElem</TD>
+<TD>Fahrplanfahrt-Umlaufelemente</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>VehJourneyBlockItems</TD>
+<TD>Vehicle journey block items</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ÉlémRotationService</TD>
+<TD>Éléments de rotation Service</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatViaNode></A>
+<DIV id=ViaNodeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ViaNode</SPAN></DIV>
+<DIV id=ViaNodeSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ÜberKnoten</TD>
+<TD>Über-Knoten</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ViaNode</TD>
+<TD>Via node</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ViaNœud</TD>
+<TD>ViaNœud</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV></DIV>
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~ITurn.html">ITurn</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ITurn_attributes.html">ITurn Attributes</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ITurn_relations.html">ITurn Relations</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ITurn_referencedby.html">ITurn ReferencedBy</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>
