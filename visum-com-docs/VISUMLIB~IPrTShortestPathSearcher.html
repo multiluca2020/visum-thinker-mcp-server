@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>IPrTShortestPathSearcher </title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~IPrTShortestPathSearcher"/>
+    <meta name="Description" content="This object allows for executing shortest path searches for private transport and provides access to the search results. Unlike IRouteSearchPrT, which is the COM interface to the shortest path search in the Visum graphics menu, this interface is desi" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~-_namespace"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~IPrTShortestPathSearcher.html">IPrTShortestPathSearcher </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">IPrTShortestPathSearcher </div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <div class="SectionHeading" id="descriptionSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Summary</span></div><div id="descriptionSectionContent" class="SectionContent"><div class="DescriptionContent"><P>This object allows for executing shortest path searches for private transport and provides access to the search results. Unlike IRouteSearchPrT, which is the COM interface to the shortest path search in the Visum graphics menu, this interface is designed for executing many shortest path queries very fast.</P></div></div>
+            <div class="SectionHeading" id="objectmodelSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Object Model</span></div><div id="objectmodelSectionContent" class="SectionContent"><map id="dxdiagram" name="dxdiagram"><area shape="rect" coords="4,4,167,28" href="VISUMLIB~IPrTShortestPathSearcher.html" alt="IPrTShortestPathSearcher " /><area shape="rect" coords="24,36,380,60" href="VISUMLIB~IPrTShortestPathRequests.html" alt="IPrTShortestPathRequests " /><area shape="rect" coords="24,68,228,92" href="VISUMLIB~IPrTShortestPathResults.html" alt="IPrTShortestPathResults " /></map><img border="0" src="cdiagramimages/VISUMLIB_IPrTShortestPathSearcher.png" usemap="#dxdiagram" /></div>
+            
+            
+            
+            <div class="SectionHeading" id="exampleSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Examples</span></div><div id="exampleSectionContent" class="SectionContent"><div class="SectionHeading" id="examplesSubexamples-SectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText SubSectionHeading">-</span></div><div id="examplesSubexamples-SectionContent" class="SectionContent">
+
+<div class="TabContainer">
+    <ul>
+        <li class="FilteredContentPython">
+			<a href="#TabContent-19a5e4d1-3942-4de2-9919-515096682aa6">Python</a>
+		</li>
+
+    </ul>
+	<div id="TabContent-19a5e4d1-3942-4de2-9919-515096682aa6" class="FilteredContentPython">
+		<pre><span style="color: #008000; "># create searcher
+</span>searcher = Visum.Net.CreatePrTShortestPathSearcher()
+
+<span style="color: #008000; "># create requests
+</span>requestList = []
+<span style="color: #0000FF; ">for</span> ...:
+    <span style="color: #008000; "># cost attribute can be either an enum PrTSearchCriterionT (t0 = 0, tCur = 1, impedance = 2 ...)
+</span>    <span style="color: #008000; "># or the string of a attribute ID for links, connectors, turns, main turns
+</span>    fromNetElem = Visum.Net.Nodes.ItemByKey(...)
+    toNetElem = Visum.Net.Nodes.ItemByKey(...)
+    tSys = <span style="color: #800000; ">&quot;C&quot;</span>
+    costAttribute = 2 <span style="color: #008000; "># 2 == impedance 
+</span>    requestList.append([fromNetElem, toNetElem, tSys, costAttribute])
+
+requests = searcher.CreatePrTShortestPathRequests()
+requests.AddRequests(requestList)
+
+<span style="color: #008000; "># run search
+</span>pathAttributes = [1, <span style="color: #800000; ">&quot;AddVal1&quot;</span>] <span style="color: #008000; "># 1 == tCur
+</span>searchResults = searcher.Search(requests, pathAttributes)
+
+<span style="color: #008000; "># searchResults.Costs: path costs
+# searchResults.AdditionalAttributeValues: values for path attributes</span></pre>
+	</div>
+	
+</div>
+</div>
+</div>
+            
+            
+            <div class="SectionHeading" id="publicmethodsSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Public Methods</span></div><div id="publicmethodsSectionContent" class="SectionContent"><table class="FilteredItemListTable">
+<tr><td class=LinkCell><IMG alt="Public Method" src="aximages/PublicMethod.png">&nbsp;<a href="VISUMLIB~IPrTShortestPathSearcher~CreatePrTShortestPathRequests.html">CreatePrTShortestPathRequests</a></td><td class="DescriptionCell">Create container for requests.</td></tr>
+<tr><td class=LinkCell><IMG alt="Public Method" src="aximages/PublicMethod.png">&nbsp;<a href="VISUMLIB~IPrTShortestPathSearcher~Search.html">Search</a></td><td class="DescriptionCell">Search shortest paths for all requests.</td></tr>
+</table></div>
+            
+        
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

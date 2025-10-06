@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>IDemandModel  Relations</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~IDemandModel_relations"/>
+    <meta name="Description" content="IDemandModel provides access to a single demand model and all of its properties" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~IDemandModel"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~IDemandModel.html">IDemandModel </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">IDemandModel  Relations</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <a class="PageLink" href="VISUMLIB~IDemandModel.html">Overview</a>&nbsp;<!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <DIV id=relationsSummarySectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Summary</SPAN></DIV>
+<DIV id=relationsSummarySectionContent class=SectionContent>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Role name</TH>
+<TH>Related class</TH>
+<TH>Cardinality</TH></TR>
+<TR>
+<TD><A href="#RelatActChains">ActChains</A></TD>
+<TD><A href="VISUMLIB~IActChain.html">IActChain</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatActivities">Activities</A></TD>
+<TD><A href="VISUMLIB~IActivity.html">IActivity</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatActivityExecutions">ActivityExecutions</A></TD>
+<TD><A href="VISUMLIB~IActivityExecution.html">IActivityExecution</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatActivityLocations">ActivityLocations</A></TD>
+<TD><A href="VISUMLIB~IActivityLocation.html">IActivityLocation</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatActPairs">ActPairs</A></TD>
+<TD><A href="VISUMLIB~IActPair.html">IActPair</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatAvailableModes">AvailableModes</A></TD>
+<TD><A href="VISUMLIB~IMode.html">IMode</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatDeliveryConcepts">DeliveryConcepts</A></TD>
+<TD><A href="VISUMLIB~IDeliveryConcept.html">IDeliveryConcept</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatDemandStrata">DemandStrata</A></TD>
+<TD><A href="VISUMLIB~IDemandStratum.html">IDemandStratum</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatHouseholds">Households</A></TD>
+<TD><A href="VISUMLIB~IHousehold.html">IHousehold</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatLocations">Locations</A></TD>
+<TD><A href="VISUMLIB~ILocation.html">ILocation</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatNetwork">Network</A></TD>
+<TD><A href="VISUMLIB~INet.html">INet</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatPersonGroups">PersonGroups</A></TD>
+<TD><A href="VISUMLIB~IPersonGroup.html">IPersonGroup</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatPersons">Persons</A></TD>
+<TD><A href="VISUMLIB~IPerson.html">IPerson</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatSchedules">Schedules</A></TD>
+<TD><A href="VISUMLIB~ISchedule.html">ISchedule</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatSectors">Sectors</A></TD>
+<TD><A href="VISUMLIB~ISector.html">ISector</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatStructuralProperties">StructuralProperties</A></TD>
+<TD><A href="VISUMLIB~IStructuralProp.html">IStructuralProp</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatTours">Tours</A></TD>
+<TD><A href="VISUMLIB~ITour.html">ITour</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatTrips">Trips</A></TD>
+<TD><A href="VISUMLIB~ITrip.html">ITrip</A></TD>
+<TD>0..*</TD></TR></TBODY></TABLE></DIV>
+<DIV id=relationsRelationsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Relations</SPAN></DIV>
+<DIV id=relationsRelationsSectionContent class=SectionContent>
+<DIV><A name=RelatActChains></A>
+<DIV id=ActChainsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ActChains</SPAN></DIV>
+<DIV id=ActChainsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Aktivitätenketten</TD>
+<TD>Aktivitätenketten</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ActChains</TD>
+<TD>Activity chains</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ChaînesActivités</TD>
+<TD>Chaînes d’activités</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatActivities></A>
+<DIV id=ActivitiesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Activities</SPAN></DIV>
+<DIV id=ActivitiesSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Aktivitäten</TD>
+<TD>Aktivitäten</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Activities</TD>
+<TD>Activities</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Activités</TD>
+<TD>Activités</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatActivityExecutions></A>
+<DIV id=ActivityExecutionsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ActivityExecutions</SPAN></DIV>
+<DIV id=ActivityExecutionsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Aktivitätsausübungen</TD>
+<TD>Aktivitätsausübungen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ActivityExecutions</TD>
+<TD>Activity executions</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ExercicesActivité</TD>
+<TD>Exercices d’activité</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatActivityLocations></A>
+<DIV id=ActivityLocationsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ActivityLocations</SPAN></DIV>
+<DIV id=ActivityLocationsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Aktivitätsstandorte</TD>
+<TD>Aktivitätsstandorte</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ActivityLocations</TD>
+<TD>Activity locations</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>EmplacementsActivité</TD>
+<TD>Emplacements d’activité</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatActPairs></A>
+<DIV id=ActPairsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ActPairs</SPAN></DIV>
+<DIV id=ActPairsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Aktivitätenpaare</TD>
+<TD>Aktivitätenpaare</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ActPairs</TD>
+<TD>Activity pairs</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>PairesActivités</TD>
+<TD>Paires d’activités</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatAvailableModes></A>
+<DIV id=AvailableModesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>AvailableModes</SPAN></DIV>
+<DIV id=AvailableModesSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>VerfügbareModi</TD>
+<TD>Verfügbare Modi</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>AvailableModes</TD>
+<TD>Available modes</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD></TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatDeliveryConcepts></A>
+<DIV id=DeliveryConceptsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>DeliveryConcepts</SPAN></DIV>
+<DIV id=DeliveryConceptsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Logistikkonzepte</TD>
+<TD>Logistikkonzepte</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>DeliveryConcepts</TD>
+<TD>Delivery concepts</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ConceptsLivraison</TD>
+<TD>Concepts de livraison</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatDemandStrata></A>
+<DIV id=DemandStrataSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>DemandStrata</SPAN></DIV>
+<DIV id=DemandStrataSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Nachfrageschichten</TD>
+<TD>Nachfrageschichten</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>DemandStrata</TD>
+<TD>Demand strata</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CouchesDemande</TD>
+<TD>Couches de la demande</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatHouseholds></A>
+<DIV id=HouseholdsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Households</SPAN></DIV>
+<DIV id=HouseholdsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Haushalte</TD>
+<TD>Haushalte</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Households</TD>
+<TD>Households</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Ménages</TD>
+<TD>Ménages</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatLocations></A>
+<DIV id=LocationsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Locations</SPAN></DIV>
+<DIV id=LocationsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Standorte</TD>
+<TD>Standorte</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Locations</TD>
+<TD>Locations</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Emplacements</TD>
+<TD>Emplacements</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatNetwork></A>
+<DIV id=NetworkSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Network</SPAN></DIV>
+<DIV id=NetworkSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Netz</TD>
+<TD>Netz</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Network</TD>
+<TD>Network</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Réseau</TD>
+<TD>Réseau</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatPersonGroups></A>
+<DIV id=PersonGroupsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>PersonGroups</SPAN></DIV>
+<DIV id=PersonGroupsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>PGruppen</TD>
+<TD>Personengruppen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>PersonGroups</TD>
+<TD>Person groups</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>GroupesUsagers</TD>
+<TD>Groupes d’usagers</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatPersons></A>
+<DIV id=PersonsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Persons</SPAN></DIV>
+<DIV id=PersonsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Personen</TD>
+<TD>Personen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Persons</TD>
+<TD>Persons</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Personnes</TD>
+<TD>Personnes</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatSchedules></A>
+<DIV id=SchedulesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Schedules</SPAN></DIV>
+<DIV id=SchedulesSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Tagespläne</TD>
+<TD>Tagespläne</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Schedules</TD>
+<TD>Schedules</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Plannings</TD>
+<TD>Plannings</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatSectors></A>
+<DIV id=SectorsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Sectors</SPAN></DIV>
+<DIV id=SectorsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Branchen</TD>
+<TD>Branchen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Sectors</TD>
+<TD>Sectors</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Secteurs</TD>
+<TD>Secteurs</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatStructuralProperties></A>
+<DIV id=StructuralPropertiesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>StructuralProperties</SPAN></DIV>
+<DIV id=StructuralPropertiesSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Strukturgrößen</TD>
+<TD>Strukturgrößen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>StructuralProperties</TD>
+<TD>StructuralProperties</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CaractéristiquesZone</TD>
+<TD>Caractéristiques de zone</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatTours></A>
+<DIV id=ToursSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Tours</SPAN></DIV>
+<DIV id=ToursSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Touren</TD>
+<TD>Touren</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Tours</TD>
+<TD>Tours</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Tournées</TD>
+<TD>Tournées</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatTrips></A>
+<DIV id=TripsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Trips</SPAN></DIV>
+<DIV id=TripsSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Trips</TD>
+<TD>Trips</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Trips</TD>
+<TD>Trips</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Déplacements</TD>
+<TD>Déplacements</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV></DIV>
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~IDemandModel.html">IDemandModel</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IDemandModel_attributes.html">IDemandModel Attributes</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IDemandModel_relations.html">IDemandModel Relations</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IDemandModel_referencedby.html">IDemandModel ReferencedBy</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

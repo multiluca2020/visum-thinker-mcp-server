@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>AddLineRoute Method</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~INet~AddLineRoute"/>
+    <meta name="Description" content="Add a line route with name in network" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~INet_methods"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ > <a href="VISUMLIB~INet.html">INet </a>
+ &gt; <a href="VISUMLIB~INet~AddLineRoute.html">AddLineRoute Method</a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">AddLineRoute Method</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+<div id="NamePopupContent" class="PopupContent">
+Name of line route
+</div>
+<div id="LinePopupContent" class="PopupContent">
+Name of line or line object
+</div>
+<div id="DirectionPopupContent" class="PopupContent">
+Direction code or IDirection object
+</div>
+<div id="RouteItemsPopupContent" class="PopupContent">
+Network elements container. The nodes and stop points contained in the container determine the course of the line route.
+</div>
+<div id="NetReadRouteSearchTSysPopupContent" class="PopupContent">
+Shortest path search parameters (see&nbsp;<A href="VISUMLIB~INetReadRouteSearchTSys.html" data-auto-update-caption="true">INetReadRouteSearchTSys Object</A>). If this parameter is not specified, every gap in the course of nodes and stop points provokes an error message
+</div>
+
+    <div id="BodyContent">
+        <div class="SectionHeading" id="descriptionSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Summary</span></div><div id="descriptionSectionContent" class="SectionContent"><div class="DescriptionContent">Add a line route with name in network</div></div>
+            <div class="SectionHeading" id="syntaxSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Syntax</span></div><div id="syntaxSectionContent" class="SectionContent"><div class=LanguageSpecific id=Syntax_VB><table class="syntaxtable" width="100%" cellpadding="0" cellspacing="0"><tr><th>Visual Basic</th></tr><tr><td><pre><pre><span style="color: #0000FF; ">Public</span> <span style="color: #0000FF; ">Function</span> AddLineRoute( _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="NamePopupLink" data-popupcontentsource="#NamePopupContent" data-popupshowevent="click mouseenter">Name</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="LinePopupLink" data-popupcontentsource="#LinePopupContent" data-popupshowevent="click mouseenter">Line</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="DirectionPopupLink" data-popupcontentsource="#DirectionPopupContent" data-popupshowevent="click mouseenter">Direction</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="RouteItemsPopupLink" data-popupcontentsource="#RouteItemsPopupContent" data-popupshowevent="click mouseenter">RouteItems</a></i> <span style="color: #0000FF; ">As</span> <a href="VISUMLIB~INetElements.html">INetElements</a>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="NetReadRouteSearchTSysPopupLink" data-popupcontentsource="#NetReadRouteSearchTSysPopupContent" data-popupshowevent="click mouseenter">NetReadRouteSearchTSys</a></i> <span style="color: #0000FF; ">As</span> Variant _
+) <span style="color: #0000FF; ">As</span> <a href="VISUMLIB~ILineRoute.html">ILineRoute</a></pre></pre></tr></table></div></div>
+            <div class="SectionHeading" id="parametersSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Parameters</span></div><div id="parametersSectionContent" class="SectionContent"><table><tr><th>Name</th><th>Value type</th><th>Description</th></tr>
+<tr><td>Name</td><td>String</td><td>Name of line route</td></tr>
+<tr><td>Line</td><td>Variant</td><td>Name of line or line object</td></tr>
+<tr><td>Direction</td><td>Variant</td><td>Direction code or IDirection object</td></tr>
+<tr><td>RouteItems</td><td><a href="VISUMLIB~INetElements.html">INetElements</a></td><td>Network elements container. The nodes and stop points contained in the container determine the course of the line route.</td></tr>
+<tr><td>NetReadRouteSearchTSys</td><td>Variant</td><td>Shortest path search parameters (see&nbsp;<A href="VISUMLIB~INetReadRouteSearchTSys.html" data-auto-update-caption="true">INetReadRouteSearchTSys Object</A>). If this parameter is not specified, every gap in the course of nodes and stop points provokes an error message</td></tr>
+</table></div>
+            <div class="SectionHeading" id="returnsSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Return Type</span></div><div id="returnsSectionContent" class="SectionContent"><div class="ReturnsContent">The generated line route object</div></div>
+            <div class="SectionHeading" id="remarksSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Description</span></div><div id="remarksSectionContent" class="SectionContent">Inserts a line route with the specified name and direction. The nodes and stop points are given&nbsp;in the net element container of type&nbsp;<A href="VISUMLIB~INetElements.html">INetElements</A>. The search parameters are determined by an&nbsp;<A href="VISUMLIB~INetReadRouteSearchTSys.html">INetReadRouteSearchTSys</A> object analogous to additive net reading.<BR>The first and the last line route element and all stop points that are open for the transport system of the line become route points. Line route elements that are created by the shortest path search do not become route points anyway.<BR></div>
+            
+            
+            <div class="SectionHeading" id="exampleSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Examples</span></div><div id="exampleSectionContent" class="SectionContent"><div class="SectionHeading" id="examplesSubexamples-SectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText SubSectionHeading">-</span></div><div id="examplesSubexamples-SectionContent" class="SectionContent">
+<div class="DescriptionContent">These examples use 'Example.net'</div>
+<div class="TabContainer">
+    <ul>
+        <li class="FilteredContentPython">
+			<a href="#TabContent-810c0029-c22d-44db-b890-746e761eb52d">Python</a>
+		</li>
+        <li class="FilteredContentPython">
+			<a href="#TabContent-1474cdc5-c25b-4f1a-b308-681842eebc0c">Python</a>
+		</li>
+
+    </ul>
+	<div id="TabContent-810c0029-c22d-44db-b890-746e761eb52d" class="FilteredContentPython">
+		<pre><span style="color: #008000; ">#retreive some required objects from the network
+</span>busLine = Visum.Net.Lines.ItemByKey(<span style="color: #800000; ">&quot;BUS1&quot;</span>)
+dirTo = Visum.Net.Directions.GetAll[0]
+stopPoint10 = Visum.Net.StopPoints.ItemByKey(10)
+stopPoint20 = Visum.Net.StopPoints.ItemByKey(20)
+
+<span style="color: #008000; "># Add a bus line route from 10 to 20
+</span>stopsR1 = Visum.CreateNetElements()                       <span style="color: #008000; ">#create the container for passing stop points to AddLineRoute
+</span>stopsR1.Add(stopPoint10)
+stopsR1.Add(stopPoint20)
+paraR1 = Visum.IO.CreateNetReadRouteSearchTSys()                         <span style="color: #008000; ">#create the parameter object
+</span>paraR1.SetAttValue(<span style="color: #800000; ">&quot;HowToHandleIncompleteRoute&quot;</span>, 0)                      <span style="color: #008000; "># 0 - &quot;RouteSearchHandleIncompleteRouteTIgnoreLine&quot;
+</span>paraR1.SetAttValue(<span style="color: #800000; ">&quot;LINKTYPEFORINSERTEDLINKSREPLACINGMISSINGLINKS&quot;</span>, 77)  <span style="color: #008000; ">#set option to create new direct links and set parameters
+</span>Visum.Net.AddLineRoute(<span style="color: #800000; ">&quot;R1&quot;</span>, busLine, dirTo, stopsR1, paraR1) <span style="color: #008000; ">#create the line route</span></pre>
+	</div>
+	<div id="TabContent-1474cdc5-c25b-4f1a-b308-681842eebc0c" class="FilteredContentPython">
+		<pre><span style="color: #008000; "># use constants
+</span>C = win32com.client.constants
+
+<span style="color: #008000; ">#retreive some required objects from the network
+</span>trainLine = Visum.Net.Lines.ItemByKey(<span style="color: #800000; ">&quot;TRAIN&quot;</span>)
+dirTo = Visum.Net.Directions.GetAll[0]
+stopPoint10 = Visum.Net.StopPoints.ItemByKey(10)
+stopPoint40 = Visum.Net.StopPoints.ItemByKey(40)
+
+<span style="color: #008000; "># Add a train line route from 10 to 40 and open
+</span>stopsR1 = Visum.CreateNetElements()                          <span style="color: #008000; ">#create the container for passing the stop points of the line route to addLineRoute
+</span>stopsR1.Add(stopPoint10)
+stopsR1.Add(stopPoint40)
+          
+paraR1 = Visum.IO.CreateNetReadRouteSearchTSys() <span style="color: #008000; ">#create the parameter object
+</span>paraR1.SetAttValue(<span style="color: #800000; ">&quot;HowToHandleIncompleteRoute&quot;</span>, C.RouteSearchHandleIncompleteRouteTSearchShortestPath) <span style="color: #008000; "># search shortest path if line route has gaps
+</span>paraR1.SetAttValue(<span style="color: #800000; ">&quot;ShortestPathCriterion&quot;</span>, C.ShortestPathCriterion_LinkT_Sys) <span style="color: #008000; "># link travel time of current transport system
+</span>paraR1.SetAttValue(<span style="color: #800000; ">&quot;IncludeBlockedLinks&quot;</span>, False) <span style="color: #008000; "># don't route over closed links
+</span>paraR1.SetAttValue(<span style="color: #800000; ">&quot;IncludeBlockedTurns&quot;</span>, False) <span style="color: #008000; "># don't route over closed turns
+</span>paraR1.SetAttValue(<span style="color: #800000; ">&quot;MaxDeviationFactor&quot;</span>, 1000) <span style="color: #008000; "># maximum deviation factor of shortest path search from direct distance
+</span>paraR1.SetAttValue(<span style="color: #800000; ">&quot;WhatToDoIfShortestPathNotFound&quot;</span>, C.IfNotFound_DontRead) <span style="color: #008000; "># if no shortest path is found, don't read
+</span>
+Visum.Net.AddLineRoute(<span style="color: #800000; ">&quot;R1&quot;</span>, trainLine, dirTo, stopsR1, paraR1) <span style="color: #008000; ">#create the line route</span></pre>
+	</div>
+	
+</div>
+</div>
+</div>
+            
+            
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~INet.html">INet </a>
+&nbsp;|&nbsp;<a href="VISUMLIB~INet.html">INet Members</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

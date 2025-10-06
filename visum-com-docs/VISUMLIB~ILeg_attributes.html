@@ -1,0 +1,4639 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>ILeg  Attributes</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~ILeg_attributes"/>
+    <meta name="Description" content="ILeg provides access to a single leg and all of its properties" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~ILeg"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~ILeg.html">ILeg </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">ILeg  Attributes</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <a class="PageLink" href="VISUMLIB~ILeg.html">Overview</a>&nbsp;<!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <DIV id=attributesSummarySectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Summary</SPAN></DIV>
+<DIV id=attributesSummarySectionContent class=SectionContent>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Identifier</TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD><A href="#AttrBypassControl">BypassControl</A></TD>
+<TD>BypassControl</TD>
+<TD>Bypass Control</TD></TR>
+<TR>
+<TD><A href="#AttrBypassHasTargetLane">BypassHasTargetLane</A></TD>
+<TD>BypassHasTargetLane</TD>
+<TD>Bypass has target lane</TD></TR>
+<TR>
+<TD><A href="#AttrBypassRadius">BypassRadius</A></TD>
+<TD>BypassRadius</TD>
+<TD>Bypass Radius</TD></TR>
+<TR>
+<TD><A href="#AttrChannelizedControl">ChannelizedControl</A></TD>
+<TD>ChannelizedControl</TD>
+<TD>Channelized Control</TD></TR>
+<TR>
+<TD><A href="#AttrChannelizedTurnHasTargetLane">ChannelizedTurnHasTargetLane</A></TD>
+<TD>ChannelizedTurnHasTargetLane</TD>
+<TD>Channelized turn has target lane</TD></TR>
+<TR>
+<TD><A href="#AttrChannTurnLen">ChannTurnLen</A></TD>
+<TD>ChannTurnLen</TD>
+<TD>Channelized turn length</TD></TR>
+<TR>
+<TD><A href="#AttrCIslandLen">CIslandLen</A></TD>
+<TD>CIslandLen</TD>
+<TD>Center island length</TD></TR>
+<TR>
+<TD><A href="#AttrCIslandWidth">CIslandWidth</A></TD>
+<TD>CIslandWidth</TD>
+<TD>Center island width</TD></TR>
+<TR>
+<TD><A href="#AttrHasBypass">HasBypass</A></TD>
+<TD>HasBypass</TD>
+<TD>Has Bypass</TD></TR>
+<TR>
+<TD><A href="#AttrHasCIsland">HasCIsland</A></TD>
+<TD>HasCIsland</TD>
+<TD>Has Center Island</TD></TR>
+<TR>
+<TD><A href="#AttrHasSplitter">HasSplitter</A></TD>
+<TD>HasSplitter</TD>
+<TD>Has Splitter Island</TD></TR>
+<TR>
+<TD><A href="#AttrICAApproachHalfWidth">ICAApproachHalfWidth</A></TD>
+<TD>ICAApproachHalfWidth</TD>
+<TD>ICA approach half width</TD></TR>
+<TR>
+<TD><A href="#AttrICABicycleBaseSaturationFlowRate">ICABicycleBaseSaturationFlowRate</A></TD>
+<TD>ICABicycleBaseSaturationFlowRate</TD>
+<TD>ICA bicycle base saturation flow rate</TD></TR>
+<TR>
+<TD><A href="#AttrICABicycleLaneWidth">ICABicycleLaneWidth</A></TD>
+<TD>ICABicycleLaneWidth</TD>
+<TD>ICA bicycle lane width</TD></TR>
+<TR>
+<TD><A href="#AttrICABicycleVol">ICABicycleVol</A></TD>
+<TD>ICABicycleVol</TD>
+<TD>ICA Bicycle volume</TD></TR>
+<TR>
+<TD><A href="#AttrICABusStopRate">ICABusStopRate</A></TD>
+<TD>ICABusStopRate</TD>
+<TD>ICA Local bus stopping rate</TD></TR>
+<TR>
+<TD><A href="#AttrICAComputeFlaredLaneEffects">ICAComputeFlaredLaneEffects</A></TD>
+<TD>ICAComputeFlaredLaneEffects</TD>
+<TD>ICA Compute flared lane effects</TD></TR>
+<TR>
+<TD><A href="#AttrICACornerRadius">ICACornerRadius</A></TD>
+<TD>ICACornerRadius</TD>
+<TD>ICA corner radius</TD></TR>
+<TR>
+<TD><A href="#AttrICACurbPresent">ICACurbPresent</A></TD>
+<TD>ICACurbPresent</TD>
+<TD>ICA curb present</TD></TR>
+<TR>
+<TD><A href="#AttrICAEntryAngle">ICAEntryAngle</A></TD>
+<TD>ICAEntryAngle</TD>
+<TD>ICA entry angle</TD></TR>
+<TR>
+<TD><A href="#AttrICAEntryWidth">ICAEntryWidth</A></TD>
+<TD>ICAEntryWidth</TD>
+<TD>ICA entry width</TD></TR>
+<TR>
+<TD><A href="#AttrICAFlaredStorageSize">ICAFlaredStorageSize</A></TD>
+<TD>ICAFlaredStorageSize</TD>
+<TD>ICA Flared storage size</TD></TR>
+<TR>
+<TD><A href="#AttrICAFlareLength">ICAFlareLength</A></TD>
+<TD>ICAFlareLength</TD>
+<TD>ICA flare length</TD></TR>
+<TR>
+<TD><A href="#AttrICAGradeSeparation">ICAGradeSeparation</A></TD>
+<TD>ICAGradeSeparation</TD>
+<TD>ICA grade separation</TD></TR>
+<TR>
+<TD><A href="#AttrICAHasParkingLeft">ICAHasParkingLeft</A></TD>
+<TD>ICAHasParkingLeft</TD>
+<TD>ICA Has on-street parking on left</TD></TR>
+<TR>
+<TD><A href="#AttrICAHasParkingRight">ICAHasParkingRight</A></TD>
+<TD>ICAHasParkingRight</TD>
+<TD>ICA Has on-street parking on right</TD></TR>
+<TR>
+<TD><A href="#AttrICAKimberHollisC">ICAKimberHollisC</A></TD>
+<TD>ICAKimberHollisC</TD>
+<TD>ICA Kimber Hollis c-factor</TD></TR>
+<TR>
+<TD><A href="#AttrICANumberOfStorageSpacesInMedian">ICANumberOfStorageSpacesInMedian</A></TD>
+<TD>ICANumberOfStorageSpacesInMedian</TD>
+<TD>ICA Number of storage spaces in median refuge area</TD></TR>
+<TR>
+<TD><A href="#AttrICAParkingLeft">ICAParkingLeft</A></TD>
+<TD>ICAParkingLeft</TD>
+<TD>On-street parking maneuver rate left</TD></TR>
+<TR>
+<TD><A href="#AttrICAParkingRight">ICAParkingRight</A></TD>
+<TD>ICAParkingRight</TD>
+<TD>On-street parking maneuver rate right</TD></TR>
+<TR>
+<TD><A href="#AttrICAPavedOutsideShoulderWidth">ICAPavedOutsideShoulderWidth</A></TD>
+<TD>ICAPavedOutsideShoulderWidth</TD>
+<TD>ICA paved outside shoulder width</TD></TR>
+<TR>
+<TD><A href="#AttrICAProportionOnStreetParking">ICAProportionOnStreetParking</A></TD>
+<TD>ICAProportionOnStreetParking</TD>
+<TD>ICA proportion on-street parking</TD></TR>
+<TR>
+<TD><A href="#AttrICARightTurnIslandsNumber">ICARightTurnIslandsNumber</A></TD>
+<TD>ICARightTurnIslandsNumber</TD>
+<TD>ICA number of right turn islands</TD></TR>
+<TR>
+<TD><A href="#AttrICAShareBypassVol">ICAShareBypassVol</A></TD>
+<TD>ICAShareBypassVol</TD>
+<TD>ICA Share of bypass volume</TD></TR>
+<TR>
+<TD><A href="#AttrICASidewalkFlow">ICASidewalkFlow</A></TD>
+<TD>ICASidewalkFlow</TD>
+<TD>ICA sidewalk flow</TD></TR>
+<TR>
+<TD><A href="#AttrICAStreetWidth">ICAStreetWidth</A></TD>
+<TD>ICAStreetWidth</TD>
+<TD>ICA street width</TD></TR>
+<TR>
+<TD><A href="#AttrICAStripedParkingLaneWidth">ICAStripedParkingLaneWidth</A></TD>
+<TD>ICAStripedParkingLaneWidth</TD>
+<TD>ICA striped parking lane width</TD></TR>
+<TR>
+<TD><A href="#AttrICAUseTwoStageGapAcceptance">ICAUseTwoStageGapAcceptance</A></TD>
+<TD>ICAUseTwoStageGapAcceptance</TD>
+<TD>ICA Use two stage gap acceptance</TD></TR>
+<TR>
+<TD><A href="#AttrICAWalkwayWidthLeft">ICAWalkwayWidthLeft</A></TD>
+<TD>ICAWalkwayWidthLeft</TD>
+<TD>ICA walkway width left</TD></TR>
+<TR>
+<TD><A href="#AttrICAWalkwayWidthRight">ICAWalkwayWidthRight</A></TD>
+<TD>ICAWalkwayWidthRight</TD>
+<TD>ICA walkway width right</TD></TR>
+<TR>
+<TD><A href="#AttrIsChannelized">IsChannelized</A></TD>
+<TD>IsChannelized</TD>
+<TD>Is Channelized</TD></TR>
+<TR>
+<TD><A href="#AttrLateralOffset">LateralOffset</A></TD>
+<TD>LateralOffset</TD>
+<TD>Lateral offset</TD></TR>
+<TR>
+<TD><A href="#AttrMainNodeNo">MainNodeNo</A></TD>
+<TD>MainNodeNo</TD>
+<TD>Main node number</TD></TR>
+<TR>
+<TD><A href="#AttrNodeNo">NodeNo</A></TD>
+<TD>NodeNo</TD>
+<TD>Node number</TD></TR>
+<TR>
+<TD><A href="#AttrNumConflLanes">NumConflLanes</A></TD>
+<TD>NumConflLanes</TD>
+<TD>Number of conflicting lanes</TD></TR>
+<TR>
+<TD><A href="#AttrNumInboundPockets">NumInboundPockets</A></TD>
+<TD>NumInboundPockets</TD>
+<TD>Number of inbound pockets</TD></TR>
+<TR>
+<TD><A href="#AttrNumOutboundPockets">NumOutboundPockets</A></TD>
+<TD>NumOutboundPockets</TD>
+<TD>Number of outbound pockets</TD></TR>
+<TR>
+<TD><A href="#AttrOrientation">Orientation</A></TD>
+<TD>Orientation</TD>
+<TD>Orientation</TD></TR>
+<TR>
+<TD><A href="#AttrRoundaboutEntryRadius">RoundaboutEntryRadius</A></TD>
+<TD>RoundaboutEntryRadius</TD>
+<TD>Roundabout entry radius</TD></TR>
+<TR>
+<TD><A href="#AttrRoundaboutExitRadius">RoundaboutExitRadius</A></TD>
+<TD>RoundaboutExitRadius</TD>
+<TD>Roundabout exit radius</TD></TR>
+<TR>
+<TD><A href="#AttrRoundaboutInscribedDiameter">RoundaboutInscribedDiameter</A></TD>
+<TD>RoundaboutInscribedDiameter</TD>
+<TD>Roundabout inscribed circle diameter</TD></TR>
+<TR>
+<TD><A href="#AttrSBAPresetCriticalGapBypass">SBAPresetCriticalGapBypass</A></TD>
+<TD>SBAPresetCriticalGapBypass</TD>
+<TD>SBA preset critical gap bypass</TD></TR>
+<TR>
+<TD><A href="#AttrSBAPresetCriticalGapRoundabout">SBAPresetCriticalGapRoundabout</A></TD>
+<TD>SBAPresetCriticalGapRoundabout</TD>
+<TD>SBA preset critical gap roundabout</TD></TR>
+<TR>
+<TD><A href="#AttrSBAPresetFollowUpGapBypass">SBAPresetFollowUpGapBypass</A></TD>
+<TD>SBAPresetFollowUpGapBypass</TD>
+<TD>SBA preset follow up gap bypass</TD></TR>
+<TR>
+<TD><A href="#AttrSBAPresetFollowUpGapRoundabout">SBAPresetFollowUpGapRoundabout</A></TD>
+<TD>SBAPresetFollowUpGapRoundabout</TD>
+<TD>SBA preset follow up gap roundabout</TD></TR>
+<TR>
+<TD><A href="#AttrSBAUsedCriticalGapBypass">SBAUsedCriticalGapBypass</A></TD>
+<TD>SBAUsedCriticalGapBypass</TD>
+<TD>SBA used critical gap bypass</TD></TR>
+<TR>
+<TD><A href="#AttrSBAUsedCriticalGapRoundabout">SBAUsedCriticalGapRoundabout</A></TD>
+<TD>SBAUsedCriticalGapRoundabout</TD>
+<TD>SBA used critical gap roundabout</TD></TR>
+<TR>
+<TD><A href="#AttrSBAUsedFollowUpGapBypass">SBAUsedFollowUpGapBypass</A></TD>
+<TD>SBAUsedFollowUpGapBypass</TD>
+<TD>SBA used follow up gap bypass</TD></TR>
+<TR>
+<TD><A href="#AttrSBAUsedFollowUpGapRoundabout">SBAUsedFollowUpGapRoundabout</A></TD>
+<TD>SBAUsedFollowUpGapRoundabout</TD>
+<TD>SBA used follow up gap roundabout</TD></TR>
+<TR>
+<TD><A href="#AttrSBAUsePresetCriticalGapBypass">SBAUsePresetCriticalGapBypass</A></TD>
+<TD>SBAUsePresetCriticalGapBypass</TD>
+<TD>SBA use preset critical gap bypass</TD></TR>
+<TR>
+<TD><A href="#AttrSBAUsePresetCriticalGapRoundabout">SBAUsePresetCriticalGapRoundabout</A></TD>
+<TD>SBAUsePresetCriticalGapRoundabout</TD>
+<TD>SBA use preset critical gap roundabout</TD></TR>
+<TR>
+<TD><A href="#AttrSBAUsePresetFollowUpGapBypass">SBAUsePresetFollowUpGapBypass</A></TD>
+<TD>SBAUsePresetFollowUpGapBypass</TD>
+<TD>SBA use preset follow up gap bypass</TD></TR>
+<TR>
+<TD><A href="#AttrSBAUsePresetFollowUpGapRoundabout">SBAUsePresetFollowUpGapRoundabout</A></TD>
+<TD>SBAUsePresetFollowUpGapRoundabout</TD>
+<TD>SBA use preset follow up gap roundabout</TD></TR>
+<TR>
+<TD><A href="#AttrSplitterIslandLength">SplitterIslandLength</A></TD>
+<TD>SplitterIslandLength</TD>
+<TD>Splitter Island Length</TD></TR>
+<TR>
+<TD><A href="#AttrSplitterIslandWidth">SplitterIslandWidth</A></TD>
+<TD>SplitterIslandWidth</TD>
+<TD>Splitter Island Width</TD></TR>
+<TR>
+<TD><A href="#AttrStopLinePos">StopLinePos</A></TD>
+<TD>StopLinePos</TD>
+<TD>Stop line position</TD></TR></TBODY></TABLE></DIV>
+<DIV id=attributesAttributesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Attributes</SPAN></DIV>
+<DIV id=attributesAttributesSectionContent class=SectionContent>
+<DIV><A name=AttrBypassControl></A>
+<DIV id=BypassControlSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>BypassControl</SPAN></DIV>
+<DIV id=BypassControlSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD><A href="VISUMLIB~BypassControl.html">BypassControl</A></TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>None</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SteuerungBypass</TD>
+<TD>Steuerung Bypass</TD>
+<TD>Gibt bei einem Kreisverkehr an, wie die Vorfahrtsregelung am von diesem Arm ausgehenden Bypass ist. Nur relevant an Knoten vom Steuerungstyp Kreisverkehr, wenn es einen von diesem Arm ausgehenden Bypass gibt. Relevant für Umlegungen mit ICA und SBA. Relevant für die ICA-Berechnung an Kreisverkehren ab HCM2010.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>BypassControl</TD>
+<TD>Bypass Control</TD>
+<TD>At a roundabout, indicates the priority rule at the bypass originating from this leg. Only relevant at nodes of the control type roundabout if there is a bypass originating from this leg. Relevant for assignments with ICA and SBA.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>RégulContournement</TD>
+<TD>Régulation contournement</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrBypassHasTargetLane></A>
+<DIV id=BypassHasTargetLaneSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>BypassHasTargetLane</SPAN></DIV>
+<DIV id=BypassHasTargetLaneSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>BypassHatZielfahrstreifen</TD>
+<TD>Bypass hat Zielfahrstreifen</TD>
+<TD>Gibt an, dass dieser Bypass auf einen exklusiven Fahrstreifen einmündet, dass es also keinen Fahrstreifenabbieger mit anderer Quelle gibt, der auf den Zielfahrstreifen führt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>BypassHasTargetLane</TD>
+<TD>Bypass has target lane</TD>
+<TD>Indicates that this bypass enters an exclusive lane, so there is no lane turn with a different source that enters the target lane.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ContournAvecVoieCible</TD>
+<TD>Contournement avec voie cible</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrBypassRadius></A>
+<DIV id=BypassRadiusSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>BypassRadius</SPAN></DIV>
+<DIV id=BypassRadiusSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1000</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>RadiusBypass</TD>
+<TD>Radius Bypass</TD>
+<TD>Gibt den Radius des an einem Kreisverkehr vorbeiführenden Bypass an. Nur Relevant an Knoten vom Steuerungstyp Kreisverkehr, wenn es einen von diesem Arm ausgehenden Bypass gibt. Relevant für SBA und ANM-Export.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>BypassRadius</TD>
+<TD>Bypass Radius</TD>
+<TD>Specifies the radius of the bypass passing a roundabout. Only relevant at nodes of the control type roundabout if there is a bypass originating from this leg. Relevant for SBA and ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>RayonContournement</TD>
+<TD>Rayon contournement</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrChannelizedControl></A>
+<DIV id=ChannelizedControlSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ChannelizedControl</SPAN></DIV>
+<DIV id=ChannelizedControlSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD><A href="VISUMLIB~ChannelizedControl.html">ChannelizedControl</A></TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>Signal</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SteuerungGetrennterRechtsabbieger</TD>
+<TD>Steuerung getrennter Rechtsabbieger</TD>
+<TD>Gibt an, wie die Vorfahrtsregelung am von diesem Arm ausgehenden getrennten Rechtsabbieger (Linksabbieger bei Linksverkehr) ist. Nur relevant, wenn der Arm einen getrennten Rechtsabbieger hat. Relevant für Umlegungen mit ICA, SBA (außer Kreisverkehr) und ANM-Export (nur signalisiert). Relevant für die ICA-Berechnung an vorfahrtsgeregelten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ChannelizedControl</TD>
+<TD>Channelized Control</TD>
+<TD>Indicates the priority rules at the separate right-turn (left-turn when driving on the left) originating from this leg. Only relevant if the leg has a separate right-turn. Relevant for assignments with ICA, SBA (except roundabouts) and ANM export (signalized only).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>RégulVoieTournanteDroiteSép</TD>
+<TD>Régulation de voie tournante à droite séparée</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrChannelizedTurnHasTargetLane></A>
+<DIV id=ChannelizedTurnHasTargetLaneSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ChannelizedTurnHasTargetLane</SPAN></DIV>
+<DIV id=ChannelizedTurnHasTargetLaneSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>GetrRechtsabbHatZielfahrstreifen</TD>
+<TD>Getrennter Rechtsabbieger hat Zielfahrstreifen</TD>
+<TD>Gibt an, dass dieser getrennte Abbieger auf einen exklusiven Fahrstreifen einmündet, dass es also keinen Fahrstreifenabbieger mit anderer Quelle gibt, der auf den Zielfahrstreifen führt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ChannelizedTurnHasTargetLane</TD>
+<TD>Channelized turn has target lane</TD>
+<TD>Indicates that this separate turn enters an exclusive lane, so there is no lane turn with a different source that enters the target lane.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>VoieTournanteDroiteSéparéeAvecVoieCible</TD>
+<TD>Voie tournante à droite séparée avec voie cible</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrChannTurnLen></A>
+<DIV id=ChannTurnLenSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ChannTurnLen</SPAN></DIV>
+<DIV id=ChannTurnLenSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>20</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>DInselLänge</TD>
+<TD>Dreiecksinsel-Länge</TD>
+<TD>Schenkellänge der Dreiecksinsel zwischen dem Arm und dem von ihm ausgehenden getrennten Rechtsabbieger (Linksabbieger bei Linksverkehr). Relevant für Umlegungen mit ICA, SBA (außer Kreisverkehr) und ANM-Export. Relevant für die ICA-Berechnung ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ChannTurnLen</TD>
+<TD>Channelized turn length</TD>
+<TD>Side length of the triangular island between the leg and the separate right turn coming from it (left turn in case of left traffic). Relevant for assignments with ICA, SBA (except roundabouts), and ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LongIlotTriangle</TD>
+<TD>Longueur îlot triangulaire</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCIslandLen></A>
+<DIV id=CIslandLenSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>CIslandLen</SPAN></DIV>
+<DIV id=CIslandLenSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MInselLänge</TD>
+<TD>Mittelinsel-Länge</TD>
+<TD>Länge der Mittelinsel zwischen den Fahrstreifen der beiden Richtungen des Arms. Relevant für ANM-Export (außer Kreisverkehr).</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>CIslandLen</TD>
+<TD>Center island length</TD>
+<TD>Length of the center island between the lanes of the two directions of the leg. Relevant for ANM export (except roundabouts).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LongIlotCentral</TD>
+<TD>Longueur îlot central</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCIslandWidth></A>
+<DIV id=CIslandWidthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>CIslandWidth</SPAN></DIV>
+<DIV id=CIslandWidthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MInselBreite</TD>
+<TD>Mittelinsel-Breite</TD>
+<TD>Breite der Mittelinsel zwischen den Fahrstreifen der beiden Richtungen des Arms. Relevant für Umlegungen mit ICA (HCM ab 2010, vorfahrtsgeregelte Knoten) und ANM-Export (außer Kreisverkehr).</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>CIslandWidth</TD>
+<TD>Center island width</TD>
+<TD>Width of the center island between the lanes of the two directions of the leg. Relevant for assignments with ICA (HCM from 2010, right-of-way controlled nodes) and ANM export (except roundabouts).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LargIlotCentral</TD>
+<TD>Largeur îlot central</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrHasBypass></A>
+<DIV id=HasBypassSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>HasBypass</SPAN></DIV>
+<DIV id=HasBypassSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>HatBypass</TD>
+<TD>Hat Bypass</TD>
+<TD>Gibt an, ob der Arm einen Bypass hat (0 = nein / 1 = ja). Relevant für Umlegungen mit ICA, SBA und ANM-Export. Relevant für die ICA-Berechnung an Kreisverkehren ab HCM2010.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>HasBypass</TD>
+<TD>Has Bypass</TD>
+<TD>Indicates whether the leg has a bypass (0 = no / 1 = yes). Relevant for assignments with ICA, SBA, and ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AvecContournement</TD>
+<TD>Avec contournement</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrHasCIsland></A>
+<DIV id=HasCIslandSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>HasCIsland</SPAN></DIV>
+<DIV id=HasCIslandSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>HatMittelinsel</TD>
+<TD>Hat Mittelinsel</TD>
+<TD>Gibt an, ob auf dem Arm eine Mittelinsel liegt (0 = nein / 1 = ja). Relevant für Umlegungen mit ICA (HCM ab 2010, vorfahrtsgeregelte Knoten) und ANM-Export (außer Kreisverkehr).</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>HasCIsland</TD>
+<TD>Has Center Island</TD>
+<TD>Indicates whether there is a center island on the leg (0 = no / 1 = yes). Relevant for assignments with ICA (HCM from 2010, right-of-way controlled nodes) and ANM export (except roundabouts).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AvecIlotCentral</TD>
+<TD>Avec îlot central</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrHasSplitter></A>
+<DIV id=HasSplitterSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>HasSplitter</SPAN></DIV>
+<DIV id=HasSplitterSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>HatFahrbahnteiler</TD>
+<TD>Hat Fahrbahnteiler</TD>
+<TD>Gibt an, ob im Kreisverkehr einen Fahrbahnteiler hat (0 = nein / 1 = ja). Relevant für ANM-Export.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>HasSplitter</TD>
+<TD>Has Splitter Island</TD>
+<TD>Indicates whether the roundabout includes a center island (0 = no / 1 = yes). Relevant for ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AvecIlotSéparation</TD>
+<TD>Avec îlot de séparation des voies</TD>
+<TD>Indique si le giratoire inclut un îlot central ou non (0 = non/1 = oui). Pertinent pour l’exportation MRA.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAApproachHalfWidth></A>
+<DIV id=ICAApproachHalfWidthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAApproachHalfWidth</SPAN></DIV>
+<DIV id=ICAApproachHalfWidthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>2</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>15</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>3.5</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAEingHalbweite</TD>
+<TD>ICA Eingangs-Halbweite</TD>
+<TD>Eingangs-Halbweite des Arms. Geht in die Knotenwiderstandsberechnung für Kreisverkehre nach Kimber-Hollis ein.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAApproachHalfWidth</TD>
+<TD>ICA approach half width</TD>
+<TD>Approach half width of the leg. Is included in the node impedance calculation for roundabouts according to Kimber-Hollis.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>DemiLargeurEntréeACI</TD>
+<TD>Demi largeur d’entrée ACI</TD>
+<TD>Demi largeur d’entrée de la branche. Incluse dans le calcul du temps généralisé des nœuds pour les carrefours giratoires selon Kimber-Hollis.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICABicycleBaseSaturationFlowRate></A>
+<DIV id=ICABicycleBaseSaturationFlowRateSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICABicycleBaseSaturationFlowRate</SPAN></DIV>
+<DIV id=ICABicycleBaseSaturationFlowRateSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>2000.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICARadSättigung</TD>
+<TD>ICA Basis-Sättigungsverkehrsstärke Radfahrer</TD>
+<TD>Basis-Sättigungsverkehrsstärke für Radfahrer. Geht ein in die ICA-Berechnung des Knotens für Fahrradfahrer nach HCM 6. Edition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICABicycleBaseSaturationFlowRate</TD>
+<TD>ICA bicycle base saturation flow rate</TD>
+<TD>Basic saturation flow rate for bicycles. Is included in the ICA calculation of the node for bicycles to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>DébitSatCyclBaseACI</TD>
+<TD>Débit de saturation cycles de base ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICABicycleLaneWidth></A>
+<DIV id=ICABicycleLaneWidthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICABicycleLaneWidth</SPAN></DIV>
+<DIV id=ICABicycleLaneWidthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICARadFSBreite</TD>
+<TD>ICA Radfahrstreifen-Breite</TD>
+<TD>Breite des Fahrrad-Fahrstreifens des Arms. Geht ein in die ICA-Berechnung des Knotens für Fahrradfahrer nach HCM 6. Edition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICABicycleLaneWidth</TD>
+<TD>ICA bicycle lane width</TD>
+<TD>Width of the bicycle lane of the leg. Is included in the ICA calculation of the node for bicycles according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LargBandeCyclACI</TD>
+<TD>Largeur de bande cyclable ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICABicycleVol></A>
+<DIV id=ICABicycleVolSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICABicycleVol</SPAN></DIV>
+<DIV id=ICABicycleVolSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICARadBel</TD>
+<TD>ICA Radfahrer-Belastung</TD>
+<TD>Belastung durch geradeaus fahrende Fahrradfahrer am Knotenarm. Geht ein in die ICA-Berechnung des Knotens für Fahrradfahrer nach HCM 6. Edition. Auch für Kraftfahrzeuge relevant, wenn der Knoten signalisiert ist.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICABicycleVol</TD>
+<TD>ICA Bicycle volume</TD>
+<TD>Volume by cyclists riding straight ahead at the node leg. Is included in the ICA calculation of the node for bicycles according to HCM 6th Edition, also relevant for motor vehicles if the node is signalized.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ChgCyclACI</TD>
+<TD>Charge cycles ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICABusStopRate></A>
+<DIV id=ICABusStopRateSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICABusStopRate</SPAN></DIV>
+<DIV id=ICABusStopRateSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>250</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICABusFreq</TD>
+<TD>ICA Busfrequenz</TD>
+<TD>Anzahl der Bus-Haltevorgänge pro Stunde. Relevant für die ICA-Berechnung an signalisierten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICABusStopRate</TD>
+<TD>ICA Local bus stopping rate</TD>
+<TD>Number of bus stop events per hour. Is included in the ICA calculation of the node.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>FréqBusACI</TD>
+<TD>Fréquence de bus pour ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAComputeFlaredLaneEffects></A>
+<DIV id=ICAComputeFlaredLaneEffectsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAComputeFlaredLaneEffects</SPAN></DIV>
+<DIV id=ICAComputeFlaredLaneEffectsSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICABerechneWirkungEingangsaufweitung</TD>
+<TD>ICA Berechne die Wirkung der Eingangsaufweitung</TD>
+<TD>Gibt an, ob bei der ICA-Berechnung der Effekt von in der Ausrundung des Rechtsabbiegers (Linksabbiegers bei Linksverkehr) wartenden Fahrzeugen berücksichtigt werden soll oder nicht. Relevant für die ICA-Berechnung an vorfahrtsgeregelten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAComputeFlaredLaneEffects</TD>
+<TD>ICA Compute flared lane effects</TD>
+<TD>Indicates whether the ICA calculation should consider the effect of vehicles waiting in flared lanes of the right turn (left turn when driving on the left).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CalculImpactÉlargEntrantACI</TD>
+<TD>Calcul d’impact d’élargissement entrant ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICACornerRadius></A>
+<DIV id=ICACornerRadiusSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICACornerRadius</SPAN></DIV>
+<DIV id=ICACornerRadiusSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAAbbiegerRadius</TD>
+<TD>ICA Radius des Abbiegers</TD>
+<TD>Radius der Straßenecke (also des Rechtsabbiegers, bei Linksverkehr des Linksabbiegers). Geht ein in die ICA-Berechnung des Knotens nach HCM 6. Edition. Relevant für Umlegungen mit ICA.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICACornerRadius</TD>
+<TD>ICA corner radius</TD>
+<TD>Radius of the corner of the road (i.e. of the right turn, left turn when driving on the left). Is included in the ICA calculation of the node according to HCM 6th Edition. Relevant for assignments with ICA.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>RayonMvtNACI</TD>
+<TD>Rayon du mouvement au nœud ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICACurbPresent></A>
+<DIV id=ICACurbPresentSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICACurbPresent</SPAN></DIV>
+<DIV id=ICACurbPresentSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICABordsteinVorh</TD>
+<TD>ICA Bordstein vorhanden</TD>
+<TD>Gibt an, ob ein Bordstein vorhanden ist. Geht ein in die ICA-Berechnung des Knotens für Fahrradfahrer nach HCM 6. Edition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICACurbPresent</TD>
+<TD>ICA curb present</TD>
+<TD>Indicates whether a curb is present. Is included in the ICA calculation of the node for bicycles according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AvecBordureTrottoirACI</TD>
+<TD>Avec bordure de trottoir ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAEntryAngle></A>
+<DIV id=ICAEntryAngleSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAEntryAngle</SPAN></DIV>
+<DIV id=ICAEntryAngleSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>180</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>45</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAEingWinkel</TD>
+<TD>ICA Eingangswinkel</TD>
+<TD>Winkel des Eingangs in einen nach Kimber-Hollis berechneten Kreisverkehr.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAEntryAngle</TD>
+<TD>ICA entry angle</TD>
+<TD>Angle of the entry into a roundabout calculated according to Kimber-Hollis.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AngleEntréeACI</TD>
+<TD>Angle d’entrée ACI</TD>
+<TD>Angle de l’entrée dans un carrefour giratoire calculé selon Kimber-Hollis.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAEntryWidth></A>
+<DIV id=ICAEntryWidthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAEntryWidth</SPAN></DIV>
+<DIV id=ICAEntryWidthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>3</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>20</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>7</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAEingBreite</TD>
+<TD>ICA Eingangsbreite</TD>
+<TD>Breite des Eingangs in einen nach Kimber-Hollis berechneten Kreisverkehr.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAEntryWidth</TD>
+<TD>ICA entry width</TD>
+<TD>Width of the entry into a roundabout calculated according to Kimber-Hollis.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LargEntréeACI</TD>
+<TD>Largeur d’entrée ACI</TD>
+<TD>Largeur de l’entrée dans un carrefour giratoire calculé selon Kimber-Hollis.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAFlaredStorageSize></A>
+<DIV id=ICAFlaredStorageSizeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAFlaredStorageSize</SPAN></DIV>
+<DIV id=ICAFlaredStorageSizeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAGrößeEingangsaufweitung</TD>
+<TD>ICA Größe der Eingangsaufweitung</TD>
+<TD>Anzahl Fahrzeuge, die in der Ausrundung des Rechtsabbiegers (Linksabbiegers bei Linksverkehr) warten können. Relevant für die ICA-Berechnung an vorfahrtsgeregelten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAFlaredStorageSize</TD>
+<TD>ICA Flared storage size</TD>
+<TD>Number of vehicles that can wait in the flared lane of the right turn (left turn for left-hand traffic).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TailleÉlargEntrantACI</TD>
+<TD>Taille d’élargissement entrant ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAFlareLength></A>
+<DIV id=ICAFlareLengthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAFlareLength</SPAN></DIV>
+<DIV id=ICAFlareLengthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>100</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>20.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAAufweitungslänge</TD>
+<TD>ICA Aufweitungslänge</TD>
+<TD>Länge des Bereichs, in dem Fahrzeuge in der Ausrundung des Rechtsabbiegers (Linksabbiegers bei Linksverkehr) warten können. Relevant für Kreisverkehre, deren Widerstand nach Kimber-Hollis bewertet wird, sowie beim ANM-Export.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAFlareLength</TD>
+<TD>ICA flare length</TD>
+<TD>Length of the area in which vehicles can wait in the flare lane of the right turn (left turn when driving on the left). Relevant for roundabouts whose impedance is evaluated according to Kimber-Hollis, as well as for ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LongÉlargissementACI</TD>
+<TD>Longueur élargissement ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAGradeSeparation></A>
+<DIV id=ICAGradeSeparationSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAGradeSeparation</SPAN></DIV>
+<DIV id=ICAGradeSeparationSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>100</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICASteigungsTrennung</TD>
+<TD>ICA Steigungs-Trennung</TD>
+<TD>Steigungs-Trennung des Arms. Geht in die Knotenwiderstandsberechnung für Kreisverkehre nach Kimber-Hollis ein.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAGradeSeparation</TD>
+<TD>ICA grade separation</TD>
+<TD>Grade separation of the leg. Is included in the node impedance calculation for roundabouts according to Kimber-Hollis.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ÉcartSortieACI</TD>
+<TD>Écart sortie ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAHasParkingLeft></A>
+<DIV id=ICAHasParkingLeftSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAHasParkingLeft</SPAN></DIV>
+<DIV id=ICAHasParkingLeftSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAParkenLinksMöglich</TD>
+<TD>ICA Parken links möglich</TD>
+<TD>Gibt an, ob bei der ICA-Berechnung für signalisierte Knoten Parken auf der linken Seite erlaubt sein soll. Relevant für die ICA-Berechnung an signalisierten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAHasParkingLeft</TD>
+<TD>ICA Has on-street parking on left</TD>
+<TD>Indicates whether parking on the left should be allowed for signalized nodes in the ICA calculation.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>StatGauchePossACI</TD>
+<TD>Stationnement à gauche possible ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAHasParkingRight></A>
+<DIV id=ICAHasParkingRightSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAHasParkingRight</SPAN></DIV>
+<DIV id=ICAHasParkingRightSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAParkenRechtsMöglich</TD>
+<TD>ICA Parken rechts möglich</TD>
+<TD>Gibt an, ob bei der ICA-Berechnung für signalisierte Knoten Parken auf der rechten Seite erlaubt sein soll. Relevant für die ICA-Berechnung an signalisierten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAHasParkingRight</TD>
+<TD>ICA Has on-street parking on right</TD>
+<TD>Indicates whether parking on the right should be allowed for signalized nodes in the ICA calculation.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>StatDroitePossACI</TD>
+<TD>Stationnement à droite possible ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAKimberHollisC></A>
+<DIV id=ICAKimberHollisCSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAKimberHollisC</SPAN></DIV>
+<DIV id=ICAKimberHollisCSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>10</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAKimberHollisC</TD>
+<TD>ICA Kimber Hollis C-Faktor</TD>
+<TD>Parameter C der Staulängenberechnung im Rahmen der Knotenwiderstandsberechnung für Kreisverkehre nach Kimber-Hollis.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAKimberHollisC</TD>
+<TD>ICA Kimber Hollis c-factor</TD>
+<TD>Parameter C of the queue length calculation as part of the node impedance calculation for roundabouts according to Kimber-Hollis.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>FactCKimberHollisACI</TD>
+<TD>Facteur C Kimber Hollis ACI</TD>
+<TD>Paramètre C du calcul de longueurs de congestion dans le cadre du calcul du temps généralisé des nœuds pour carrefours giratoires selon Kimber-Hollis.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICANumberOfStorageSpacesInMedian></A>
+<DIV id=ICANumberOfStorageSpacesInMedianSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICANumberOfStorageSpacesInMedian</SPAN></DIV>
+<DIV id=ICANumberOfStorageSpacesInMedianSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAAnzPlätzeInMittelinsel</TD>
+<TD>ICA Anzahl Plätze in Mittelinsel</TD>
+<TD>Anzahl Fahrzeuge, die beim Einbiegen in einen Arm mit getrennten Fahrstreifen nach dem Überqueren der Fahrstreifen der ersten Richtung an der Mittenposition warten können. Relevant für die ICA-Berechnung an vorfahrtsgeregelten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICANumberOfStorageSpacesInMedian</TD>
+<TD>ICA Number of storage spaces in median refuge area</TD>
+<TD>Number of vehicles that can wait at the center position when turning into a leg with separate lanes after crossing the lanes of the first direction.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbPlacesIlotCentralACI</TD>
+<TD>Nombre de places sur l’îlot central ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAParkingLeft></A>
+<DIV id=ICAParkingLeftSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAParkingLeft</SPAN></DIV>
+<DIV id=ICAParkingLeftSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>180</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAParkfreqLinks</TD>
+<TD>ICA Parkfrequenz links</TD>
+<TD>Anzahl Parkvorgänge auf der linken Seite pro Stunde. Relevant für die ICA-Berechnung an signalisierten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAParkingLeft</TD>
+<TD>On-street parking maneuver rate left</TD>
+<TD>Number of parking operations on the left side per hour.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>FréqStatGaucheACI</TD>
+<TD>Fréquence de stationnement à gauche ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAParkingRight></A>
+<DIV id=ICAParkingRightSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAParkingRight</SPAN></DIV>
+<DIV id=ICAParkingRightSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>180</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAParkfreqRechts</TD>
+<TD>ICA Parkfrequenz rechts</TD>
+<TD>Anzahl Parkvorgänge auf der rechten Seite pro Stunde. Relevant für die ICA-Berechnung an signalisierten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAParkingRight</TD>
+<TD>On-street parking maneuver rate right</TD>
+<TD>Number of parking operations on the right side per hour.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>FréqStatDroiteACI</TD>
+<TD>Fréquence de stationnement à droite ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAPavedOutsideShoulderWidth></A>
+<DIV id=ICAPavedOutsideShoulderWidthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAPavedOutsideShoulderWidth</SPAN></DIV>
+<DIV id=ICAPavedOutsideShoulderWidthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICASeitenstreifenBreite</TD>
+<TD>ICA Breite des befestigten Seitenstreifens</TD>
+<TD>Breite des Seitenstreifens am Arm. Geht ein in die ICA-Berechnung des Knotens für Fahrradfahrer nach HCM 6. Edition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAPavedOutsideShoulderWidth</TD>
+<TD>ICA paved outside shoulder width</TD>
+<TD>Width of the shoulder at the leg. Included in the ICA calculation of the node for cyclists according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LargAccotementACI</TD>
+<TD>Largeur de l’accotement ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAProportionOnStreetParking></A>
+<DIV id=ICAProportionOnStreetParkingSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAProportionOnStreetParking</SPAN></DIV>
+<DIV id=ICAProportionOnStreetParkingSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>percentage</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1.0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAAnteilStraßenParker</TD>
+<TD>ICA Anteil Straßen-Parker</TD>
+<TD>Anteil Straßenparker auf dem Arm. Geht ein in die ICA-Berechnung des Knotens für Fahrradfahrer nach HCM 6. Edition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAProportionOnStreetParking</TD>
+<TD>ICA proportion on-street parking</TD>
+<TD>Proportion of street parking on the leg. Included in the ICA calculation of the node for cyclists according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>PartStatRouteACI</TD>
+<TD>Part de véhicules en stationnement sur route ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICARightTurnIslandsNumber></A>
+<DIV id=ICARightTurnIslandsNumberSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICARightTurnIslandsNumber</SPAN></DIV>
+<DIV id=ICARightTurnIslandsNumberSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>2</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAAnzRAInseln</TD>
+<TD>ICA Anzahl Rechtsabbieger-Inseln</TD>
+<TD>Anzahl Mittelinseln beim Überqueren des Rechtsabbiegers (des Linksabbiegers bei Linksverkehr). Geht ein in die ICA-Berechnung des Knotens nach HCM 6. Edition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICARightTurnIslandsNumber</TD>
+<TD>ICA number of right turn islands</TD>
+<TD>Number of center islands when crossing the right turn (the left turn when driving left). Included in the ICA calculation of the node according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbIlotsVoieTournDroiteACI</TD>
+<TD>Nombre d’îlots de voie tournante à droite ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAShareBypassVol></A>
+<DIV id=ICAShareBypassVolSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAShareBypassVol</SPAN></DIV>
+<DIV id=ICAShareBypassVolSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>1.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAAnteilBypassBel</TD>
+<TD>ICA Anteil Bypass Belastung</TD>
+<TD>Anteil der Rechtsabbieger (Linksabbieger bei Linksverkehr), die den vom Arm ausgehenden Bypass benutzen und nicht in den Kreisverkehr einfahren. Nur relevant, wenn der Knoten ein Kreisverkehr ist. Relevant für die ICA-Berechnung an Kreisverkehren ab HCM2010.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAShareBypassVol</TD>
+<TD>ICA Share of bypass volume</TD>
+<TD>Share of right turns (left turns when driving left) that use the bypass coming from the leg and do not enter the roundabout. Only relevant if the node is a roundabout.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>PartContournChgACI</TD>
+<TD>Part contournement charge ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICASidewalkFlow></A>
+<DIV id=ICASidewalkFlowSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICASidewalkFlow</SPAN></DIV>
+<DIV id=ICASidewalkFlowSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAPassierendeFg</TD>
+<TD>ICA Passierende Fußgänger</TD>
+<TD>Belastung des Arms durch passierende Fußgänger. Geht ein in die ICA-Berechnung des Knotens nach HCM 6. Edition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICASidewalkFlow</TD>
+<TD>ICA sidewalk flow</TD>
+<TD>Volume of the leg due to pedestrians passing by. Included in the ICA calculation of the node according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>FluxPiétonTrottoirACI</TD>
+<TD>Flux piéton trottoir ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAStreetWidth></A>
+<DIV id=ICAStreetWidthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAStreetWidth</SPAN></DIV>
+<DIV id=ICAStreetWidthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAStraßenbreite</TD>
+<TD>ICA Straßenbreite</TD>
+<TD>Breite der Straße an diesem Arm. Geht ein in die ICA-Berechnung des Knotens für Fahrradfahrer nach HCM 6. Edition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAStreetWidth</TD>
+<TD>ICA street width</TD>
+<TD>Width of the street at this leg. Included in the ICA calculation of the node for bicycles according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LargRouteACI</TD>
+<TD>Largeur de route ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAStripedParkingLaneWidth></A>
+<DIV id=ICAStripedParkingLaneWidthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAStripedParkingLaneWidth</SPAN></DIV>
+<DIV id=ICAStripedParkingLaneWidthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAParkstreifenBreite</TD>
+<TD>ICA Breite des Parkstreifens</TD>
+<TD>Breite des Parkstreifens am Arm. Geht ein in die ICA-Berechnung des Knotens für Fahrradfahrer nach HCM 6. Edition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAStripedParkingLaneWidth</TD>
+<TD>ICA striped parking lane width</TD>
+<TD>Width of the parking strip at the leg. Included in the ICA calculation of the node for bicycles according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LargBandeStatACI</TD>
+<TD>Largeur de bande de stationnement ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAUseTwoStageGapAcceptance></A>
+<DIV id=ICAUseTwoStageGapAcceptanceSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAUseTwoStageGapAcceptance</SPAN></DIV>
+<DIV id=ICAUseTwoStageGapAcceptanceSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAVerwPlätzeInMittelinsel</TD>
+<TD>ICA Verwende Plätze in Mittelinsel</TD>
+<TD>Gibt an, ob an diesem Arm das Warten an der Mittenposition erlaubt ist oder nicht. Relevant für die ICA-Berechnung an vorfahrtsgeregelten Knoten ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAUseTwoStageGapAcceptance</TD>
+<TD>ICA Use two stage gap acceptance</TD>
+<TD>Specifies whether waiting at the center position is permitted at this leg.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>UtilPlacesIlotCentralACI</TD>
+<TD>Utiliser places dans îlot central ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAWalkwayWidthLeft></A>
+<DIV id=ICAWalkwayWidthLeftSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAWalkwayWidthLeft</SPAN></DIV>
+<DIV id=ICAWalkwayWidthLeftSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAGehwegbreiteLinks</TD>
+<TD>ICA Gehwegbreite links</TD>
+<TD>Gehwegbreite links des Arms. Relevant für die ICA-Berechnung an signalisierten Knoten ab HCM 6. Auflage.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAWalkwayWidthLeft</TD>
+<TD>ICA walkway width left</TD>
+<TD>Widths of the sidewalk left of the leg. Included in the ICA calculation of the node according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LargVoiePiétGaucheACI</TD>
+<TD>Largeur de voie piétonne gauche ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrICAWalkwayWidthRight></A>
+<DIV id=ICAWalkwayWidthRightSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ICAWalkwayWidthRight</SPAN></DIV>
+<DIV id=ICAWalkwayWidthRightSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ICAGehwegbreiteRechts</TD>
+<TD>ICA Gehwegbreite rechts</TD>
+<TD>Gehwegbreite rechts des Arms. Relevant für die ICA-Berechnung an signalisierten Knoten ab HCM 6. Auflage.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ICAWalkwayWidthRight</TD>
+<TD>ICA walkway width right</TD>
+<TD>Widths of the sidewalk right of the leg. Included in the ICA calculation of the node according to HCM 6th Edition.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LargVoiePiétDroiteACI</TD>
+<TD>Largeur de voie piétonne droite ACI</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrIsChannelized></A>
+<DIV id=IsChannelizedSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>IsChannelized</SPAN></DIV>
+<DIV id=IsChannelizedSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>HatGetrenntenRechtsabbieger</TD>
+<TD>Hat getrennten Rechtsabbieger</TD>
+<TD>Gibt an, ob der Knotenarm einen getrennten Rechtsabbieger hat (0 = nein / 1 = ja). Relevant für Umlegungen mit ICA, SBA (außer Kreisverkehr) und ANM-Export. Relevant für die ICA-Berechnung ab HCM 2000.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>IsChannelized</TD>
+<TD>Is Channelized</TD>
+<TD>Indicates whether the node leg has a separate right turn (0 = no / 1 = yes).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AvecVoieTournanteDroiteSép</TD>
+<TD>Avec voie tournante à droite séparée</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrLateralOffset></A>
+<DIV id=LateralOffsetSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>LateralOffset</SPAN></DIV>
+<DIV id=LateralOffsetSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SeitlicherVersatz</TD>
+<TD>Seitlicher Versatz</TD>
+<TD>Seitlicher Versatz des Arms am Knoten. Positive Werte verschieben den Arm nach rechts, negative Werte nach links (aus Sicht auf die Kreuzung). Relevant für ANM-Export (außer Kreisverkehr).</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>LateralOffset</TD>
+<TD>Lateral offset</TD>
+<TD>Lateral offset of the leg at the node. Positive values shift the arm to the right, negative values to the left (from the perspective towards the intersection). Relevant for ANM export (except roundabouts).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>DécalageLatéral</TD>
+<TD>Décalage latéral</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMainNodeNo></A>
+<DIV id=MainNodeNoSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MainNodeNo</SPAN></DIV>
+<DIV id=MainNodeNoSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>index</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>OberKnotNr</TD>
+<TD>Oberknoten-Nummer</TD>
+<TD>Nummer des Oberknotens.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MainNodeNo</TD>
+<TD>Main node number</TD>
+<TD>Number of the main node.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NumMN</TD>
+<TD>Numéro Macronœud</TD>
+<TD>Numéro du macronœud.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNodeNo></A>
+<DIV id=NodeNoSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>NodeNo</SPAN></DIV>
+<DIV id=NodeNoSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>index</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KnotNr</TD>
+<TD>Knoten-Nummer</TD>
+<TD>Nummer des Knotens.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>NodeNo</TD>
+<TD>Node number</TD>
+<TD>Number of the node.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NumNœud</TD>
+<TD>NumNœud</TD>
+<TD>Numéro du nœud.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNumConflLanes></A>
+<DIV id=NumConflLanesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>NumConflLanes</SPAN></DIV>
+<DIV id=NumConflLanesSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>ICA input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>ICA</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>5</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AnzKonflFS</TD>
+<TD>Anzahl Konflikt-Fahrstreifen</TD>
+<TD>Anzahl in Konflikt stehender Fahrstreifen. Nur relevant, wenn der (Ober-)Knoten ein Kreisverkehr ist. Relevant für Umlegungen mit ICA, SBA und ANM-Export. Relevant für die ICA-Berechnung an Kreisverkehren ab HCM2010.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>NumConflLanes</TD>
+<TD>Number of conflicting lanes</TD>
+<TD>Number of lanes in conflict. Only relevant if the (main) node is a roundabout. Relevant for assignments with ICA, SBA, and ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbVoiesConflictuelles</TD>
+<TD>Nombre de voies conflictuelles</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNumInboundPockets></A>
+<DIV id=NumInboundPocketsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>NumInboundPockets</SPAN></DIV>
+<DIV id=NumInboundPocketsSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis output</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>20</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AnzEingAufweitungen</TD>
+<TD>Anzahl Eingangs-Aufweitungen</TD>
+<TD>Anzahl Aufweitungen auf Eingangsstrecke.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>NumInboundPockets</TD>
+<TD>Number of inbound pockets</TD>
+<TD>Number of pockets on entry link.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbÉlargEntrants</TD>
+<TD>Nb élargissements entrants</TD>
+<TD>Nombre d’élargissements sur le tronçon entrant.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNumOutboundPockets></A>
+<DIV id=NumOutboundPocketsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>NumOutboundPockets</SPAN></DIV>
+<DIV id=NumOutboundPocketsSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis output</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>20</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AnzAusgAufweitungen</TD>
+<TD>Anzahl Ausgangs-Aufweitungen</TD>
+<TD>Anzahl Aufweitungen auf Ausgangsstrecke.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>NumOutboundPockets</TD>
+<TD>Number of outbound pockets</TD>
+<TD>Number of pockets on exit link.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbÉlargSortants</TD>
+<TD>Nb élargissements sortants</TD>
+<TD>Nombre d’élargissements sur le tronçon sortant.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrOrientation></A>
+<DIV id=OrientationSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Orientation</SPAN></DIV>
+<DIV id=OrientationSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD><A href="VISUMLIB~OrientationType.html">OrientationType</A></TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>Undefined</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Orientierung</TD>
+<TD>Orientierung</TD>
+<TD>Orientierung des Arms am Knoten oder Oberknoten.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Orientation</TD>
+<TD>Orientation</TD>
+<TD>Orientation of the leg at the node or main node.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Orientation</TD>
+<TD>Orientation</TD>
+<TD>Orientation de la branche du nœud ou macronœud.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrRoundaboutEntryRadius></A>
+<DIV id=RoundaboutEntryRadiusSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>RoundaboutEntryRadius</SPAN></DIV>
+<DIV id=RoundaboutEntryRadiusSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1000</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>35</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KreisverkehrsEingRadius</TD>
+<TD>Kreisverkehrs-Eingangsradius</TD>
+<TD>Radius des Eingangs in den Kreisverkehr. Verwendet bei der ICA-Berechnung (Kimber), bei der simulationsbasierten Umlegung (SBA) und beim ANM-Export. Nur relevant, wenn der Knoten ein Kreisverkehr ist. Relevant für Umlegungen mit ICA (nur Kimber), SBA und ANM-Export.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>RoundaboutEntryRadius</TD>
+<TD>Roundabout entry radius</TD>
+<TD>Radius of the entry to the roundabout. Used for ICA calculation (Kimber), simulation-based assignment (SBA), and ANM export. Only relevant if the node is a roundabout. Relevant for assignments with ICA (Kimber only), SBA, and ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>RayonEntréeGiratoire</TD>
+<TD>Rayon d’entrée du carrefour giratoire</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrRoundaboutExitRadius></A>
+<DIV id=RoundaboutExitRadiusSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>RoundaboutExitRadius</SPAN></DIV>
+<DIV id=RoundaboutExitRadiusSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1000</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>35</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KreisverkehrsAusgRadius</TD>
+<TD>Kreisverkehrs-Ausgangsradius</TD>
+<TD>Radius des Ausgangs aus dem Kreisverkehr. Verwendet bei der simulationsbasierten Umlegung (SBA) und beim ANM-Export. Nur relevant, wenn der Knoten ein Kreisverkehr ist. Relevant für SBA und ANM-Export.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>RoundaboutExitRadius</TD>
+<TD>Roundabout exit radius</TD>
+<TD>Radius of the exit from the roundabout. Used for ICA calculation (Kimber), simulation-based assignment (SBA), and ANM export. Only relevant if the node is a roundabout. Relevant for SBA and ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AngleSortieGiratoire</TD>
+<TD>Angle de sortie du carrefour giratoire</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrRoundaboutInscribedDiameter></A>
+<DIV id=RoundaboutInscribedDiameterSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>RoundaboutInscribedDiameter</SPAN></DIV>
+<DIV id=RoundaboutInscribedDiameterSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>200</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>40</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KreisverkehrsEinbeschrKreisDurchm</TD>
+<TD>Einbeschriebener Kreisverkehrs-Durchmesser</TD>
+<TD>Durchmesser des Kreisverkehrs an der Position des Armes. Verwendet bei der ICA-Berechnung (Kimber) und beim ANM-Export. Relevant für Umlegungen mit ICA (nur Kimber), SBA und ANM-Export.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>RoundaboutInscribedDiameter</TD>
+<TD>Roundabout inscribed circle diameter</TD>
+<TD>Diameter of the roundabout at the position of the leg. Used for ICA calculation (Kimber) and ANM export. Relevant for assignments with ICA (Kimber only), SBA, and ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>GiratoireInscritDiamètreCercle</TD>
+<TD>Giratoire inscrit dans diamètre du cercle</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAPresetCriticalGapBypass></A>
+<DIV id=SBAPresetCriticalGapBypassSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAPresetCriticalGapBypass</SPAN></DIV>
+<DIV id=SBAPresetCriticalGapBypassSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>AvgOpen</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAEingGrenzzeitlückeBypass</TD>
+<TD>SBA eingestellte Grenzzeitlücke Bypass</TD>
+<TD>Eingestellte Grenzzeitlücke am Ausgang des Kreisverkehrs-Bypass für die Simulation. Wird verwendet, wenn das Attribut 'SBA eingestellte Grenzzeitlücke Kreisverkehr verwenden' wahr ist.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAPresetCriticalGapBypass</TD>
+<TD>SBA preset critical gap bypass</TD>
+<TD>Set critical gap at the exit of the roundabout bypass for the simulation. Used if the attribute ‘SBA use preset critical gap roundabout' is true.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IntVéhCritConfigContournABS</TD>
+<TD>Intervalle véhicule critique configuré contournement ABS</TD>
+<TD>Intervalle véhicule critique configuré à la sortie du contournement de carrefour giratoire pour la simulation. Est utilisé lorsque l’attribut «Utiliser intervalle véhicule critique configuré carrefour giratoire ABS&nbsp;» est vrai.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAPresetCriticalGapRoundabout></A>
+<DIV id=SBAPresetCriticalGapRoundaboutSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAPresetCriticalGapRoundabout</SPAN></DIV>
+<DIV id=SBAPresetCriticalGapRoundaboutSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>AvgOpen</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAEingGrenzzeitlückeKreisverkehr</TD>
+<TD>SBA eingestellte Grenzzeitlücke Kreisverkehr</TD>
+<TD>Eingestellte Grenzzeitlücke bei Einfahrt in den Kreisverkehr für die Simulation. Wird verwendet, wenn das Attribut 'SBA eingestellte Grenzzeitlücke Kreisverkehr verwenden' wahr ist.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAPresetCriticalGapRoundabout</TD>
+<TD>SBA preset critical gap roundabout</TD>
+<TD>Set critical gap at the entry of the roundabout bypass for the simulation. Used if the attribute ‘SBA use preset critical gap roundabout' is true.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IntVéhCritConfigGiratoireABS</TD>
+<TD>Intervalle véhicule critique configuré carrefour giratoire ABS</TD>
+<TD>Intervalle véhicule critique configuré à l’entrée dans le carrefour giratoire pour la simulation. Est utilisé lorsque l’attribut «Utiliser intervalle véhicule critique configuré carrefour giratoire ABS&nbsp;» est vrai.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAPresetFollowUpGapBypass></A>
+<DIV id=SBAPresetFollowUpGapBypassSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAPresetFollowUpGapBypass</SPAN></DIV>
+<DIV id=SBAPresetFollowUpGapBypassSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>AvgOpen</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAEingFolgezeitlückeBypass</TD>
+<TD>SBA eingestellte Folgezeitlücke Bypass</TD>
+<TD>Eingestellte Folgezeitlücke am Ausgang des Kreisverkehrs-Bypass für die Simulation. Wird verwendet, wenn das Attribut 'SBA eingestellte Folgezeitlücke Kreisverkehr verwenden' wahr ist.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAPresetFollowUpGapBypass</TD>
+<TD>SBA preset follow up gap bypass</TD>
+<TD>Set follow-up gap at the exit of the roundabout bypass for the simulation. Used if the attribute ‘SBA use preset follow-up gap roundabout' is true.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IntVéhInserSuccConfigContournABS</TD>
+<TD>Intervalle véh. d’insertion successive configuré contournement ABS</TD>
+<TD>Intervalle véhicule d’insertion successive configuré à la sortie du contournement de carrefour giratoire pour la simulation. Est utilisé lorsque l’attribut «&nbsp;Utiliser intervalle véh. d’insertion successive configuré carrefour giratoire ABS&nbsp;» est vrai.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAPresetFollowUpGapRoundabout></A>
+<DIV id=SBAPresetFollowUpGapRoundaboutSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAPresetFollowUpGapRoundabout</SPAN></DIV>
+<DIV id=SBAPresetFollowUpGapRoundaboutSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>AvgOpen</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAEingFolgezeitlückeKreisverkehr</TD>
+<TD>SBA eingestellte Folgezeitlücke Kreisverkehr</TD>
+<TD>Eingestellte Folgezeitlücke bei Einfahrt in den Kreisverkehr für die Simulation. Wird verwendet, wenn das Attribut 'SBA eingestellte Folgezeitlücke Kreisverkehr verwenden' wahr ist.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAPresetFollowUpGapRoundabout</TD>
+<TD>SBA preset follow up gap roundabout</TD>
+<TD>Set follow-up gap at the entry of the roundabout bypass for the simulation. Used if the attribute 'SBA use preset follow-up gap roundabout' is true.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IntVéhInserSuccConfigGiratoireABS</TD>
+<TD>Intervalle véh. d’insertion successive configuré carrefour giratoire ABS</TD>
+<TD>Intervalle véhicule d’insertion successive configuré à l’entrée dans le carrefour giratoire pour la simulation. Est utilisé lorsque l’attribut «Utiliser intervalle véh. d’insertion successive configuré carrefour giratoire ABS&nbsp;» est vrai.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAUsedCriticalGapBypass></A>
+<DIV id=SBAUsedCriticalGapBypassSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAUsedCriticalGapBypass</SPAN></DIV>
+<DIV id=SBAUsedCriticalGapBypassSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>AvgOpen</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAVerwGrenzzeitlückeBypass</TD>
+<TD>SBA verwendete Grenzzeitlücke Bypass</TD>
+<TD>Verwendete Grenzzeitlücke für die Simulation. Wirkt am Ausgang des Kreisverkehrs-Bypasses, der am Arm beginnt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAUsedCriticalGapBypass</TD>
+<TD>SBA used critical gap bypass</TD>
+<TD>Critical gap used for the simulation. Effective at the exit of the roundabout bypass that starts at the leg.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IntVéhCritUtilContournABS</TD>
+<TD>Intervalle véhicule critique utilisé contournement ABS</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAUsedCriticalGapRoundabout></A>
+<DIV id=SBAUsedCriticalGapRoundaboutSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAUsedCriticalGapRoundabout</SPAN></DIV>
+<DIV id=SBAUsedCriticalGapRoundaboutSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>AvgOpen</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAVerwGrenzzeitlückeKreisverkehr</TD>
+<TD>SBA verwendete Grenzzeitlücke Kreisverkehr</TD>
+<TD>Verwendete Grenzzeitlücke für die Simulation. Wirkt bei Einfahrt in den Kreisverkehr.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAUsedCriticalGapRoundabout</TD>
+<TD>SBA used critical gap roundabout</TD>
+<TD>Critical gap used for the simulation. Effective at the entry of the roundabout.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IntVéhCritUtilGiratoireABS</TD>
+<TD>Intervalle véhicule critique utilisé carrefour giratoire ABS</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAUsedFollowUpGapBypass></A>
+<DIV id=SBAUsedFollowUpGapBypassSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAUsedFollowUpGapBypass</SPAN></DIV>
+<DIV id=SBAUsedFollowUpGapBypassSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>AvgOpen</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAVerwFolgezeitlückeBypass</TD>
+<TD>SBA verwendete Folgezeitlücke Bypass</TD>
+<TD>Verwendete Folgezeitlücke für die Simulation. Wirkt am Ausgang des Kreisverkehrs-Bypass, der am Arm beginnt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAUsedFollowUpGapBypass</TD>
+<TD>SBA used follow up gap bypass</TD>
+<TD>Follow-up gap used for the simulation. Effective at the exit of the roundabout bypass that starts at the leg.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IntVéhInserSuccUtilContournABS</TD>
+<TD>Intervalle véh. d’insertion successive utilisé contournement ABS</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAUsedFollowUpGapRoundabout></A>
+<DIV id=SBAUsedFollowUpGapRoundaboutSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAUsedFollowUpGapRoundabout</SPAN></DIV>
+<DIV id=SBAUsedFollowUpGapRoundaboutSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0.0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>AvgOpen</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAVerwFolgezeitlückeKreisverkehr</TD>
+<TD>SBA verwendete Folgezeitlücke Kreisverkehr</TD>
+<TD>Verwendete Folgezeitlücke für die Simulation. Wirkt bei Einfahrt in den Kreisverkehr.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAUsedFollowUpGapRoundabout</TD>
+<TD>SBA used follow up gap roundabout</TD>
+<TD>Follow-up gap used for the simulation. Effective at the entry of the roundabout.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IntVéhInserSuccUtilGiratoireABS</TD>
+<TD>Intervalle véh. d’insertion successive utilisé carrefour giratoire ABS</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAUsePresetCriticalGapBypass></A>
+<DIV id=SBAUsePresetCriticalGapBypassSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAUsePresetCriticalGapBypass</SPAN></DIV>
+<DIV id=SBAUsePresetCriticalGapBypassSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAEingGrenzzeitlückeBypassVerw</TD>
+<TD>SBA eingestellte Grenzzeitlücke Bypass verwenden</TD>
+<TD>Gibt an, ob in der Simulation am Ausgang des Kreisverkehrs-Bypasses die eingestellte oder die errechnete Grenzzeitlücke verwendet wird.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAUsePresetCriticalGapBypass</TD>
+<TD>SBA use preset critical gap bypass</TD>
+<TD>Specifies whether the preset or the calculated critical gap is used in the simulation at the exit of the roundabout bypass.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>UtilIntVéhCritConfigContournABS</TD>
+<TD>Utiliser intervalle véhicule critique configuré contournement ABS</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAUsePresetCriticalGapRoundabout></A>
+<DIV id=SBAUsePresetCriticalGapRoundaboutSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAUsePresetCriticalGapRoundabout</SPAN></DIV>
+<DIV id=SBAUsePresetCriticalGapRoundaboutSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAEingGrenzzeitlückeKreisverkehrVerw</TD>
+<TD>SBA eingestellte Grenzzeitlücke Kreisverkehr verwenden</TD>
+<TD>Gibt an, ob in der Simulation bei Einfahrt in den Kreisverkehr die eingestellte oder die errechnete Grenzzeitlücke verwendet wird.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAUsePresetCriticalGapRoundabout</TD>
+<TD>SBA use preset critical gap roundabout</TD>
+<TD>Specifies whether the preset or the calculated critical gap is used in the simulation at the entry of the roundabout.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>UtilIntVéhCritConfigGiratoireABS</TD>
+<TD>Utiliser intervalle véhicule critique configuré carrefour giratoire ABS</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAUsePresetFollowUpGapBypass></A>
+<DIV id=SBAUsePresetFollowUpGapBypassSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAUsePresetFollowUpGapBypass</SPAN></DIV>
+<DIV id=SBAUsePresetFollowUpGapBypassSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAEingFolgezeitlückeBypassVerw</TD>
+<TD>SBA eingestellte Folgezeitlücke Bypass verwenden</TD>
+<TD>Gibt an, ob in der Simulation am Ausgang des Kreisverkehrs-Bypasses die eingestellte oder die errechnete Folgezeitlücke verwendet wird.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAUsePresetFollowUpGapBypass</TD>
+<TD>SBA use preset follow up gap bypass</TD>
+<TD>Specifies whether the preset or the calculated follow-up gap is used in the simulation at the exit of the roundabout bypass.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>UtilIntVéhInserSuccConfigContournABS</TD>
+<TD>Utiliser intervalle véh. d’insertion successive configuré contournement ABS</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSBAUsePresetFollowUpGapRoundabout></A>
+<DIV id=SBAUsePresetFollowUpGapRoundaboutSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SBAUsePresetFollowUpGapRoundabout</SPAN></DIV>
+<DIV id=SBAUsePresetFollowUpGapRoundaboutSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PrTInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>sba</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>SBAEingFolgezeitlückeKreisverkehrVerw</TD>
+<TD>SBA eingestellte Folgezeitlücke Kreisverkehr verwenden</TD>
+<TD>Gibt an, ob in der Simulation bei Einfahrt in den Kreisverkehr die eingestellte oder die errechnete Folgezeitlücke verwendet wird.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SBAUsePresetFollowUpGapRoundabout</TD>
+<TD>SBA use preset follow up gap roundabout</TD>
+<TD>Specifies whether the preset or the calculated follow-up gap is used at the entry of the roundabout.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>UtilIntVéhInserSuccConfigGiratoireABS</TD>
+<TD>Utiliser intervalle véh. d’insertion successive configuré carrefour giratoire ABS</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSplitterIslandLength></A>
+<DIV id=SplitterIslandLengthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SplitterIslandLength</SPAN></DIV>
+<DIV id=SplitterIslandLengthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>FahrbahnteilerLänge</TD>
+<TD>Fahrbahnteiler Länge</TD>
+<TD>Länge des Fahrbahnteilers im Kreisverkehr. Nur relevant, wenn der Knoten ein Kreisverkehr ist und der Arm einen Fahrbahnteiler hat. Relevant für ANM-Export.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SplitterIslandLength</TD>
+<TD>Splitter Island Length</TD>
+<TD>Length of the splitter island at the roundabout. Only relevant if the node is a roundabout and the leg has a splitter island. Relevant for ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LongIlotSéparation</TD>
+<TD>Longueur îlot de séparation des voies</TD>
+<TD>Longeur de l’îlot central dans le carrefour giratoire. Pertinent uniquement lorsque le nœud est un carrefour giratoire et lorsque la branche comporte un îlot central. Pertinent pour l’exportation MRA.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSplitterIslandWidth></A>
+<DIV id=SplitterIslandWidthSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SplitterIslandWidth</SPAN></DIV>
+<DIV id=SplitterIslandWidthSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>FahrbahnteilerBreite</TD>
+<TD>Fahrbahnteiler Breite</TD>
+<TD>Breite des Fahrbahnteilers im Kreisverkehr. Nur relevant, wenn der Knoten ein Kreisverkehr ist und der Arm einen Fahrbahnteiler hat. Relevant für ANM-Export.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SplitterIslandWidth</TD>
+<TD>Splitter Island Width</TD>
+<TD>Width of the splitter island in the roundabout. Only relevant if the node is a roundabout and the leg has a splitter island. Relevant for ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>LargIlotSéparation</TD>
+<TD>Largeur îlot de séparation des voies</TD>
+<TD>Largeur de l’îlot central dans le carrefour giratoire. Pertinent uniquement lorsque le nœud est un carrefour giratoire et lorsque la branche comporte un îlot central. Pertinent pour l’exportation MRA.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrStopLinePos></A>
+<DIV id=StopLinePosSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>StopLinePos</SPAN></DIV>
+<DIV id=StopLinePosSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>kedi</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>-100</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1000</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>HaltlinienPos</TD>
+<TD>Haltlinien-Position</TD>
+<TD>Position der Haltlinie, gemessen als Abstand von der Sichtlinie. Relevant für ANM-Export.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>StopLinePos</TD>
+<TD>Stop line position</TD>
+<TD>Position of the stop line, measured as distance from the line-of-sight. Relevant for ANM export.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>RayonB</TD>
+<TD>Rayon branche</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV></DIV>
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~ILeg.html">ILeg</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ILeg_attributes.html">ILeg Attributes</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ILeg_relations.html">ILeg Relations</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ILeg_referencedby.html">ILeg ReferencedBy</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

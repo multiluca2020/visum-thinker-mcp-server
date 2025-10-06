@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpSystem DefaultUrl="TitelCopyright/Startseite_VISUM.htm" PathToScriptsFolder="Resources/Scripts/" Skin="Data/SkinDefault/Skin.xml" Multilingual="false" Skins="Default" BuildTime="24.10.2024 12:31:34" BuildVersion="20.0.8886.22535" TargetType="HtmlHelp" SkinTemplateFolder="Skin/" InPreviewMode="false" MoveOutputContentToRoot="false" ReplaceReservedCharacters="true" MakeFileLowerCase="false" UseCustomTopicFileExtension="false" PreventExternalUrls="false" EnableResponsiveOutput="false" IncludeGlossarySearchResults="true" ResultsPerPage="20" FeaturedSnippetsResults="1" KnowledgePanelResults="1" IncludeMicroContent="true" xml:lang="de-de" LanguageName="German" SearchEngine="MadCapSearch" IncludeCSHRuntime="true" DebugMode="false" ShowMadCapBacklink="false">
+    <Subsystems>
+        <Url Source="../../PTV_chmHelp/VisumCOMpur.chm" TocPath="" />
+        <Url Source="../../PTV_chmHelp/VisumPy.chm" TocPath="Visum – Python" />
+    </Subsystems>
+</HelpSystem>

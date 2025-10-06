@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CatapultSkin Version="4" Comment="This is the default skin" Anchors="Width,Height" Width="880px" Height="678px" Top="270px" Left="534px" Bottom="82px" Right="506px" Tabs="TOC,Index,Search,Favorites" DefaultTab="TOC" UseBrowserDefaultSize="false" UseDefaultBrowserSetup="True" Title="PTV Visum COM/Python Help" AutoSyncTOC="true" RemoveImagesOnSave="false">
+    <Index BinaryStorage="true" />
+    <HtmlHelpOptions ShowMenuBar="false" TopmostWindowStyle="False" Buttons="Back,Forward,Stop,Home,Font,Print,Next,Previous" EnableButtonCaptions="True" AdvancedSearch="true" SaveUserWindowPosition="false" />
+    <Stylesheet Link="Stylesheet.xml" />
+    <Toc AlwaysShowSelection="true" BinaryStorage="true" LinesBetweenItems="true" PlusMinusSquares="true" Border="FixedSingle" LinesFromRoot="true" />
+    <TopicToolbar EnableCustomLayout="true" Buttons="Print|Back|Forward|PreviousTopic|CurrentTopicIndex|NextTopic" />
+</CatapultSkin>

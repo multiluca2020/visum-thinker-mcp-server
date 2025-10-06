@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>INetReadRouteSearchTSys </title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~INetReadRouteSearchTSys"/>
+    <meta name="Description" content="Parameter object to define parameters for automatic line route completion" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~-_namespace"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~INetReadRouteSearchTSys.html">INetReadRouteSearchTSys </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">INetReadRouteSearchTSys </div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <div class="SectionHeading" id="descriptionSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Summary</span></div><div id="descriptionSectionContent" class="SectionContent"><div class="DescriptionContent">Parameter object to define parameters for automatic line route completion</div></div>
+            
+            <div class="SectionHeading" id="remarksSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Description</span></div><div id="remarksSectionContent" class="SectionContent"><P>INetReadRouteSearch defines the options for the line and system route paths completion during the net reading process. It is also used to control the routing of new line routes created through&nbsp;the methods&nbsp;<A href="VISUMLIB~INet~AddLineRoute.html">AddLineRoute</A>&nbsp;and&nbsp;<A href="VISUMLIB~INet~AddSystemRoute.html">AddSystemRoute</A>.<BR>It is created through the&nbsp;<A href="VISUMLIB~IIO~CreateNetReadRouteSearchTSys.html" data-auto-update-caption="true">CreateNetReadRouteSearchTSys Method</A>.</P>
+<P>The interface INetReadRouteSearchTSys&nbsp;is to be filled with the data from the&nbsp;former interface (method&nbsp;SearchShortestPath() at INetReadRouteSearchTSys) as follows:</P>
+<TABLE>
+<THEAD>
+<TR>
+<TH>former property</TH>
+<TH>actual attribute</TH></TR></THEAD>
+<TBODY>
+<TR>
+<TD>shortestPathCriterion</TD>
+<TD>ShortestPathCriterion</TD></TR>
+<TR>
+<TD>includeBlockedLinksInRouting</TD>
+<TD>IncludeBlockedLinks</TD></TR>
+<TR>
+<TD>includeBlockedTurnsInRouting</TD>
+<TD>IncludeBlockedTurns</TD></TR>
+<TR>
+<TD>maxDeviationFactor</TD>
+<TD>MaxDeviationFactor</TD></TR>
+<TR>
+<TD>doIfNotFound</TD>
+<TD>WhatToDoIfShortestPathNotFound</TD></TR>
+<TR>
+<TD>linkTypeIfInsert</TD>
+<TD>SetAttValue(“LinkTypeForInsertedLinksReplacingMissingShortestPaths”, linkTypeIfInsert.AttValue(„No“))</TD></TR>
+<TR>
+<TD>doIfStopPointNotFound</TD>
+<TD>&nbsp;WhatToDoIfStopPointNotFound</TD></TR>
+<TR>
+<TD>doIfStopPointIsBlocked</TD>
+<TD>WhatToDoIfStopPointIsBlocked</TD></TR>
+<TR>
+<TD>SetLinkTypeIfOpened</TD>
+<TD>ChangeLinkTypeOfOpenedLinks</TD></TR>
+<TR>
+<TD>LinkTypeIfOpened</TD>
+<TD>LinkTypeForOpenedLinks</TD></TR></TBODY></TABLE>
+<P></P>
+<P>To meet the&nbsp;former behavior the attribute&nbsp;<STRONG>HowToHandleIncompleteRoute</STRONG> must be set to <STRONG>RouteSearchHandleIncompleteRouteTSearchShortestPath</STRONG>&nbsp;additionally.</P>
+<P></P>
+<P>The method <STRONG>InsertOrOpenLink</STRONG> was replaced by the attribute <STRONG>LinkTypeForInsertedLinksReplacingMissingLinks</STRONG><BR></P></div>
+            
+            <div class="SectionHeading" id="exampleSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Examples</span></div><div id="exampleSectionContent" class="SectionContent">See examples of&nbsp;<A href="VISUMLIB~INet~AddLineRoute.html" data-auto-update-caption="true">AddLineRoute Method</A>
+            </div>
+            
+            
+            <div class="SectionHeading" id="publicmethodsSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Public Methods</span></div><div id="publicmethodsSectionContent" class="SectionContent"><table class="FilteredItemListTable">
+<tr><td class=LinkCell><IMG alt="Public Method" src="aximages/PublicMethod.png">&nbsp;<a href="VISUMLIB~INetReadRouteSearchTSys~Load.html">Load</a></td><td class="DescriptionCell">Opens file with parameter settings</td></tr>
+</table></div>
+            <div class="SectionHeading" id="publicpropertiesSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Public Properties</span></div><div id="publicpropertiesSectionContent" class="SectionContent"><table class="FilteredItemListTable">
+<tr><td class=LinkCell><IMG alt="Public Property" src="aximages/PublicProperty.png">&nbsp;<a href="VISUMLIB~INetReadRouteSearchTSys~AttValue.html">AttValue</a></td><td class="DescriptionCell">Gets or sets an attribute value of the network object</td></tr>
+</table></div>
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~INetReadRouteSearchTSys.html">INetReadRouteSearchTSys</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~INetReadRouteSearchTSys_attributes.html">INetReadRouteSearchTSys Attributes</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~INetReadRouteSearchTSys_referencedby.html">INetReadRouteSearchTSys ReferencedBy</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

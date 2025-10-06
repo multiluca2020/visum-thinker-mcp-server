@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>ICameraPosition  Attributes</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~ICameraPosition_attributes"/>
+    <meta name="Description" content="ICountLocation provides access to a single count location and all of its properties" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~ICameraPosition"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~ICameraPosition.html">ICameraPosition </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">ICameraPosition  Attributes</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <a class="PageLink" href="VISUMLIB~ICameraPosition.html">Overview</a>&nbsp;<!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <DIV id=attributesSummarySectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Summary</SPAN></DIV>
+<DIV id=attributesSummarySectionContent class=SectionContent>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Identifier</TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD><A href="#AttrFocLen">FocLen</A></TD>
+<TD>FocLen</TD>
+<TD>Focal length</TD></TR>
+<TR>
+<TD><A href="#AttrFOV">FOV</A></TD>
+<TD>FOV</TD>
+<TD>Field of view</TD></TR>
+<TR>
+<TD><A href="#AttrName">Name</A></TD>
+<TD>Name</TD>
+<TD>Name</TD></TR>
+<TR>
+<TD><A href="#AttrNo">No</A></TD>
+<TD>No</TD>
+<TD>Number</TD></TR>
+<TR>
+<TD><A href="#AttrPitchAngle">PitchAngle</A></TD>
+<TD>PitchAngle</TD>
+<TD>Pitch angle</TD></TR>
+<TR>
+<TD><A href="#AttrPosWktPoint3D">PosWktPoint3D</A></TD>
+<TD>PosWktPoint3D</TD>
+<TD>PosWktPoint3D</TD></TR>
+<TR>
+<TD><A href="#AttrPosX">PosX</A></TD>
+<TD>PosX</TD>
+<TD>Position (x)</TD></TR>
+<TR>
+<TD><A href="#AttrPosY">PosY</A></TD>
+<TD>PosY</TD>
+<TD>Position (y)</TD></TR>
+<TR>
+<TD><A href="#AttrPosZ">PosZ</A></TD>
+<TD>PosZ</TD>
+<TD>Position (z)</TD></TR>
+<TR>
+<TD><A href="#AttrRollAngle">RollAngle</A></TD>
+<TD>RollAngle</TD>
+<TD>Roll angle</TD></TR>
+<TR>
+<TD><A href="#AttrYawAngle">YawAngle</A></TD>
+<TD>YawAngle</TD>
+<TD>Yaw angle</TD></TR></TBODY></TABLE></DIV>
+<DIV id=attributesAttributesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Attributes</SPAN></DIV>
+<DIV id=attributesAttributesSectionContent class=SectionContent>
+<DIV><A name=AttrFocLen></A>
+<DIV id=FocLenSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>FocLen</SPAN></DIV>
+<DIV id=FocLenSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis output</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Brennweite</TD>
+<TD>Brennweite</TD>
+<TD>Brennweite der Kamera.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>FocLen</TD>
+<TD>Focal length</TD>
+<TD>Focal length of the camera.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>DistFocale</TD>
+<TD>Distance focale</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrFOV></A>
+<DIV id=FOVSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>FOV</SPAN></DIV>
+<DIV id=FOVSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>179</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>45</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Sichtfeld</TD>
+<TD>Sichtfeld</TD>
+<TD>Bildwinkel der Kamera, angegeben in Grad.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>FOV</TD>
+<TD>Field of view</TD>
+<TD>Field of view of the camera, indicated in degrees.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ChampVision</TD>
+<TD>Champ de vision</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrName></A>
+<DIV id=NameSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Name</SPAN></DIV>
+<DIV id=NameSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>string</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Name</TD>
+<TD>Name</TD>
+<TD>Name der Kameraposition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Name</TD>
+<TD>Name</TD>
+<TD>Name of the camera position.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Nom</TD>
+<TD>Nom</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNo></A>
+<DIV id=NoSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>No</SPAN></DIV>
+<DIV id=NoSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>index</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Nr</TD>
+<TD>Nummer</TD>
+<TD>Nummer der Kameraposition.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>No</TD>
+<TD>Number</TD>
+<TD>Number of the camera position.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Num</TD>
+<TD>Numéro</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrPitchAngle></A>
+<DIV id=PitchAngleSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>PitchAngle</SPAN></DIV>
+<DIV id=PitchAngleSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>-90</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>90</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>NickWinkel</TD>
+<TD>Nick-Winkel</TD>
+<TD>Nick-Winkel der Kamera um die y-Achse (also Neigung).</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>PitchAngle</TD>
+<TD>Pitch angle</TD>
+<TD>Pitch angle of the camera around the y-axis (i.e. tilt).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AngleTangage</TD>
+<TD>Angle de tangage</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrPosWktPoint3D></A>
+<DIV id=PosWktPoint3DSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>PosWktPoint3D</SPAN></DIV>
+<DIV id=PosWktPoint3DSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longString</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>WKT geometry information</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>PosWktPunkt3D</TD>
+<TD>PosWktPunkt3D</TD>
+<TD>Position der Kamera im Raum als WKT-Ausdruck.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>PosWktPoint3D</TD>
+<TD>PosWktPoint3D</TD>
+<TD>Position of the camera in space as WKT expression.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>PosPointWkt3D</TD>
+<TD>PosPointWkt3D</TD>
+<TD>Position de la caméra dans l’espace comme expression WKT.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrPosX></A>
+<DIV id=PosXSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>PosX</SPAN></DIV>
+<DIV id=PosXSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>coord</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>PosX</TD>
+<TD>Position (x)</TD>
+<TD>X-Position der Kamera.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>PosX</TD>
+<TD>Position (x)</TD>
+<TD>X position of the camera.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>PosX</TD>
+<TD>Position (x)</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrPosY></A>
+<DIV id=PosYSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>PosY</SPAN></DIV>
+<DIV id=PosYSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>coord</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>PosY</TD>
+<TD>Position (y)</TD>
+<TD>Y-Position der Kamera.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>PosY</TD>
+<TD>Position (y)</TD>
+<TD>Y position of the camera.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>PosY</TD>
+<TD>Position (y)</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrPosZ></A>
+<DIV id=PosZSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>PosZ</SPAN></DIV>
+<DIV id=PosZSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>shortLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>PosZ</TD>
+<TD>Position (z)</TD>
+<TD>Z-Position der Kamera.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>PosZ</TD>
+<TD>Position (z)</TD>
+<TD>Z position of the camera.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>PosZ</TD>
+<TD>Position (z)</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrRollAngle></A>
+<DIV id=RollAngleSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>RollAngle</SPAN></DIV>
+<DIV id=RollAngleSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>360</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>RollWinkel</TD>
+<TD>Roll-Winkel</TD>
+<TD>Rollwinkel der Kamera um die x-Achse (also Winkel der Horizontlinie).</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>RollAngle</TD>
+<TD>Roll angle</TD>
+<TD>Roll angle of the camera around the x-axis (i.e. angle of the horizon line).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AngleRoulis</TD>
+<TD>Angle de roulis</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrYawAngle></A>
+<DIV id=YawAngleSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>YawAngle</SPAN></DIV>
+<DIV id=YawAngleSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>double</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>360</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>GierWinkel</TD>
+<TD>Gier-Winkel</TD>
+<TD>Gier-Winkel der Kamera um die z-Achse (also Blickrichtung)</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>YawAngle</TD>
+<TD>Yaw angle</TD>
+<TD>Yaw angle of the camera around the z-axis (i.e. view direction)</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AngleLacet</TD>
+<TD>Angle de lacet</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV></DIV>
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~ICameraPosition.html">ICameraPosition</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ICameraPosition_attributes.html">ICameraPosition Attributes</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ICameraPosition_relations.html">ICameraPosition Relations</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ICameraPosition_referencedby.html">ICameraPosition ReferencedBy</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

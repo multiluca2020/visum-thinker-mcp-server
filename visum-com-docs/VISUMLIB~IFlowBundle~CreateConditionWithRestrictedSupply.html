@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>CreateConditionWithRestrictedSupply Method</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~IFlowBundle~CreateConditionWithRestrictedSupply"/>
+    <meta name="Description" content="Adds a new term for a network object to the last open group of &quot;AND&quot; linked terms." />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~IFlowBundle_methods"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ > <a href="VISUMLIB~IFlowBundle.html">IFlowBundle </a>
+ &gt; <a href="VISUMLIB~IFlowBundle~CreateConditionWithRestrictedSupply.html">CreateConditionWithRestrictedSupply Method</a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">CreateConditionWithRestrictedSupply Method</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+<div id="NetElmPopupContent" class="PopupContent">
+A network element for object flow bundle calculation
+</div>
+<div id="LocalSupplyPopupContent" class="PopupContent">
+An INetElements container that describes the offer available
+</div>
+<div id="LocalSupply_IncludeWalkPopupContent" class="PopupContent">
+PuT pedestrian traffic systems may be part of the offer or not
+</div>
+<div id="ActivityTypeSetPopupContent" class="PopupContent">
+IActivityTypeSet object that describes the activity examined
+</div>
+<div id="SupplyAfterTransferPopupContent" class="PopupContent">
+An INetElements container that describes the more detailed offer available for passengers in transit
+</div>
+<div id="AfterTransfer_IncludeWalkPopupContent" class="PopupContent">
+PuT pedestrian traffic systems may be part of a detailed offer for passengers in transit or not
+</div>
+<div id="ComplementPopupContent" class="PopupContent">
+Set to True, to use the complement of the defined condition
+</div>
+<div id="ConsiderTimeRestrictionPopupContent" class="PopupContent">
+Apply temporal restrictions referring to a simulation-based assignment
+</div>
+<div id="FromTimePopupContent" class="PopupContent">
+Start time of the temporal restriction
+</div>
+<div id="ToTimePopupContent" class="PopupContent">
+End time of the temporal restriction
+</div>
+
+    <div id="BodyContent">
+        <div class="SectionHeading" id="descriptionSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Summary</span></div><div id="descriptionSectionContent" class="SectionContent"><div class="DescriptionContent">Adds a new term for a network object to the last open group of "AND" linked terms.<BR></div></div>
+            <div class="SectionHeading" id="syntaxSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Syntax</span></div><div id="syntaxSectionContent" class="SectionContent"><div class=LanguageSpecific id=Syntax_VB><table class="syntaxtable" width="100%" cellpadding="0" cellspacing="0"><tr><th>Visual Basic</th></tr><tr><td><pre><pre><span style="color: #0000FF; ">Public</span> <span style="color: #0000FF; ">Sub</span> CreateConditionWithRestrictedSupply( _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="NetElmPopupLink" data-popupcontentsource="#NetElmPopupContent" data-popupshowevent="click mouseenter">NetElm</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="LocalSupplyPopupLink" data-popupcontentsource="#LocalSupplyPopupContent" data-popupshowevent="click mouseenter">LocalSupply</a></i> <span style="color: #0000FF; ">As</span> <a href="VISUMLIB~INetElements.html">INetElements</a>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="LocalSupply_IncludeWalkPopupLink" data-popupcontentsource="#LocalSupply_IncludeWalkPopupContent" data-popupshowevent="click mouseenter">LocalSupply_IncludeWalk</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="ActivityTypeSetPopupLink" data-popupcontentsource="#ActivityTypeSetPopupContent" data-popupshowevent="click mouseenter">ActivityTypeSet</a></i> <span style="color: #0000FF; ">As</span> <a href="VISUMLIB~IActivityTypeSet.html">IActivityTypeSet</a>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="SupplyAfterTransferPopupLink" data-popupcontentsource="#SupplyAfterTransferPopupContent" data-popupshowevent="click mouseenter">SupplyAfterTransfer</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="AfterTransfer_IncludeWalkPopupLink" data-popupcontentsource="#AfterTransfer_IncludeWalkPopupContent" data-popupshowevent="click mouseenter">AfterTransfer_IncludeWalk</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="ComplementPopupLink" data-popupcontentsource="#ComplementPopupContent" data-popupshowevent="click mouseenter">Complement</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span> = <span style="color: #0000FF; ">False</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="ConsiderTimeRestrictionPopupLink" data-popupcontentsource="#ConsiderTimeRestrictionPopupContent" data-popupshowevent="click mouseenter">ConsiderTimeRestriction</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span> = <span style="color: #0000FF; ">False</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="FromTimePopupLink" data-popupcontentsource="#FromTimePopupContent" data-popupshowevent="click mouseenter">FromTime</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Integer</span> = 0, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="ToTimePopupLink" data-popupcontentsource="#ToTimePopupContent" data-popupshowevent="click mouseenter">ToTime</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Integer</span> = 86400 _
+) </pre></pre></tr></table></div></div>
+            <div class="SectionHeading" id="parametersSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Parameters</span></div><div id="parametersSectionContent" class="SectionContent"><table><tr><th>Name</th><th>Value type</th><th>Description</th></tr>
+<tr><td>NetElm</td><td>Variant</td><td>A network element for object flow bundle calculation</td></tr>
+<tr><td>LocalSupply</td><td><a href="VISUMLIB~INetElements.html">INetElements</a></td><td>An INetElements container that describes the offer available</td></tr>
+<tr><td>LocalSupply_IncludeWalk</td><td>Boolean</td><td>PuT pedestrian traffic systems may be part of the offer or not</td></tr>
+<tr><td>ActivityTypeSet</td><td><a href="VISUMLIB~IActivityTypeSet.html">IActivityTypeSet</a></td><td>IActivityTypeSet object that describes the activity examined</td></tr>
+<tr><td>SupplyAfterTransfer</td><td>Variant</td><td>An INetElements container that describes the more detailed offer available for passengers in transit</td></tr>
+<tr><td>AfterTransfer_IncludeWalk</td><td>Variant</td><td>PuT pedestrian traffic systems may be part of a detailed offer for passengers in transit or not</td></tr>
+<tr><td>Complement</td><td>Boolean</td><td>Set to True, to use the complement of the defined condition</td></tr>
+<tr><td>ConsiderTimeRestriction</td><td>Boolean</td><td>Apply temporal restrictions referring to a simulation-based assignment</td></tr>
+<tr><td>FromTime</td><td>Integer</td><td>Start time of the temporal restriction</td></tr>
+<tr><td>ToTime</td><td>Integer</td><td>End time of the temporal restriction</td></tr>
+</table></div>
+            
+            <div class="SectionHeading" id="remarksSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Description</span></div><div id="remarksSectionContent" class="SectionContent">Additionally, you can specify offer limitations using an INetElements container: For each network object type (operator, main line, line route, time profile, vehicle journey and transport system) for which there is an object in the container, you have to use the objects specified. If there is no object in the container for one of the types, then there is no such limitation. In addition to the INetElements object, the localSupply_includeWalk parameter is an option that allows you to add PuT pedestrian transport systems to the offer. <BR>The second set of analogous offer parameters is only interpreted for stop (area, point) object flow bundles and describe a more detailed offer for passengers in transit. If this container is not specified, there are no offer limitations for a more detailed offer. <BR>If a group starts with a zone or main zone condition, but only destination traffic is required, an error message is displayed. This is also the case, if a group ends with a zone or main zone condition and only origin traffic is requested.</div>
+            
+            
+            
+            
+            
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~IFlowBundle.html">IFlowBundle </a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IFlowBundle.html">IFlowBundle Members</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

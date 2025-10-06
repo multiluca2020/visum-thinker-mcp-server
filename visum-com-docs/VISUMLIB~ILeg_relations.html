@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>ILeg  Relations</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~ILeg_relations"/>
+    <meta name="Description" content="ILeg provides access to a single leg and all of its properties" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~ILeg"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~ILeg.html">ILeg </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">ILeg  Relations</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <a class="PageLink" href="VISUMLIB~ILeg.html">Overview</a>&nbsp;<!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <DIV id=relationsSummarySectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Summary</SPAN></DIV>
+<DIV id=relationsSummarySectionContent class=SectionContent>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Role name</TH>
+<TH>Related class</TH>
+<TH>Cardinality</TH></TR>
+<TR>
+<TD><A href="#RelatCrosswalks">Crosswalks</A></TD>
+<TD><A href="VISUMLIB~ICrosswalk.html">ICrosswalk</A></TD>
+<TD>0..*</TD></TR>
+<TR>
+<TD><A href="#RelatInboundLanes">InboundLanes</A></TD>
+<TD><A href="VISUMLIB~ILane.html">ILane</A></TD>
+<TD>1..*</TD></TR>
+<TR>
+<TD><A href="#RelatInLink">InLink</A></TD>
+<TD><A href="VISUMLIB~ILink.html">ILink</A></TD>
+<TD>1..1</TD></TR>
+<TR>
+<TD><A href="#RelatLanes">Lanes</A></TD>
+<TD><A href="VISUMLIB~ILane.html">ILane</A></TD>
+<TD>1..*</TD></TR>
+<TR>
+<TD><A href="#RelatOutboundLanes">OutboundLanes</A></TD>
+<TD><A href="VISUMLIB~ILane.html">ILane</A></TD>
+<TD>1..*</TD></TR>
+<TR>
+<TD><A href="#RelatOutLink">OutLink</A></TD>
+<TD><A href="VISUMLIB~ILink.html">ILink</A></TD>
+<TD>1..1</TD></TR></TBODY></TABLE></DIV>
+<DIV id=relationsRelationsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Relations</SPAN></DIV>
+<DIV id=relationsRelationsSectionContent class=SectionContent>
+<DIV><A name=RelatCrosswalks></A>
+<DIV id=CrosswalksSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Crosswalks</SPAN></DIV>
+<DIV id=CrosswalksSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 0..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Furten</TD>
+<TD>Furten</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Crosswalks</TD>
+<TD>Crosswalks</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>PassagesPiétons</TD>
+<TD>Passages piétons</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatInboundLanes></A>
+<DIV id=InboundLanesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>InboundLanes</SPAN></DIV>
+<DIV id=InboundLanesSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Eingangsfahrstreif</TD>
+<TD>Eingangs-Fahrstreifen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>InboundLanes</TD>
+<TD>Inbound lanes</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>VoiesEntrantes</TD>
+<TD>Voies entrantes</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatInLink></A>
+<DIV id=InLinkSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>InLink</SPAN></DIV>
+<DIV id=InLinkSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Eingangsstrecke</TD>
+<TD>Eingangs-Strecke</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>InLink</TD>
+<TD>In link</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TronçonEntrant</TD>
+<TD>Tronçon entrant</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatLanes></A>
+<DIV id=LanesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Lanes</SPAN></DIV>
+<DIV id=LanesSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Fahrstreifen</TD>
+<TD>Fahrstreifen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Lanes</TD>
+<TD>Lanes</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Voies</TD>
+<TD>Voies</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatOutboundLanes></A>
+<DIV id=OutboundLanesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>OutboundLanes</SPAN></DIV>
+<DIV id=OutboundLanesSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..*</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Ausgangsfahrstreif</TD>
+<TD>Ausgangs-Fahrstreifen</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>OutboundLanes</TD>
+<TD>Outbound lanes</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>VoiesSortantes</TD>
+<TD>Voies sortantes</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=RelatOutLink></A>
+<DIV id=OutLinkSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>OutLink</SPAN></DIV>
+<DIV id=OutLinkSectionContent class=SectionContent>
+<DIV>
+<P>Cardinality: 1..1</P>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Ausgangsstrecke</TD>
+<TD>Ausgangs-Strecke</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>OutLink</TD>
+<TD>Out link</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TronçonSortant</TD>
+<TD>Tronçon sortant</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV></DIV>
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~ILeg.html">ILeg</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ILeg_attributes.html">ILeg Attributes</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ILeg_relations.html">ILeg Relations</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~ILeg_referencedby.html">ILeg ReferencedBy</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

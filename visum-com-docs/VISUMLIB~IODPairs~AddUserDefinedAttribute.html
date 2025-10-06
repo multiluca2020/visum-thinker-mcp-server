@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>AddUserDefinedAttribute Method</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~IODPairs~AddUserDefinedAttribute"/>
+    <meta name="Description" content="Adds a user-defined attribute to this net object type" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~IODPairs_methods"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ > <a href="VISUMLIB~IODPairs.html">IODPairs </a>
+ &gt; <a href="VISUMLIB~IODPairs~AddUserDefinedAttribute.html">AddUserDefinedAttribute Method</a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">AddUserDefinedAttribute Method</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+<div id="IDPopupContent" class="PopupContent">
+<BR>ID of the attribute
+</div>
+<div id="ShortNamePopupContent" class="PopupContent">
+<BR>Short name
+</div>
+<div id="LongNamePopupContent" class="PopupContent">
+<BR>Long name
+</div>
+<div id="VTPopupContent" class="PopupContent">
+<BR>Data type for the attribute. See <A href="VISUMLIB~ValueType.html" data-auto-update-caption="true"><U><FONT color=#0066cc>EnumValueType Enumeration</FONT></U></A>.&nbsp;Not all types contained in the enum are allowed.
+</div>
+<div id="DecPlacesPopupContent" class="PopupContent">
+<BR>Number of decimal places (Default: 0)
+</div>
+<div id="IgnoredPopupContent" class="PopupContent">
+<BR>The parameter is ignored and is only used for compatibility with older VISUM versions
+</div>
+<div id="MinValPopupContent" class="PopupContent">
+<BR>If numerical value range: min. value
+</div>
+<div id="MaxValPopupContent" class="PopupContent">
+<BR>If numerical value range: max. value
+</div>
+<div id="DefValPopupContent" class="PopupContent">
+<BR>If numerical value range: default value
+</div>
+<div id="CrossSectionLogicPopupContent" class="PopupContent">
+<BR>
+<P>Cross section logic to be applied (see <A href="Sum%20Avg%20Min%20Max%20T.html" data-auto-update-caption="true">SumAvgMinMaxT</A>)</P>
+</div>
+<div id="CslIgnoreClosedPopupContent" class="PopupContent">
+<BR>
+<P>Ignores closed directions in cross sections</P>
+</div>
+<div id="FormulaPopupContent" class="PopupContent">
+<BR>
+<P>If value type is formular the parameter defines the formula of the attribute, e.g. “1.0+0.5*[ID]”</P>
+</div>
+<div id="SubAttrPopupContent" class="PopupContent">
+<BR>
+<P>Currently, only time interval sets&nbsp;can be specified as subattribute dimensions. The are refered to by a string 'TISET_' +&nbsp;number of the time interval set.&nbsp;When only the standard analysis times are present in the network (in older models), they are thus usually referred to as 'TISET_1'.&nbsp;Ommit the&nbsp;argument&nbsp;for creating UDAs without&nbsp;the subattribute dimension.</P>
+</div>
+<div id="CanBeEmptyPopupContent" class="PopupContent">
+<BR>
+</div>
+
+    <div id="BodyContent">
+        <div class="SectionHeading" id="descriptionSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Summary</span></div><div id="descriptionSectionContent" class="SectionContent"><div class="DescriptionContent">Adds a user-defined attribute to&nbsp;this net object type</div></div>
+            <div class="SectionHeading" id="syntaxSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Syntax</span></div><div id="syntaxSectionContent" class="SectionContent"><div class=LanguageSpecific id=Syntax_VB><table class="syntaxtable" width="100%" cellpadding="0" cellspacing="0"><tr><th>Visual Basic</th></tr><tr><td><pre><pre><span style="color: #0000FF; ">Public</span> <span style="color: #0000FF; ">Sub</span> AddUserDefinedAttribute( _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="IDPopupLink" data-popupcontentsource="#IDPopupContent" data-popupshowevent="click mouseenter">ID</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="ShortNamePopupLink" data-popupcontentsource="#ShortNamePopupContent" data-popupshowevent="click mouseenter">ShortName</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="LongNamePopupLink" data-popupcontentsource="#LongNamePopupContent" data-popupshowevent="click mouseenter">LongName</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="VTPopupLink" data-popupcontentsource="#VTPopupContent" data-popupshowevent="click mouseenter">VT</a></i> <span style="color: #0000FF; ">As</span> <a href="VISUMLIB~ValueType.html">ValueType</a>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="DecPlacesPopupLink" data-popupcontentsource="#DecPlacesPopupContent" data-popupshowevent="click mouseenter">DecPlaces</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="IgnoredPopupLink" data-popupcontentsource="#IgnoredPopupContent" data-popupshowevent="click mouseenter">Ignored</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span> = <span style="color: #0000FF; ">False</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="MinValPopupLink" data-popupcontentsource="#MinValPopupContent" data-popupshowevent="click mouseenter">MinVal</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="MaxValPopupLink" data-popupcontentsource="#MaxValPopupContent" data-popupshowevent="click mouseenter">MaxVal</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="DefValPopupLink" data-popupcontentsource="#DefValPopupContent" data-popupshowevent="click mouseenter">DefVal</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="CrossSectionLogicPopupLink" data-popupcontentsource="#CrossSectionLogicPopupContent" data-popupshowevent="click mouseenter">CrossSectionLogic</a></i> <span style="color: #0000FF; ">As</span> Variant, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="CslIgnoreClosedPopupLink" data-popupcontentsource="#CslIgnoreClosedPopupContent" data-popupshowevent="click mouseenter">CslIgnoreClosed</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Boolean</span> = <span style="color: #0000FF; ">False</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="FormulaPopupLink" data-popupcontentsource="#FormulaPopupContent" data-popupshowevent="click mouseenter">Formula</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span> = <span style="color: #800000; ">&quot;&quot;</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="SubAttrPopupLink" data-popupcontentsource="#SubAttrPopupContent" data-popupshowevent="click mouseenter">SubAttr</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">String</span> = <span style="color: #800000; ">&quot;&quot;</span>, _
+   <span style="color: #0000FF; ">Optional</span> <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="CanBeEmptyPopupLink" data-popupcontentsource="#CanBeEmptyPopupContent" data-popupshowevent="click mouseenter">CanBeEmpty</a></i> <span style="color: #0000FF; ">As</span> Variant _
+) </pre></pre></tr></table></div></div>
+            <div class="SectionHeading" id="parametersSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Parameters</span></div><div id="parametersSectionContent" class="SectionContent"><table><tr><th>Name</th><th>Value type</th><th>Description</th></tr>
+<tr><td>ID</td><td>String</td><td><BR>ID of the attribute</td></tr>
+<tr><td>ShortName</td><td>String</td><td><BR>Short name</td></tr>
+<tr><td>LongName</td><td>String</td><td><BR>Long name</td></tr>
+<tr><td>VT</td><td><a href="VISUMLIB~ValueType.html">ValueType</a></td><td><BR>Data type for the attribute. See <A href="VISUMLIB~ValueType.html" data-auto-update-caption="true"><U><FONT color=#0066cc>EnumValueType Enumeration</FONT></U></A>.&nbsp;Not all types contained in the enum are allowed.</td></tr>
+<tr><td>DecPlaces</td><td>Variant</td><td><BR>Number of decimal places (Default: 0)</td></tr>
+<tr><td>Ignored</td><td>Boolean</td><td><BR>The parameter is ignored and is only used for compatibility with older VISUM versions</td></tr>
+<tr><td>MinVal</td><td>Variant</td><td><BR>If numerical value range: min. value</td></tr>
+<tr><td>MaxVal</td><td>Variant</td><td><BR>If numerical value range: max. value</td></tr>
+<tr><td>DefVal</td><td>Variant</td><td><BR>If numerical value range: default value</td></tr>
+<tr><td>CrossSectionLogic</td><td>Variant</td><td><BR>
+<P>Cross section logic to be applied (see <A href="Sum%20Avg%20Min%20Max%20T.html" data-auto-update-caption="true">SumAvgMinMaxT</A>)</P></td></tr>
+<tr><td>CslIgnoreClosed</td><td>Boolean</td><td><BR>
+<P>Ignores closed directions in cross sections</P></td></tr>
+<tr><td>Formula</td><td>String</td><td><BR>
+<P>If value type is formular the parameter defines the formula of the attribute, e.g. “1.0+0.5*[ID]”</P></td></tr>
+<tr><td>SubAttr</td><td>String</td><td><BR>
+<P>Currently, only time interval sets&nbsp;can be specified as subattribute dimensions. The are refered to by a string 'TISET_' +&nbsp;number of the time interval set.&nbsp;When only the standard analysis times are present in the network (in older models), they are thus usually referred to as 'TISET_1'.&nbsp;Ommit the&nbsp;argument&nbsp;for creating UDAs without&nbsp;the subattribute dimension.</P></td></tr>
+<tr><td>CanBeEmpty</td><td>Variant</td><td><BR></td></tr>
+</table></div>
+            
+            <div class="SectionHeading" id="remarksSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Description</span></div><div id="remarksSectionContent" class="SectionContent"><P>The ID must not already be used by a predefined or already existing user-defined attribute of this net object, or an error is thrown.<BR>Note that in case of length attributes (long length or short length), the value of minval, maxval and defval parameters has to be specified using unit [m] even for long length (unit [km / mi]) and for networks using imperial units.<BR>&nbsp;</P></div>
+            
+            
+            <div class="SectionHeading" id="exampleSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Examples</span></div><div id="exampleSectionContent" class="SectionContent"><div class="SectionHeading" id="examplesSubexamples-SectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText SubSectionHeading">-</span></div><div id="examplesSubexamples-SectionContent" class="SectionContent">
+
+<div class="TabContainer">
+    <ul>
+        <li class="FilteredContentPython">
+			<a href="#TabContent-a625ee48-1fae-48ba-a8b6-fa0020be6ef3">Python</a>
+		</li>
+
+    </ul>
+	<div id="TabContent-a625ee48-1fae-48ba-a8b6-fa0020be6ef3" class="FilteredContentPython">
+		<pre>.. .AddUserDefinedAttribute(<span style="color: #800000; ">&quot;UDA_INTEGER&quot;</span>,<span style="color: #800000; ">&quot;UDA_INTEGER&quot;</span>,<span style="color: #800000; ">&quot;UDA_INTEGER&quot;</span>,1) <span style="color: #008000; ">#creates a user-defined attribute of type 'integer'
+</span>.. .AddUserDefinedAttribute(<span style="color: #800000; ">&quot;UDA_FLOAT&quot;</span>,<span style="color: #800000; ">&quot;UDA_FLOAT&quot;</span>,<span style="color: #800000; ">&quot;UDA_FLOAT&quot;</span>,2) <span style="color: #008000; ">#creates a user-defined attribute of type 'float'
+</span>.. .AddUserDefinedAttribute(<span style="color: #800000; ">&quot;UDA_BOOL&quot;</span>,<span style="color: #800000; ">&quot;UDA_BOOL&quot;</span>,<span style="color: #800000; ">&quot;UDA_BOOL&quot;</span>,9,defval=True) <span style="color: #008000; ">#creates a user-defined attribute of type 'bool' with default value of 'Yes' using named arguments
+</span>.. .AddUserDefinedAttribute(<span style="color: #800000; ">&quot;UDA_TEXT&quot;</span>,<span style="color: #800000; ">&quot;UDA_TEXT&quot;</span>,<span style="color: #800000; ">&quot;UDA_TEXT&quot;</span>,5)  <span style="color: #008000; ">#creates a user-defined attribute of type 'text'
+</span>.. .AddUserDefinedAttribute(ID=<span style="color: #800000; ">&quot;UDA_FORM1&quot;</span>,ShortName=<span style="color: #800000; ">&quot;UDA_FORM1&quot;</span>,LongName = <span style="color: #800000; ">&quot;UDA_FORM1&quot;</span>,VT= 2,Formula = <span style="color: #800000; ">&quot;[ADDVAL1] + [AddVal2]&quot;</span>) <span style="color: #008000; ">#creates a user-defined attribute using a formula. This special treatment with named parameters is due to a Python bug.
+</span>.. .AddUserDefinedAttribute(<span style="color: #800000; ">&quot;UDA_FORM2&quot;</span>,<span style="color: #800000; ">&quot;UDA_FORM2&quot;</span>,<span style="color: #800000; ">&quot;UDA_FORM2&quot;</span>,2,0,0,0,0,0,0,0,<span style="color: #800000; ">&quot;[ADDVAL1] + [AddVal2]&quot;</span>)  <span style="color: #008000; ">#use this variant if the one using named arguments shown above does not work
+</span>.. .AddUserDefinedAttribute(<span style="color: #800000; ">&quot;UDA_INTEGER1&quot;</span>,<span style="color: #800000; ">&quot;UDA_INTEGER1&quot;</span>,<span style="color: #800000; ">&quot;UDA_INTEGER1&quot;</span>,vt = 1,subAttr = 1 ) <span style="color: #008000; ">#creates a user-defined attribute of type 'integer' with subattribute AHPI</span></pre>
+	</div>
+	
+</div>
+</div>
+</div>
+            
+            
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~IODPairs.html">IODPairs </a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IODPairs.html">IODPairs Members</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

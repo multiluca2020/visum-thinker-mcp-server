@@ -1,0 +1,16 @@
+<html>
+<!-- Sitemap 1.0 -->
+<object type="text/site properties">
+	<param name="SiteType" value="index">
+	<param name="Window Styles" value="0x0">
+	<param name="ExWindow Styles" value="0x0">
+	</object>
+<ul>
+	<li><object type="text/sitemap">
+		<param name="Name" value="Start page">
+		<param name="Name" value="Startseite_VISUM">
+		<param name="Local" value="TitelCopyright/Startseite_VISUM.htm">
+			</object>
+	</li>
+	</ul>
+</html>

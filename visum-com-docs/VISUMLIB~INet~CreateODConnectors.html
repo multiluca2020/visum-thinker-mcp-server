@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>CreateODConnectors Method</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~INet~CreateODConnectors"/>
+    <meta name="Description" content="Creates multiple OD connectors for active zones" />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~INet_methods"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ > <a href="VISUMLIB~INet.html">INet </a>
+ &gt; <a href="VISUMLIB~INet~CreateODConnectors.html">CreateODConnectors Method</a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">CreateODConnectors Method</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+<div id="PrTorPuTPopupContent" class="PopupContent">
+Specifies if PuT and/or PrT connectors shall be generated
+</div>
+<div id="MaxLengthPopupContent" class="PopupContent">
+Maximum length of the created connectors
+</div>
+<div id="MaxNumConnectorsPerZoneCreatedInThisStepPopupContent" class="PopupContent">
+Maximum number of connectors created for each zone with this call
+</div>
+<div id="MaxNumConnectorsPerZoneTotalPopupContent" class="PopupContent">
+Maximum total number of connctors for each zone after this call
+</div>
+<div id="TypeOfNewConnectorsPopupContent" class="PopupContent">
+Type code [0..9] for the generated connectors
+</div>
+
+    <div id="BodyContent">
+        <div class="SectionHeading" id="descriptionSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Summary</span></div><div id="descriptionSectionContent" class="SectionContent"><div class="DescriptionContent">Creates multiple OD connectors for active zones</div></div>
+            <div class="SectionHeading" id="syntaxSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Syntax</span></div><div id="syntaxSectionContent" class="SectionContent"><div class=LanguageSpecific id=Syntax_VB><table class="syntaxtable" width="100%" cellpadding="0" cellspacing="0"><tr><th>Visual Basic</th></tr><tr><td><pre><pre><span style="color: #0000FF; ">Public</span> <span style="color: #0000FF; ">Sub</span> CreateODConnectors( _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="PrTorPuTPopupLink" data-popupcontentsource="#PrTorPuTPopupContent" data-popupshowevent="click mouseenter">PrTorPuT</a></i> <span style="color: #0000FF; ">As</span> <a href="VISUMLIB~PrTPuTType.html">PrTPuTType</a>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="MaxLengthPopupLink" data-popupcontentsource="#MaxLengthPopupContent" data-popupshowevent="click mouseenter">MaxLength</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Double</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="MaxNumConnectorsPerZoneCreatedInThisStepPopupLink" data-popupcontentsource="#MaxNumConnectorsPerZoneCreatedInThisStepPopupContent" data-popupshowevent="click mouseenter">MaxNumConnectorsPerZoneCreatedInThisStep</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Integer</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="MaxNumConnectorsPerZoneTotalPopupLink" data-popupcontentsource="#MaxNumConnectorsPerZoneTotalPopupContent" data-popupshowevent="click mouseenter">MaxNumConnectorsPerZoneTotal</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Integer</span>, _
+   <span style="color: #0000FF; ">ByVal</span> <i><a class="PopupLink" id="TypeOfNewConnectorsPopupLink" data-popupcontentsource="#TypeOfNewConnectorsPopupContent" data-popupshowevent="click mouseenter">TypeOfNewConnectors</a></i> <span style="color: #0000FF; ">As</span> <span style="color: #0000FF; ">Integer</span> _
+) </pre></pre></tr></table></div></div>
+            <div class="SectionHeading" id="parametersSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Parameters</span></div><div id="parametersSectionContent" class="SectionContent"><table><tr><th>Name</th><th>Value type</th><th>Description</th></tr>
+<tr><td>PrTorPuT</td><td><a href="VISUMLIB~PrTPuTType.html">PrTPuTType</a></td><td>Specifies if PuT and/or PrT connectors shall be generated</td></tr>
+<tr><td>MaxLength</td><td>Double</td><td>Maximum length of the created connectors</td></tr>
+<tr><td>MaxNumConnectorsPerZoneCreatedInThisStep</td><td>Integer</td><td>Maximum number of connectors created for each zone with this call</td></tr>
+<tr><td>MaxNumConnectorsPerZoneTotal</td><td>Integer</td><td>Maximum total number of connctors for each zone after this call</td></tr>
+<tr><td>TypeOfNewConnectors</td><td>Integer</td><td>Type code [0..9] for the generated connectors</td></tr>
+</table></div>
+            
+            <div class="SectionHeading" id="remarksSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">Description</span></div><div id="remarksSectionContent" class="SectionContent">This method provides the same functionality as the 'Create connectors' tool accessible through the user interface</div>
+            
+            
+            
+            
+            
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~INet.html">INet </a>
+&nbsp;|&nbsp;<a href="VISUMLIB~INet.html">INet Members</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

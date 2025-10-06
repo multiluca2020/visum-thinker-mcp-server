@@ -2,7 +2,7 @@
 import { spawn } from 'child_process';
 import { writeFileSync, readFileSync, existsSync, unlinkSync } from 'fs';
 import { join, basename, dirname } from 'path';
-import { createServer } from 'net';
+import { createServer, createConnection } from 'net';
 import { fileURLToPath } from 'url';
 
 // Per supporto ES modules
@@ -233,7 +233,8 @@ export class ProjectServerManager {
     }
 
     return new Promise((resolve, reject) => {
-      const client = require('net').createConnection(serverInfo.port, 'localhost');
+      const client = createConnection(serverInfo.port, 'localhost');
+      let buffer = '';
       
       client.on('connect', () => {
         const message = JSON.stringify({ ...command, requestId: Date.now() });
@@ -241,13 +242,37 @@ export class ProjectServerManager {
       });
 
       client.on('data', (data: any) => {
-        try {
-          const response = JSON.parse(data.toString().trim());
-          client.end();
-          resolve(response);
-        } catch (error) {
-          client.end();
-          reject(new Error('Errore parsing risposta server'));
+        buffer += data.toString();
+        
+        // Dividi per newlines per separare i messaggi
+        const messages = buffer.split('\n');
+        buffer = messages.pop() || ''; // Mantieni l'ultimo pezzo (potrebbe essere incompleto)
+        
+        for (const message of messages) {
+          if (message.trim()) {
+            try {
+              // Rimuovi backslash-n letterali che il server TCP Python aggiunge
+              const cleanedResponse = message.replace(/\\n$/g, '');
+              const response = JSON.parse(cleanedResponse);
+              
+              // Ignora il messaggio di welcome, aspetta la risposta vera
+              if (response.type === 'project_welcome') {
+                continue;
+              }
+              
+              // Risposta al comando ricevuta (query_result, save_result, error, etc.)
+              if (response.type === 'query_result' || response.type === 'save_result' || 
+                  response.type === 'error' || response.type === 'shutdown_ack' ||
+                  response.result !== undefined) {
+                client.end();
+                resolve(response);
+                return;
+              }
+            } catch (error) {
+              // Ignora messaggi malformati, continua ad aspettare
+              console.error('WARN: Messaggio TCP non parsabile:', message);
+            }
+          }
         }
       });
 

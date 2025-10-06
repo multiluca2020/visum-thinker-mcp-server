@@ -1,0 +1,5209 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <meta http-equiv="X-UA-Compatible" value="IE=9" />
+
+    
+
+    
+
+    <title>IBlock  Attributes</title>
+        
+    
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript" id="mshs_support_script"></script>
+    <script src="script/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery-ui-1.8.18.custom.css" />
+    <link rel="styleSheet" type="text/css" href="stylesheets/jquery.qtip.css" />
+	
+    
+	
+
+    <link rel="styleSheet" type="text/css" href="stylesheets/dx.com.2012.css" data-mshv2-stylesheet="/stylesheets/dx.com.2012.mshv2.css" />
+    <script src="script/dx.com.jqueryplugins.2012.min.js" type="text/javascript"></script>
+    <script src="script/dx.com.2012.js" type="text/javascript"></script>
+    
+    <meta name="Microsoft.Help.Id" content="VISUMLIB~IBlock_attributes"/>
+    <meta name="Description" content="IBlock provides access to a single block and all of its properties." />
+    <meta name="Microsoft.Help.TocParent" content="VISUMLIB~IBlock"/>
+    <meta name="Microsoft.Help.ContentType" content="Reference" />
+    
+    
+    
+    
+    
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-tabstrip.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/slimbox2.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-common.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-slimbox.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-jquery-expand.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-expandcollapse.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/hs-boxes.css"></link>
+    <link rel="styleSheet" type="text/css" href="stylesheets/customstyles.css"></link>
+	<link rel="styleSheet" type="text/css" href="ptv/ptv.css" />
+    <script src="script/hs-tabstrip.js" type="text/javascript"></script>
+    <script src="script/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="script/slimbox2.js" type="text/javascript"></script>
+    <script src="script/hs-jquery-common.js" type="text/javascript"></script>
+    <script src="script/jquery-expand.js" type="text/javascript"></script>
+    <script src="script/hs-expandcollapse.js" type="text/javascript"></script>
+    <script src="script/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="script/swfobject.js" type="text/javascript"></script>
+
+    
+    
+
+    
+
+    
+</head>
+
+<body>
+	<div class="BreadcrumbsContainer"><table><tr><td>&gt;&gt;
+<a href="VISUMLIB_P.html">Visum - COM</a>
+ &gt; <a href="VISUMLIB~IBlock.html">IBlock </a></td></tr></table></div>
+    <div id="BeforeHeaderContent">
+        
+    </div>
+    <div id="HeaderContent">
+        
+            <img class="logoimage" src="images/PTV_small.jpg" border="0"></img>
+        <div id="PageTitle"><div id="PageTitleText">IBlock  Attributes</div></div>
+    </div>
+    <div id="AfterHeaderContent">
+        <a class="PageLink" href="VISUMLIB~IBlock.html">Overview</a>&nbsp;<!-- Spacing --> <span id="ToggleAllSectionsLink" class="FunctionLink">
+                <label id="CollapseAllLabel">Collapse All</label>
+                <label id="ExpandAllLabel" style="display: none;">Expand All</label>
+            </span>
+    </div>
+    
+    <div id="BodyContent">
+        <DIV id=attributesSummarySectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Summary</SPAN></DIV>
+<DIV id=attributesSummarySectionContent class=SectionContent>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Identifier</TH>
+<TH>Short name</TH>
+<TH>Long name</TH></TR>
+<TR>
+<TD><A href="#AttrBlockTime">BlockTime</A></TD>
+<TD>BlockTime</TD>
+<TD>Block time</TD></TR>
+<TR>
+<TD><A href="#AttrBlockVersionCode">BlockVersionCode</A></TD>
+<TD>BlockVersionCode</TD>
+<TD>Block version code</TD></TR>
+<TR>
+<TD><A href="#AttrBlockVersionID">BlockVersionID</A></TD>
+<TD>BlockVersionID</TD>
+<TD>Block version ID</TD></TR>
+<TR>
+<TD><A href="#AttrCode">Code</A></TD>
+<TD>Code</TD>
+<TD>Code</TD></TR>
+<TR>
+<TD><A href="#AttrCostDist">CostDist</A></TD>
+<TD>CostDist</TD>
+<TD>Cost distance</TD></TR>
+<TR>
+<TD><A href="#AttrCostTime">CostTime</A></TD>
+<TD>CostTime</TD>
+<TD>Cost time</TD></TR>
+<TR>
+<TD><A href="#AttrCostTimeWithLayover">CostTimeWithLayover</A></TD>
+<TD>CostTimeWithLayover</TD>
+<TD>Cost time with layover</TD></TR>
+<TR>
+<TD><A href="#AttrCostTotal">CostTotal</A></TD>
+<TD>CostTotal</TD>
+<TD>Cost total</TD></TR>
+<TR>
+<TD><A href="#AttrCostTotalWeighted">CostTotalWeighted</A></TD>
+<TD>CostTotalWeighted</TD>
+<TD>Cost total (weighted)</TD></TR>
+<TR>
+<TD><A href="#AttrCostVeh">CostVeh</A></TD>
+<TD>CostVeh</TD>
+<TD>Cost vehicle</TD></TR>
+<TR>
+<TD><A href="#AttrCostVehRelBlockingPeriod">CostVehRelBlockingPeriod</A></TD>
+<TD>CostVehRelBlockingPeriod</TD>
+<TD>Cost vehicle relating to blocking period</TD></TR>
+<TR>
+<TD><A href="#AttrDepotNo">DepotNo</A></TD>
+<TD>DepotNo</TD>
+<TD>Depot number</TD></TR>
+<TR>
+<TD><A href="#AttrDirectionFault">DirectionFault</A></TD>
+<TD>DirectionFault</TD>
+<TD>Has running direction fault</TD></TR>
+<TR>
+<TD><A href="#AttrEmptyDayFault">EmptyDayFault</A></TD>
+<TD>EmptyDayFault</TD>
+<TD>Has empty day fault</TD></TR>
+<TR>
+<TD><A href="#AttrEmptyKm">EmptyKm</A></TD>
+<TD>EmptyKm</TD>
+<TD>Empty kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrEmptyMi">EmptyMi</A></TD>
+<TD>EmptyMi</TD>
+<TD>Empty miles</TD></TR>
+<TR>
+<TD><A href="#AttrEmptyTime">EmptyTime</A></TD>
+<TD>EmptyTime</TD>
+<TD>Empty time</TD></TR>
+<TR>
+<TD><A href="#AttrEmptyTripKm">EmptyTripKm</A></TD>
+<TD>EmptyTripKm</TD>
+<TD>Empty trip kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrEmptyTripMi">EmptyTripMi</A></TD>
+<TD>EmptyTripMi</TD>
+<TD>Empty trip miles</TD></TR>
+<TR>
+<TD><A href="#AttrEmptyTripTime">EmptyTripTime</A></TD>
+<TD>EmptyTripTime</TD>
+<TD>Empty trip time</TD></TR>
+<TR>
+<TD><A href="#AttrEmptyTripTSysCode">EmptyTripTSysCode</A></TD>
+<TD>EmptyTripTSysCode</TD>
+<TD>Empty trip TSys code</TD></TR>
+<TR>
+<TD><A href="#AttrEndDayIndex">EndDayIndex</A></TD>
+<TD>EndDayIndex</TD>
+<TD>End day index</TD></TR>
+<TR>
+<TD><A href="#AttrEndTime">EndTime</A></TD>
+<TD>EndTime</TD>
+<TD>End time</TD></TR>
+<TR>
+<TD><A href="#AttrForcedChainingFault">ForcedChainingFault</A></TD>
+<TD>ForcedChainingFault</TD>
+<TD>Has forced chaining fault</TD></TR>
+<TR>
+<TD><A href="#AttrFromStopPointName">FromStopPointName</A></TD>
+<TD>FromStopPointName</TD>
+<TD>From stop point name</TD></TR>
+<TR>
+<TD><A href="#AttrFromStopPointNo">FromStopPointNo</A></TD>
+<TD>FromStopPointNo</TD>
+<TD>From stop point number</TD></TR>
+<TR>
+<TD><A href="#AttrHasVehicleInterchange">HasVehicleInterchange</A></TD>
+<TD>HasVehicleInterchange</TD>
+<TD>Has vehicle exchange</TD></TR>
+<TR>
+<TD><A href="#AttrID">ID</A></TD>
+<TD>ID</TD>
+<TD>ID</TD></TR>
+<TR>
+<TD><A href="#AttrIsInSelection">IsInSelection</A></TD>
+<TD>IsInSelection</TD>
+<TD>In selection</TD></TR>
+<TR>
+<TD><A href="#AttrLayoverTimeFault">LayoverTimeFault</A></TD>
+<TD>LayoverTimeFault</TD>
+<TD>Has layover time fault</TD></TR>
+<TR>
+<TD><A href="#AttrLeadingDepotNo">LeadingDepotNo</A></TD>
+<TD>LeadingDepotNo</TD>
+<TD>Leading depot number</TD></TR>
+<TR>
+<TD><A href="#AttrLimitFault">LimitFault</A></TD>
+<TD>LimitFault</TD>
+<TD>Has limit fault</TD></TR>
+<TR>
+<TD><A href="#AttrLocationFault">LocationFault</A></TD>
+<TD>LocationFault</TD>
+<TD>Has location fault</TD></TR>
+<TR>
+<TD><A href="#AttrMeanEmptyKm">MeanEmptyKm</A></TD>
+<TD>MeanEmptyKm</TD>
+<TD>Mean empty kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrMeanEmptyMi">MeanEmptyMi</A></TD>
+<TD>MeanEmptyMi</TD>
+<TD>Mean empty miles</TD></TR>
+<TR>
+<TD><A href="#AttrMeanEmptyTime">MeanEmptyTime</A></TD>
+<TD>MeanEmptyTime</TD>
+<TD>Mean empty time</TD></TR>
+<TR>
+<TD><A href="#AttrMeanEmptyTripKm">MeanEmptyTripKm</A></TD>
+<TD>MeanEmptyTripKm</TD>
+<TD>Mean empty trip kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrMeanEmptyTripMi">MeanEmptyTripMi</A></TD>
+<TD>MeanEmptyTripMi</TD>
+<TD>Mean empty trip miles</TD></TR>
+<TR>
+<TD><A href="#AttrMeanEmptyTripTime">MeanEmptyTripTime</A></TD>
+<TD>MeanEmptyTripTime</TD>
+<TD>Mean empty trip time</TD></TR>
+<TR>
+<TD><A href="#AttrMeanOperatingKm">MeanOperatingKm</A></TD>
+<TD>MeanOperatingKm</TD>
+<TD>Mean operating kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrMeanOperatingMi">MeanOperatingMi</A></TD>
+<TD>MeanOperatingMi</TD>
+<TD>Mean operating miles</TD></TR>
+<TR>
+<TD><A href="#AttrMeanOperatingTime">MeanOperatingTime</A></TD>
+<TD>MeanOperatingTime</TD>
+<TD>Mean operating time</TD></TR>
+<TR>
+<TD><A href="#AttrMeanServiceKm">MeanServiceKm</A></TD>
+<TD>MeanServiceKm</TD>
+<TD>Mean service kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrMeanServiceMi">MeanServiceMi</A></TD>
+<TD>MeanServiceMi</TD>
+<TD>Mean service miles</TD></TR>
+<TR>
+<TD><A href="#AttrMeanServiceTime">MeanServiceTime</A></TD>
+<TD>MeanServiceTime</TD>
+<TD>Mean service time</TD></TR>
+<TR>
+<TD><A href="#AttrMeanTimeOutsideDepot">MeanTimeOutsideDepot</A></TD>
+<TD>MeanTimeOutsideDepot</TD>
+<TD>Mean time outside depot</TD></TR>
+<TR>
+<TD><A href="#AttrMeanUserDefinedKm">MeanUserDefinedKm</A></TD>
+<TD>MeanUserDefinedKm</TD>
+<TD>Mean activity kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrMeanUserDefinedMi">MeanUserDefinedMi</A></TD>
+<TD>MeanUserDefinedMi</TD>
+<TD>Mean activity miles</TD></TR>
+<TR>
+<TD><A href="#AttrMeanUserDefinedTime">MeanUserDefinedTime</A></TD>
+<TD>MeanUserDefinedTime</TD>
+<TD>Mean activity time</TD></TR>
+<TR>
+<TD><A href="#AttrName">Name</A></TD>
+<TD>Name</TD>
+<TD>Name</TD></TR>
+<TR>
+<TD><A href="#AttrNumBlockingDays">NumBlockingDays</A></TD>
+<TD>NumBlockingDays</TD>
+<TD>Number of blocking days</TD></TR>
+<TR>
+<TD><A href="#AttrNumLineRoutes">NumLineRoutes</A></TD>
+<TD>NumLineRoutes</TD>
+<TD>Number of line routes</TD></TR>
+<TR>
+<TD><A href="#AttrNumLines">NumLines</A></TD>
+<TD>NumLines</TD>
+<TD>Number of lines</TD></TR>
+<TR>
+<TD><A href="#AttrNumServiceTrips">NumServiceTrips</A></TD>
+<TD>NumServiceTrips</TD>
+<TD>Number of service trips</TD></TR>
+<TR>
+<TD><A href="#AttrNumTimeProfiles">NumTimeProfiles</A></TD>
+<TD>NumTimeProfiles</TD>
+<TD>Number of time profiles</TD></TR>
+<TR>
+<TD><A href="#AttrOperatingKm">OperatingKm</A></TD>
+<TD>OperatingKm</TD>
+<TD>Operating kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrOperatingMi">OperatingMi</A></TD>
+<TD>OperatingMi</TD>
+<TD>Operating miles</TD></TR>
+<TR>
+<TD><A href="#AttrOperatingTime">OperatingTime</A></TD>
+<TD>OperatingTime</TD>
+<TD>Operating time</TD></TR>
+<TR>
+<TD><A href="#AttrRegardDirection">RegardDirection</A></TD>
+<TD>RegardDirection</TD>
+<TD>Regard running direction</TD></TR>
+<TR>
+<TD><A href="#AttrSelfContained">SelfContained</A></TD>
+<TD>SelfContained</TD>
+<TD>Self-contained</TD></TR>
+<TR>
+<TD><A href="#AttrServiceKm">ServiceKm</A></TD>
+<TD>ServiceKm</TD>
+<TD>Service kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrServiceMi">ServiceMi</A></TD>
+<TD>ServiceMi</TD>
+<TD>Service miles</TD></TR>
+<TR>
+<TD><A href="#AttrServiceTime">ServiceTime</A></TD>
+<TD>ServiceTime</TD>
+<TD>Service time</TD></TR>
+<TR>
+<TD><A href="#AttrStartDayIndex">StartDayIndex</A></TD>
+<TD>StartDayIndex</TD>
+<TD>Start day index</TD></TR>
+<TR>
+<TD><A href="#AttrStartTime">StartTime</A></TD>
+<TD>StartTime</TD>
+<TD>Start time</TD></TR>
+<TR>
+<TD><A href="#AttrTimeFault">TimeFault</A></TD>
+<TD>TimeFault</TD>
+<TD>Has time fault</TD></TR>
+<TR>
+<TD><A href="#AttrTimeOutsideDepot">TimeOutsideDepot</A></TD>
+<TD>TimeOutsideDepot</TD>
+<TD>Time outside depot</TD></TR>
+<TR>
+<TD><A href="#AttrToStopPointName">ToStopPointName</A></TD>
+<TD>ToStopPointName</TD>
+<TD>To stop point name</TD></TR>
+<TR>
+<TD><A href="#AttrToStopPointNo">ToStopPointNo</A></TD>
+<TD>ToStopPointNo</TD>
+<TD>To stop point number</TD></TR>
+<TR>
+<TD><A href="#AttrUnchecked">Unchecked</A></TD>
+<TD>Unchecked</TD>
+<TD>Unchecked</TD></TR>
+<TR>
+<TD><A href="#AttrUserDefinedKm">UserDefinedKm</A></TD>
+<TD>UserDefinedKm</TD>
+<TD>Activity kilometers</TD></TR>
+<TR>
+<TD><A href="#AttrUserDefinedMi">UserDefinedMi</A></TD>
+<TD>UserDefinedMi</TD>
+<TD>Activity miles</TD></TR>
+<TR>
+<TD><A href="#AttrUserDefinedTime">UserDefinedTime</A></TD>
+<TD>UserDefinedTime</TD>
+<TD>Activity time</TD></TR>
+<TR>
+<TD><A href="#AttrVehCombNo">VehCombNo</A></TD>
+<TD>VehCombNo</TD>
+<TD>Vehicle combination number</TD></TR>
+<TR>
+<TD><A href="#AttrVehFault">VehFault</A></TD>
+<TD>VehFault</TD>
+<TD>Has vehicle fault</TD></TR></TBODY></TABLE></DIV>
+<DIV id=attributesAttributesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Attributes</SPAN></DIV>
+<DIV id=attributesAttributesSectionContent class=SectionContent>
+<DIV><A name=AttrBlockTime></A>
+<DIV id=BlockTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>BlockTime</SPAN></DIV>
+<DIV id=BlockTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Umlaufzeit</TD>
+<TD>Umlaufzeit</TD>
+<TD>Zeitdauer des Umlaufs vom Beginn des ersten bis zum Ende des letzten Umlaufelements. Bei geschlossenen Umläufen identisch mit der Dauer des Umlaufbildungszeitraums.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>BlockTime</TD>
+<TD>Block time</TD>
+<TD>Duration of the line block between the start of the first block item and the end of the last block item. For closed line blocks, the block time and the line blocking time interval are identical.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TpsRotation</TD>
+<TD>Temps de rotation</TD>
+<TD>Durée de la rotation du début du premier élément de rotation à la fin du dernier élément de rotation. Identique à la durée de l’intervalle de calcul des rotations pour les rotations fermées.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrBlockVersionCode></A>
+<DIV id=BlockVersionCodeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>BlockVersionCode</SPAN></DIV>
+<DIV id=BlockVersionCodeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>string</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>UmlaufversionsCode</TD>
+<TD>Umlaufversions-Code</TD>
+<TD>Kurzbezeichnung der Umlaufversion.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>BlockVersionCode</TD>
+<TD>Block version code</TD>
+<TD>Short name of the block version.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CodeRésultRotation</TD>
+<TD>CodeRésultatRotation</TD>
+<TD>Abréviation du résultat de rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrBlockVersionID></A>
+<DIV id=BlockVersionIDSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>BlockVersionID</SPAN></DIV>
+<DIV id=BlockVersionIDSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>index</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>UmlaufversionsID</TD>
+<TD>Umlaufversions-ID</TD>
+<TD>Schlüssel der Umlaufversion.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>BlockVersionID</TD>
+<TD>Block version ID</TD>
+<TD>Identifier of the block version.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IDRésultRotation</TD>
+<TD>IDRésultatRotation</TD>
+<TD>Identifiant du résultat de rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCode></A>
+<DIV id=CodeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Code</SPAN></DIV>
+<DIV id=CodeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>string</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Code</TD>
+<TD>Code</TD>
+<TD>Kurzbezeichnung des Umlaufs.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Code</TD>
+<TD>Code</TD>
+<TD>Short name of the line block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Code</TD>
+<TD>Code</TD>
+<TD>Abréviation de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCostDist></A>
+<DIV id=CostDistSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>CostDist</SPAN></DIV>
+<DIV id=CostDistSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>currency</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KostenEntf</TD>
+<TD>Kosten Entfernung</TD>
+<TD>Kosten bezogen auf die Entfernung: Service-km x Kostensatz Service-km der Fahrzeugkombination + Leer-km * Kostensatz Leer-km der Fahrzeugkombination.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>CostDist</TD>
+<TD>Cost distance</TD>
+<TD>Distance-based cost = service kilometers x cost rate per service-km of the vehicle combination + empty kilometers x cost rate per empty-km of the vehicle combination.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CoûtKm</TD>
+<TD>Coût Distance</TD>
+<TD>Coût relatif à la distance&nbsp;: kilomètres de service x coût par kilomètre de service de la combinaison de véhicules + kilomètres à vide x coût par kilomètre à vide de la combinaison de véhicules.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCostTime></A>
+<DIV id=CostTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>CostTime</SPAN></DIV>
+<DIV id=CostTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>currency</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KostenZeit</TD>
+<TD>Kosten Zeit</TD>
+<TD>Kosten bezogen auf die Zeit: Service-Zeit x Kostensatz Service der Fahrzeugkombination + Leerfahrt-Zeit x Kostensatz Leer der Fahrzeugkombination + Zeit benutzerdefinierter Aktivitäten x Kostensatz der jeweiligen Aktivität.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>CostTime</TD>
+<TD>Cost time</TD>
+<TD>Time-based cost = service time x service cost rate of the vehicle combination + empty trip time x empty cost rate of the vehicle combination + time of user-defined activities x cost rate of these activities.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CoûtH</TD>
+<TD>Coût Temps</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCostTimeWithLayover></A>
+<DIV id=CostTimeWithLayoverSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>CostTimeWithLayover</SPAN></DIV>
+<DIV id=CostTimeWithLayoverSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>currency</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KostenZeitMitStillstand</TD>
+<TD>Kosten Zeit mit Stillstandzeiten</TD>
+<TD>Kosten bezogen auf die Zeit einschließlich Stillstand = Zeit für Stillstand im Depot x Kostensatz + Zeit für Stillstand außerhalb Depot x Kostensatz + Service-Zeit x Kostensatz + Leerfahrt-Zeit x Kostensatz + Zeit benutzerdefinierter Aktivitäten x Kostensatz der jeweiligen Aktivität.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>CostTimeWithLayover</TD>
+<TD>Cost time with layover</TD>
+<TD>Time-based cost including standstills = layover time in depot x depot cost rate + layover time outside depot x layover cost rate + service time x service cost rate + empty trip time x empty cost rate + time of user-defined activities x cost rate of these activities.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CoûtHTpsArrêt</TD>
+<TD>CoûtH avec temps d’arrêt</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCostTotal></A>
+<DIV id=CostTotalSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>CostTotal</SPAN></DIV>
+<DIV id=CostTotalSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>currency</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KostenGesamt</TD>
+<TD>Kosten gesamt</TD>
+<TD>Gesamtkosten des Umlaufs = Fahrzeugkosten bezogen auf den Umlaufbildungszeitraum + Kosten bezogen auf die Zeit + Kosten bezogen auf die Entfernung.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>CostTotal</TD>
+<TD>Cost total</TD>
+<TD>Total cost of line block = Vehicle cost related to blocking time period + cost related to time + cost related to distance.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CoûtTot</TD>
+<TD>Coût total</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCostTotalWeighted></A>
+<DIV id=CostTotalWeightedSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>CostTotalWeighted</SPAN></DIV>
+<DIV id=CostTotalWeightedSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>currency</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KostenGesamtGewichtet</TD>
+<TD>Kosten gesamt (gewichtet)</TD>
+<TD>Gesamtkosten des Umlaufs in der Umlaufbildung. Im Gegensatz zu den gewöhnlichen Gesamtkosten wirken die Gewichtungsfaktoren auf die Kostensätze der jeweiligen Aktivitäten, und für Umläufe ohne Fahrzeugkombination werden die Kostensätze aus den Verfahrensparametern verwendet. Der Wert ist nur relevant für Umläufe, die vom Verfahren Umlaufbildung erzeugt wurden.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>CostTotalWeighted</TD>
+<TD>Cost total (weighted)</TD>
+<TD>Total cost of the line block in line blocking. In contrast to the ordinary total costs, the weighting factors affect the cost rates of the respective activities, and for line blocks without a vehicle combination, the cost rates from the procedure parameters are used. The value is only relevant for line blocks generated by the procedure 'Line blocking'.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CoûtTotalPondéré</TD>
+<TD>Coût total (pondéré)</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCostVeh></A>
+<DIV id=CostVehSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>CostVeh</SPAN></DIV>
+<DIV id=CostVehSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>currency</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Sub attribute 1</TH>
+<TD>AHP</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KostenFzg</TD>
+<TD>Kosten Fahrzeug</TD>
+<TD>Fahrzeugkosten abgeleitet aus der Fahrzeuganzahl (gleich der Anzahl Umlauftage), bezogen auf Analyseperiode oder Analysehorizont.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>CostVeh</TD>
+<TD>Cost vehicle</TD>
+<TD>Vehicle cost derived from number of vehicles (= number of block days), per AH or AP.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CoûtVéh</TD>
+<TD>Coût Véhicule</TD>
+<TD>Coût de véhicule dérivé du nombre de véhicules (égal au nombre de jours de rotation), rapporté à la période d’analyse ou à l’horizon d’analyse.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrCostVehRelBlockingPeriod></A>
+<DIV id=CostVehRelBlockingPeriodSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>CostVehRelBlockingPeriod</SPAN></DIV>
+<DIV id=CostVehRelBlockingPeriodSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>currency</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>KostenFzgBezUmlaufPeriode</TD>
+<TD>Kosten Fahrzeug bezogen auf Umlaufbildungszeitraum</TD>
+<TD>Fahrzeugkosten abgeleitet aus der Fahrzeuganzahl (gleich der Anzahl Umlauftage), bezogen auf den Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>CostVehRelBlockingPeriod</TD>
+<TD>Cost vehicle relating to blocking period</TD>
+<TD>Vehicle cost derived from number of vehicles (= number of block days), per blocking period.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CoûtVéhIntervCalcRotations</TD>
+<TD>CoûtVéh relatif à interv. calcul de rotations</TD>
+<TD>Coût de véhicule dérivé du nombre de véhicules (égal au nombre de jours de rotation), rapporté à l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrDepotNo></A>
+<DIV id=DepotNoSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>DepotNo</SPAN></DIV>
+<DIV id=DepotNoSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>index</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>DepotNr</TD>
+<TD>Depot-Nummer</TD>
+<TD>Nummer des als Depot angegebenen Haltepunkts.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>DepotNo</TD>
+<TD>Depot number</TD>
+<TD>Number of the stop point tagged as depot.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NumDépôt</TD>
+<TD>Numéro de dépôt</TD>
+<TD>Numéro du point d’arrêt spécifié comme dépôt.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrDirectionFault></A>
+<DIV id=DirectionFaultSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>DirectionFault</SPAN></DIV>
+<DIV id=DirectionFaultSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CheckBlocks</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Fahrtrichtungsfehler</TD>
+<TD>Hat Fahrtrichtungsfehler</TD>
+<TD>Zeigt bei einem geprüften Umlauf an, dass die Orientierung für einen gebundenen Fahrplanfahrtabschnitt an verschiedenen Kalendertagen unterschiedlich ist oder dass die Orientierung nach einem kompletten Durchlauf des Umlaufs wechselt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>DirectionFault</TD>
+<TD>Has running direction fault</TD>
+<TD>Indicates that in the checked line block either a bound vehicle journey section's orientation differs on various calendar days or the orientation changes after a complete run of the line block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ErreurSensCirculation</TD>
+<TD>Erreur de sens de circulation</TD>
+<TD>Indique pour une rotation vérifiée que le sens de circulation est différent selon les jours calendaires pour une section de service associée ou que le sens de circulation change après un cycle complet de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEmptyDayFault></A>
+<DIV id=EmptyDayFaultSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EmptyDayFault</SPAN></DIV>
+<DIV id=EmptyDayFaultSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CheckBlocks</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Umlauftagfehler</TD>
+<TD>Hat Umlauftags-Fehler</TD>
+<TD>Zeigt bei einem geprüften Umlauf an, dass es einen Umlauftag ohne jede Aktivität gibt, der gelöscht werden könnte.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EmptyDayFault</TD>
+<TD>Has empty day fault</TD>
+<TD>Indicates that the checked line block includes a block day without any activity which thus could be deleted.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ErreurJourRotation</TD>
+<TD>Erreur de jour de rotation</TD>
+<TD>Indique pour une rotation vérifiée qu’il existe un jour de rotation sans aucune activité qui peut être supprimé.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEmptyKm></A>
+<DIV id=EmptyKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EmptyKm</SPAN></DIV>
+<DIV id=EmptyKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>LeerKm</TD>
+<TD>Leerkilometer</TD>
+<TD>Leerkilometer, definiert als Summe über die Längen aller Umlaufelemente im Umlauf außer denen vom Typ Fahrplanfahrt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EmptyKm</TD>
+<TD>Empty kilometers</TD>
+<TD>Empty kilometers, defined as the total sum of the lengths of all block items in the line block except for the items of the 'vehicle journeys' type.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmÀVide</TD>
+<TD>KmÀVide</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEmptyMi></A>
+<DIV id=EmptyMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EmptyMi</SPAN></DIV>
+<DIV id=EmptyMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>LeerMi</TD>
+<TD>Leermeilen</TD>
+<TD>Leer-Meilen, definiert als Summe über die Längen aller Umlaufelemente im Umlauf außer denen vom Typ Fahrplanfahrt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EmptyMi</TD>
+<TD>Empty miles</TD>
+<TD>Empty miles, defined as the total sum of the lengths of all empty trips and all user-defined line block items in the line block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiÀVide</TD>
+<TD>MileÀVide</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEmptyTime></A>
+<DIV id=EmptyTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EmptyTime</SPAN></DIV>
+<DIV id=EmptyTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>LeerZeit</TD>
+<TD>Leerzeit</TD>
+<TD>Leerzeit, definiert als Summe über die Dauern aller Umlaufelemente außer denen vom Typ Fahrplanfahrt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EmptyTime</TD>
+<TD>Empty time</TD>
+<TD>Empty time, defined as the total duration of all block items except for the items of the 'vehicle journey' type.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TpsVide</TD>
+<TD>TempsÀVide</TD>
+<TD>Temps à vide, défini comme somme des durées de tous les éléments de rotation autres que ceux du type service.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEmptyTripKm></A>
+<DIV id=EmptyTripKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EmptyTripKm</SPAN></DIV>
+<DIV id=EmptyTripKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>LeerfahrtKm</TD>
+<TD>Leerfahrt-Kilometer</TD>
+<TD>Leerfahrt-Kilometer, definiert als Summe der Längen aller Leerfahrten im Umlauf.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EmptyTripKm</TD>
+<TD>Empty trip kilometers</TD>
+<TD>Empty trip kilometers, defined as the sum of the lengths of all empty trips in the line block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmServiceÀVide</TD>
+<TD>Km de service à vide</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEmptyTripMi></A>
+<DIV id=EmptyTripMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EmptyTripMi</SPAN></DIV>
+<DIV id=EmptyTripMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>LeerfahrtMi</TD>
+<TD>Leerfahrt-Meilen</TD>
+<TD>Leerfahrt-Meilen, definiert als Summe der Längen aller Leerfahrten im Umlauf.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EmptyTripMi</TD>
+<TD>Empty trip miles</TD>
+<TD>Empty trip miles, defined as the sum of the lengths of all empty trips in the line block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiServiceÀVide</TD>
+<TD>Miles de service à vide</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEmptyTripTime></A>
+<DIV id=EmptyTripTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EmptyTripTime</SPAN></DIV>
+<DIV id=EmptyTripTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>LeerFahrtZeit</TD>
+<TD>Leerfahrt-Zeit</TD>
+<TD>Leerfahrtzeit, definiert als Summe über die Dauern aller Leerfahrten im Umlauf.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EmptyTripTime</TD>
+<TD>Empty trip time</TD>
+<TD>Empty time, defined as the total duration of all empty trips in the line block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TpsServiceÀVide</TD>
+<TD>Temps de service à vide</TD>
+<TD>Temps de service à vide, définis comme somme des durées de tous les services à vide dans la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEmptyTripTSysCode></A>
+<DIV id=EmptyTripTSysCodeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EmptyTripTSysCode</SPAN></DIV>
+<DIV id=EmptyTripTSysCodeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>TSys</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>LeerfahrtVSysCode</TD>
+<TD>Leerfahrt-Verkehrssystem-Code</TD>
+<TD>Kurzbezeichnung des für Leerfahrten verwendeten Verkehrssystems.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EmptyTripTSysCode</TD>
+<TD>Empty trip TSys code</TD>
+<TD>Short name of the transport system used for empty trips.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>CodeSysTrÀVide</TD>
+<TD>Code SysTr service à vide</TD>
+<TD>Abréviation du système de transport utilisé pour les services à vide.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEndDayIndex></A>
+<DIV id=EndDayIndexSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EndDayIndex</SPAN></DIV>
+<DIV id=EndDayIndexSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>CalendarDay</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EndTagIndex</TD>
+<TD>Endtag-Index</TD>
+<TD>Index des Kalendertags, an dem das letzte Umlaufelement des Umlaufs endet, bezogen auf den Kalender (und nicht auf den Umlaufbildungszeitraum).</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EndDayIndex</TD>
+<TD>End day index</TD>
+<TD>Index of the calendar day, when the last block item of the line block ends, with regard to the calendar (not with regard to blocking time interval).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IndiceJourFin</TD>
+<TD>Indice Jour Fin</TD>
+<TD>Indice du jour calendaire où le dernier élément de rotation de la rotation se termine, rapporté au calendrier (et non à l’intervalle de calcul des rotations).</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrEndTime></A>
+<DIV id=EndTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>EndTime</SPAN></DIV>
+<DIV id=EndTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>time</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EndZeit</TD>
+<TD>Endzeit</TD>
+<TD>Zeitpunkt, an dem das letzte Umlaufelement des Umlaufs endet.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>EndTime</TD>
+<TD>End time</TD>
+<TD>Time when the last block item of the line block ends.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>HFin</TD>
+<TD>Heure Fin</TD>
+<TD>Instant de fin du dernier élément de rotation de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrForcedChainingFault></A>
+<DIV id=ForcedChainingFaultSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ForcedChainingFault</SPAN></DIV>
+<DIV id=ForcedChainingFaultSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CheckBlocks</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Zwangsbindungsfehler</TD>
+<TD>Hat Zwangsbindungsfehler</TD>
+<TD>Zeigt bei einem geprüften Umlauf an, dass eine für einen gebundenen Fahrplanfahrtabschnitt definierte Zwangsbindung nicht eingehalten wird.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ForcedChainingFault</TD>
+<TD>Has forced chaining fault</TD>
+<TD>Indicates that in the checked line block a forced chaining is violated which has been defined for a bound vehicle journey section.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ErreurChaînageForcé</TD>
+<TD>Erreur de chaînage forcé</TD>
+<TD>Indique pour une rotation vérifiée qu’un chaînage forcé défini pour une section de service associée n’est pas respecté.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrFromStopPointName></A>
+<DIV id=FromStopPointNameSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>FromStopPointName</SPAN></DIV>
+<DIV id=FromStopPointNameSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>string</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>VonHPunktName</TD>
+<TD>Von-Haltepunkt-Name</TD>
+<TD>Name des Haltepunkts, an dem das erste Umlaufelement des Umlaufs beginnt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>FromStopPointName</TD>
+<TD>From stop point name</TD>
+<TD>Name of the stop point where the first block item of the line block starts.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NomPArrêtO</TD>
+<TD>NomPArrêtOrig</TD>
+<TD>Nom du point d’arrêt de début du premier élément de rotation de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrFromStopPointNo></A>
+<DIV id=FromStopPointNoSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>FromStopPointNo</SPAN></DIV>
+<DIV id=FromStopPointNoSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>index</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>VonHPunktNr</TD>
+<TD>Von-Haltepunkt-Nummer</TD>
+<TD>Nummer des Haltepunkts, an dem das erste Umlaufelement des Umlaufs beginnt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>FromStopPointNo</TD>
+<TD>From stop point number</TD>
+<TD>Number of the stop point where the first block item of the line block starts.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NumPArrêtO</TD>
+<TD>NumPArrêtOrig</TD>
+<TD>Numéro du point d’arrêt de début du premier élément de rotation de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrHasVehicleInterchange></A>
+<DIV id=HasVehicleInterchangeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>HasVehicleInterchange</SPAN></DIV>
+<DIV id=HasVehicleInterchangeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>HatFahrzeugaustausch</TD>
+<TD>Hat Fahrzeugaustausch</TD>
+<TD>Gibt an, ob für den Umlauf Fahrzeugaustausch zugelassen ist (0 = nein / 1 = ja). Bei Fahrzeugaustausch wird bei Prüfung auf Fahrzeugfehler das Attribut Fahrzeugkombinations-Set des Fahrtabschnitts an Stelle der Fahrzeugkombinations-Nummer benutzt</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>HasVehicleInterchange</TD>
+<TD>Has vehicle exchange</TD>
+<TD>Indicates whether vehicle interchange is permitted in this line block (0 = no / 1 = yes). If vehicle interchange is permitted, the check for vehicle faults will use the 'Vehicle combination set' attribute of the vehicle journey section instead of the 'Vehicle combination number' attribute</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>AvecÉchangeVéhicules</TD>
+<TD>Avec échange de véhicules</TD>
+<TD>Indique si l’échange de véh. est autorisé ou non pour la rotation (0 = non / 1 = oui). En cas d’échange véh., l’attr. Ensemble CombinaisonVéh de section de service est utilisé pour vérifier l’existence d’erreurs de véh. au lieu du n° de CombiVéh</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrID></A>
+<DIV id=IDSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ID</SPAN></DIV>
+<DIV id=IDSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>index</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ID</TD>
+<TD>ID</TD>
+<TD>Eindeutiger Schlüssel des Umlaufs.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ID</TD>
+<TD>ID</TD>
+<TD>Identifier (unique key) of the line block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ID</TD>
+<TD>ID</TD>
+<TD>Identifiant univoque de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrIsInSelection></A>
+<DIV id=IsInSelectionSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>IsInSelection</SPAN></DIV>
+<DIV id=IsInSelectionSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>Basis input</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>IstInAuswahl</TD>
+<TD>In Auswahl</TD>
+<TD>Ist enthalten in räumlicher Auswahl (1=ja / 0=nein)</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>IsInSelection</TD>
+<TD>In selection</TD>
+<TD>Is contained in the spatial selection (1 = yes / 0 = no)</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>DansSélec</TD>
+<TD>DansSélection</TD>
+<TD>Est inclus dans le polygone de sélection multiple (1=oui / 0=non)</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrLayoverTimeFault></A>
+<DIV id=LayoverTimeFaultSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>LayoverTimeFault</SPAN></DIV>
+<DIV id=LayoverTimeFaultSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CheckBlocks</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Standzeitfehler</TD>
+<TD>Hat Wendezeitfehler</TD>
+<TD>Zeigt bei einem geprüften Umlauf an, dass die Vor- und Nachbereitungszeiten nicht eingehalten werden.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>LayoverTimeFault</TD>
+<TD>Has layover time fault</TD>
+<TD>Indicates that in the checked line block the preparation or post preparation time restrictions are violated.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ErreurTpsArrêtTech</TD>
+<TD>Erreur de temps d’arrêt technique</TD>
+<TD>Indique pour une rotation vérifiée que les temps de préparation Pré et Pos ne sont pas respectés.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrLeadingDepotNo></A>
+<DIV id=LeadingDepotNoSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>LeadingDepotNo</SPAN></DIV>
+<DIV id=LeadingDepotNoSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>index</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>FührendesDepotNr</TD>
+<TD>Führendes Depot-Nummer</TD>
+<TD>Nummer des Haltepunkts, der ein Depot für die Fahrzeugkombination des Umlaufs ist und in dem unter den Haltepunkten mit dieser Eigenschaft die längste kumulierte Aufenthaltszeit verbracht wird.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>LeadingDepotNo</TD>
+<TD>Leading depot number</TD>
+<TD>Number of the stop point which is a depot for the vehicle combination of the line block and where - among the stop points with this property - the longest accumulated layover time is spent.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NumDépôtPrincipal</TD>
+<TD>Numéro dépôt principal</TD>
+<TD>Numéro du point d’arrêt qui est un dépôt pour la combinaison de véhicules de la rotation et à la durée d’arrêt cumulée la plus longue parmi tous les points d’arrêt avec cette propriété.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrLimitFault></A>
+<DIV id=LimitFaultSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>LimitFault</SPAN></DIV>
+<DIV id=LimitFaultSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CheckBlocks</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Grenzwertfehler</TD>
+<TD>Hat Grenzwertfehler</TD>
+<TD>Zeigt bei einem geprüften Umlauf an, dass die für benutzerdefinierte Umlaufelementtypen vorgegebenen Zeit- oder Weg-Intervalle für eine Aktivität im Umlauf nicht eingehalten werden.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>LimitFault</TD>
+<TD>Has limit fault</TD>
+<TD>Indicates that in the checked line block the time or distance intervals preset for user-defined block item types are violated for one activity in the block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ErreurSeuil</TD>
+<TD>Erreur de seuil</TD>
+<TD>Indique pour une rotation vérifiée que les intervalles de temps ou de distance pour les types d’éléments de rotation définis par l’utilisateur ne sont pas respectés pour une activité dans la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrLocationFault></A>
+<DIV id=LocationFaultSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>LocationFault</SPAN></DIV>
+<DIV id=LocationFaultSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CheckBlocks</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Ortsfehler</TD>
+<TD>Hat Ortsbruch</TD>
+<TD>Zeigt bei einem geprüften Umlauf an, dass es einen Ortsbruch gibt, dass also eine Aktivität an einem anderen Haltepunkt beginnt als ihre vorangehende Aktivität geendet hat.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>LocationFault</TD>
+<TD>Has location fault</TD>
+<TD>Indicates that the checked line block includes a location fault, which means that an activity does not start at the stop point where the previous activity terminated, but from a different stop point.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ErreurEmplacement</TD>
+<TD>Erreur d’emplacement</TD>
+<TD>Indique pour une rotation vérifiée qu’il existe une erreur d’emplacement, c.-à-d. qu’une activité commence à un autre point d’arrêt que celui où l’activité précédente s’est terminée.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanEmptyKm></A>
+<DIV id=MeanEmptyKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanEmptyKm</SPAN></DIV>
+<DIV id=MeanEmptyKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlLeerKm</TD>
+<TD>Mittlere Leerkilometer</TD>
+<TD>Mittlere Leer-km pro Tag, definiert als Leer-km (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanEmptyKm</TD>
+<TD>Mean empty kilometers</TD>
+<TD>Mean empty kilometers per day, defined as Empty km (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmÀVideMoy</TD>
+<TD>KmÀVide moy</TD>
+<TD>Km à vide moyens par jour, définis comme kilomètres à vide (voir l’entrée respective) divisés par le nombre de jours de rotation multipliés par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanEmptyMi></A>
+<DIV id=MeanEmptyMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanEmptyMi</SPAN></DIV>
+<DIV id=MeanEmptyMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlLeerMi</TD>
+<TD>Mittlere Leermeilen</TD>
+<TD>Mittlere Leer-Meilen pro Tag, definiert als Leer-Meilen (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanEmptyMi</TD>
+<TD>Mean empty miles</TD>
+<TD>Mean empty miles per day, defined as Empty mi (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiÀVideMoy</TD>
+<TD>MileÀVide moy</TD>
+<TD>Miles à vide moyens par jour, définis comme miles à vide (voir l’entrée respective) divisés par le nombre de jours de rotation multipliés par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanEmptyTime></A>
+<DIV id=MeanEmptyTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanEmptyTime</SPAN></DIV>
+<DIV id=MeanEmptyTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlLeerZeit</TD>
+<TD>Mittlere Leerzeit</TD>
+<TD>Mittlere Leerzeit pro Tag, definiert als Leerzeit (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanEmptyTime</TD>
+<TD>Mean empty time</TD>
+<TD>Mean empty time per day, defined as Empty time (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TpsVideMoy</TD>
+<TD>TempsÀVide moy</TD>
+<TD>Temps à vide moyen par jour, défini comme temps à vide (voir l’entrée respective) divisé par le nombre de jours de rotation multiplié par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanEmptyTripKm></A>
+<DIV id=MeanEmptyTripKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanEmptyTripKm</SPAN></DIV>
+<DIV id=MeanEmptyTripKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlLeerfahrtKm</TD>
+<TD>Mittlere Leerfahrt-Kilometer</TD>
+<TD>Mittlere Leerfahrt-km pro Tag, definiert als Leerfahrt-Kilometer (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanEmptyTripKm</TD>
+<TD>Mean empty trip kilometers</TD>
+<TD>Mean empty trip time per day, defined as empty trip kilometers (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmServiceÀVideMoy</TD>
+<TD>Km de service à vide moy</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanEmptyTripMi></A>
+<DIV id=MeanEmptyTripMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanEmptyTripMi</SPAN></DIV>
+<DIV id=MeanEmptyTripMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlLeerfahrtMi</TD>
+<TD>Mittlere Leerfahrt-Meilen</TD>
+<TD>Mittlere Leerfahrt-Meilen pro Tag, definiert als Leerfahrt-Meilen (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanEmptyTripMi</TD>
+<TD>Mean empty trip miles</TD>
+<TD>Mean empty miles per day, defined as empty trip miles (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiServiceÀVideMoy</TD>
+<TD>Miles de service à vide moy</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanEmptyTripTime></A>
+<DIV id=MeanEmptyTripTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanEmptyTripTime</SPAN></DIV>
+<DIV id=MeanEmptyTripTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlLeerFahrtZeit</TD>
+<TD>Mittlere Leerfahrt-Zeit</TD>
+<TD>Mittlere Leerfahrtzeit pro Tag, definiert als Leerfahrtzeit (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanEmptyTripTime</TD>
+<TD>Mean empty trip time</TD>
+<TD>Mean empty trip time per day, defined as Empty trip time (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TpsServÀVideMoy</TD>
+<TD>Temps de service à vide moy</TD>
+<TD>Temps de service à vide moyen par jour, défini comme temps de service à vide (voir l’entrée respective) divisé par le nombre de jours de rotation multiplié par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanOperatingKm></A>
+<DIV id=MeanOperatingKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanOperatingKm</SPAN></DIV>
+<DIV id=MeanOperatingKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlEinsatzKm</TD>
+<TD>Mittlere Einsatzkilometer</TD>
+<TD>Mittlere Einsatz-km pro Tag, definiert als Einsatz-km (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanOperatingKm</TD>
+<TD>Mean operating kilometers</TD>
+<TD>Mean operating kilometers per day, defined as Operating km (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmExploitaMoy</TD>
+<TD>KmExploitation moy</TD>
+<TD>Km d’exploitation moyens par jour, définis comme kilomètres d’exploitation (voir l’entrée respective) divisés par le nombre de jours de rotation multipliés par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanOperatingMi></A>
+<DIV id=MeanOperatingMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanOperatingMi</SPAN></DIV>
+<DIV id=MeanOperatingMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlEinsatzMi</TD>
+<TD>Mittlere Einsatzmeilen</TD>
+<TD>Mittlere Einsatz-Meilen pro Tag, definiert als Einsatz-Meilen (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanOperatingMi</TD>
+<TD>Mean operating miles</TD>
+<TD>Mean operating miles per day, defined as Operating mi (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiExploitaMoy</TD>
+<TD>MileExploitation moy</TD>
+<TD>Miles d’exploitation moyens par jour, définis comme miles d’exploitation (voir l’entrée respective) divisés par le nombre de jours de rotation multipliés par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanOperatingTime></A>
+<DIV id=MeanOperatingTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanOperatingTime</SPAN></DIV>
+<DIV id=MeanOperatingTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlEinsatzzeit</TD>
+<TD>Mittlere Einsatzzeit</TD>
+<TD>Mittlere Einsatzzeit pro Tag, definiert als Einsatzzeit (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanOperatingTime</TD>
+<TD>Mean operating time</TD>
+<TD>Mean operating time per day, defined as Operating time (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TExploitaMoy</TD>
+<TD>TpsExploitation moy</TD>
+<TD>Temps d’exploitation moyen par jour, défini comme temps d’exploitation (voir l’entrée respective) divisé par le nombre de jours de rotation multiplié par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanServiceKm></A>
+<DIV id=MeanServiceKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanServiceKm</SPAN></DIV>
+<DIV id=MeanServiceKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlServiceKm</TD>
+<TD>Mittlere Servicekilometer</TD>
+<TD>Mittlere Service-km pro Tag, definiert als Service-km (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanServiceKm</TD>
+<TD>Mean service kilometers</TD>
+<TD>Mean service kilometers per day, defined as Service km (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmServiceMoy</TD>
+<TD>KmService moy</TD>
+<TD>Km de service moyens par jour, définis comme kilomètres de service (voir l’entrée respective) divisés par le nombre de jours de rotation multipliés par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanServiceMi></A>
+<DIV id=MeanServiceMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanServiceMi</SPAN></DIV>
+<DIV id=MeanServiceMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlServiceMi</TD>
+<TD>Mittlere Servicemeilen</TD>
+<TD>Mittlere Service-Meilen pro Tag, definiert als Service-Meilen (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanServiceMi</TD>
+<TD>Mean service miles</TD>
+<TD>Mean service miles per day, defined as Service mi (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiServiceMoy</TD>
+<TD>MileService moy</TD>
+<TD>Miles de service moyens par jour, définis comme miles de service (voir l’entrée respective) divisés par le nombre de jours de rotation multipliés par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanServiceTime></A>
+<DIV id=MeanServiceTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanServiceTime</SPAN></DIV>
+<DIV id=MeanServiceTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlServicezeit</TD>
+<TD>Mittlere Servicezeit</TD>
+<TD>Mittlere Servicezeit pro Tag, definiert als Servicezeit (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanServiceTime</TD>
+<TD>Mean service time</TD>
+<TD>Mean service time per day, defined as Service time (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TServiceMoy</TD>
+<TD>TpsService moy</TD>
+<TD>Temps de service moyen par jour, définis comme temps de service (voir l’entrée respective) divisé par le nombre de jours de rotation multiplié par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanTimeOutsideDepot></A>
+<DIV id=MeanTimeOutsideDepotSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanTimeOutsideDepot</SPAN></DIV>
+<DIV id=MeanTimeOutsideDepotSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlZeitAussDepot</TD>
+<TD>Mittlere Zeit außerhalb Depot</TD>
+<TD>Mittlere Zeit außerhalb Depot pro Tag, definiert als Zeit außerhalb Depot (siehe dort) geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanTimeOutsideDepot</TD>
+<TD>Mean time outside depot</TD>
+<TD>Mean time outside of depot per day, defined as Time outside depot (quod vide) divided by number of blocking days x number of days in the line blocking time interval.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TMoyHorsDépôt</TD>
+<TD>Tps moyen hors du dépôt</TD>
+<TD>Temps moyen hors du dépôt par jour, définis comme temps hors du dépôt (voir l’entrée respective) divisé par le nombre de jours de rotation multiplié par le nombre de jours dans l’intervalle de calcul des rotations.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanUserDefinedKm></A>
+<DIV id=MeanUserDefinedKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanUserDefinedKm</SPAN></DIV>
+<DIV id=MeanUserDefinedKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlBenutzerDefKm</TD>
+<TD>Mittlere Aktivitäten-Kilometer</TD>
+<TD>Mittlere Kilometer auf benutzerdefinierten Aktivitäten, definiert als Summe der Entfernungen auf benutzerdefinierten Aktivitäten geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanUserDefinedKm</TD>
+<TD>Mean activity kilometers</TD>
+<TD>Mean kilometers on user-defined activities, defined as the sum of distances on user-defined activities divided by the number of blocking days times the number of days in the blocking time period.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmDéfUtilisateurMoy</TD>
+<TD>Km d’activité moy</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanUserDefinedMi></A>
+<DIV id=MeanUserDefinedMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanUserDefinedMi</SPAN></DIV>
+<DIV id=MeanUserDefinedMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlBenutzerDefMi</TD>
+<TD>Mittlere Aktivitäten-Meilen</TD>
+<TD>Mittlere Meilen auf benutzerdefinierten Aktivitäten, definiert als Summe der Entfernungen auf benutzerdefinierten Aktivitäten geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanUserDefinedMi</TD>
+<TD>Mean activity miles</TD>
+<TD>Mean miles on user-defined activities, defined as the sum of distances on user-defined activities divided by the number of blocking days times the number of days in the blocking time period.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiDéfUtilisateurMoy</TD>
+<TD>Miles d’activité moy</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrMeanUserDefinedTime></A>
+<DIV id=MeanUserDefinedTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>MeanUserDefinedTime</SPAN></DIV>
+<DIV id=MeanUserDefinedTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>MittlBenutzerDefZeit</TD>
+<TD>Mittlere Aktivitäten-Zeit</TD>
+<TD>Mittlere Zeit auf benutzerdefinierten Aktivitäten, definiert als Summe der Dauern der benutzerdefinierten Aktivitäten geteilt durch Anzahl Umlauftage mal Anzahl Tage im Umlaufbildungszeitraum.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>MeanUserDefinedTime</TD>
+<TD>Mean activity time</TD>
+<TD>Mean time on user-defined activities, defined as the sum of durations on user-defined activities divided by the number of blocking days times the number of days in the blocking time period.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TpsDéfUtilisateurMoy</TD>
+<TD>Temps d’activité moy</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrName></A>
+<DIV id=NameSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Name</SPAN></DIV>
+<DIV id=NameSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>string</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Name</TD>
+<TD>Name</TD>
+<TD>Name des Umlaufs.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Name</TD>
+<TD>Name</TD>
+<TD>Name of the line block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>Nom</TD>
+<TD>Nom</TD>
+<TD>Nom de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNumBlockingDays></A>
+<DIV id=NumBlockingDaysSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>NumBlockingDays</SPAN></DIV>
+<DIV id=NumBlockingDaysSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>12345</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AnzUmlTage</TD>
+<TD>Anzahl Umlauftage</TD>
+<TD>Anzahl Umlauftage des Umlaufs. Die Anzahl gibt an, nach wie vielen Tagen sich der Umlauf wiederholt. Gleichzeitig gibt sie an, wie viele Exemplare der Fahrzeugkombination in diesem Umlauf eingesetzt werden.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>NumBlockingDays</TD>
+<TD>Number of blocking days</TD>
+<TD>Number of blocking days of the line block. This number indicates both: the number of days after which the block will restart and the number of instances of the vehicle combination which are deployed in this line block.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbJoursRotation</TD>
+<TD>Nb jours de rotation</TD>
+<TD>Nombre de jours de rotation de la rotation. Le nombre indique après combien de jours la rotation se répète. Il indique simultanément combien d’exemplaires de la combinaison de véhicules sont utilisés dans cette rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNumLineRoutes></A>
+<DIV id=NumLineRoutesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>NumLineRoutes</SPAN></DIV>
+<DIV id=NumLineRoutesSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AnzLinienrouten</TD>
+<TD>Anzahl Linienrouten</TD>
+<TD>Anzahl der verschiedenen Linienrouten im Umlauf, d.h. der Linienrouten, für die es ein Umlaufelement gibt, welches eine Fahrplanfahrt auf dieser Linienroute darstellt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>NumLineRoutes</TD>
+<TD>Number of line routes</TD>
+<TD>Number of different line routes in the line block, i.e. those line routes, for which a line block item exists that represents a vehicle journey on this line route.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbItinL</TD>
+<TD>Nombre Itin Ligne</TD>
+<TD>Nombre d’itinéraires de ligne différents dans la rotation, c.-à-d. des itinéraires de ligne pour lesquels il existe un élément de rotation représentant un service sur cet itinéraire de ligne.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNumLines></A>
+<DIV id=NumLinesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>NumLines</SPAN></DIV>
+<DIV id=NumLinesSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AnzLinien</TD>
+<TD>Anzahl Linien</TD>
+<TD>Anzahl der verschiedenen Linien im Umlauf, d.h. der Linien, für die es ein Umlaufelement gibt, welches eine Fahrplanfahrt auf dieser Linie darstellt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>NumLines</TD>
+<TD>Number of lines</TD>
+<TD>Number of different lines in the line block, i.e. those lines, for which a line block item exists that represents a vehicle journey on this line.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbLignes</TD>
+<TD>Nombre Lignes</TD>
+<TD>Nombre de lignes différentes dans la rotation, c.-à-d. des lignes pour lesquelles il existe un élément de rotation représentant un service sur cette ligne.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNumServiceTrips></A>
+<DIV id=NumServiceTripsSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>NumServiceTrips</SPAN></DIV>
+<DIV id=NumServiceTripsSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AnzServiceFahrt</TD>
+<TD>Anzahl Servicefahrten</TD>
+<TD>Anzahl der Umlaufelemente vom Typ Fahrplanfahrt im Umlauf. Fahrplanfahrten, auf deren Abschnitten es mehrere Umlaufelemente (z.B. an verschiedenen Kalendertagen) gibt, werden mehrfach gezählt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>NumServiceTrips</TD>
+<TD>Number of service trips</TD>
+<TD>Number of line block items of the 'vehicle journey' type in the line block. Vehicle journeys with sections on which several block items exist (e.g. on different calendar days) are counted repeatedly.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbServices</TD>
+<TD>Nombre Services</TD>
+<TD>Nombre d’éléments de rotation du type service dans la rotation. Les services où il existe plusieurs éléments de rotation sur les sections respectives (par ex. pour des jours calendaires différents) sont comptés plusieurs fois.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrNumTimeProfiles></A>
+<DIV id=NumTimeProfilesSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>NumTimeProfiles</SPAN></DIV>
+<DIV id=NumTimeProfilesSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>int32</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>AnzFZP</TD>
+<TD>Anzahl Fahrzeitprofile</TD>
+<TD>Anzahl der verschiedenen Fahrzeitprofile im Umlauf, d.h. der Fahrzeitprofile, für die es ein Umlaufelement gibt, welches eine Fahrplanfahrt auf diesem Fahrzeitprofil darstellt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>NumTimeProfiles</TD>
+<TD>Number of time profiles</TD>
+<TD>Number of different time profiles in the line block, i.e. those time profiles, for which a line block item exists that represents a vehicle journey on this time profile.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NbProfilsTP</TD>
+<TD>Nombre Profils TP</TD>
+<TD>Nombre de profils de temps de parcours différents dans la rotation, c.-à-d. des profils de temps de parcours pour lesquels il existe un élément de rotation représentant un service sur ce profil de temps de parcours.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrOperatingKm></A>
+<DIV id=OperatingKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>OperatingKm</SPAN></DIV>
+<DIV id=OperatingKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EinsatzKm</TD>
+<TD>Einsatzkilometer</TD>
+<TD>Einsatz-km, definiert als Summe über die Längen aller Umlaufelemente im Umlauf. Gleichwertig zur Summe der Längen aller Umlaufelemente außer Stillstand.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>OperatingKm</TD>
+<TD>Operating kilometers</TD>
+<TD>Operating kilometers, defined as sum over the lengths of all block items in the line block. Equivalent to the sum of the lengths of all block items except for standstills.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmExploita</TD>
+<TD>KmExploitation</TD>
+<TD>Kilomètres d’exploitation, définis comme somme des longueurs de tous les éléments de rotation dans la rotation. Équivalent à la somme des longueurs de tous les éléments de rotation à l’exception des arrêts techniques.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrOperatingMi></A>
+<DIV id=OperatingMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>OperatingMi</SPAN></DIV>
+<DIV id=OperatingMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EinsatzMi</TD>
+<TD>Einsatzmeilen</TD>
+<TD>Einsatz-Meilen, definiert als Summe über die Längen aller Umlaufelemente im Umlauf. Gleichwertig zur Summe der Längen aller Umlaufelemente außer Stillstand.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>OperatingMi</TD>
+<TD>Operating miles</TD>
+<TD>Operating miles, defined as sum over the lengths of all block items in the line block. Equivalent to the sum of the lengths of all block items except for standstills.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiExploita</TD>
+<TD>MileExploitation</TD>
+<TD>Miles d’exploitation, définis comme somme des longueurs de tous les éléments de rotation dans la rotation. Équivalent à la somme des longueurs de tous les éléments de rotation à l’exception des arrêts techniques.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrOperatingTime></A>
+<DIV id=OperatingTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>OperatingTime</SPAN></DIV>
+<DIV id=OperatingTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>EinsatzZeit</TD>
+<TD>Einsatzzeit</TD>
+<TD>Einsatzzeit, definiert als Summe über die Dauern aller Umlaufelemente im Umlauf außer Stillstand. Wendezeit-Umlaufelemente (entsprechend der Vor- und Nachbereitungszeit des Fahrtabschnitts) werden mitgezählt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>OperatingTime</TD>
+<TD>Operating time</TD>
+<TD>Operating time, defined as sum over the durations of all block items in the line block except for standstills. Block items of the layover type (according to the section's pre and post preparation time) are included in counting.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TExploita</TD>
+<TD>TpsExploitation</TD>
+<TD>Temps d’exploitation, défini comme somme des durées de tous les éléments de rotation dans la rotation à l’exception des arrêts techniques. Les éléments de rotation de TempsRebroussement (conformément au TpsPréparationPré et Post de la section de service) sont comptés.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrRegardDirection></A>
+<DIV id=RegardDirectionSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>RegardDirection</SPAN></DIV>
+<DIV id=RegardDirectionSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>RichtungBeachten</TD>
+<TD>Fahrtrichtung beachten</TD>
+<TD>Gibt an, ob die Fahrtrichtung bei der Umlaufprüfung berücksichtigt werden soll (Wert=1) oder nicht (Wert=0). Nur bei Berücksichtigung der Fahrtrichtung wird auf Fahrtrichtungsfehler geprüft.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>RegardDirection</TD>
+<TD>Regard running direction</TD>
+<TD>Indicates whether the line block check shall take the direction of traffic into account (yes = 1, no = 0). Only if the direction is regarded the check will include the check for direction faults.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TenirCompteSensCircul</TD>
+<TD>Tenir compte de sens de circulation</TD>
+<TD>Indique s’il faut tenir compte du sens de circulation pour la vérification des rotations (valeur = 1) ou non (valeur = 0). L’existence d’erreurs de sens de circulation est uniquement vérifiée lorsqu’on tient compte du sens de circulation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrSelfContained></A>
+<DIV id=SelfContainedSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>SelfContained</SPAN></DIV>
+<DIV id=SelfContainedSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>UmlGeschlossen</TD>
+<TD>Geschlossen</TD>
+<TD>Gibt an, ob der Umlauf abgeschlossen ist (Wert=1) oder nicht. Abgeschlossen bedeutet, dass ein Übergang von der letzten auf die erste Leistung stattfindet und der Umlauf dadurch keinen Anfang oder Ende hat.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>SelfContained</TD>
+<TD>Self-contained</TD>
+<TD>Indicates whether the line block is self-contained, i.e. it is closed (yes = 1, no = 0). Closed means that a transition from the last to the first action is included and that the line block has neither a start nor an end, accordingly.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>RotationComplète</TD>
+<TD>Rotation complète</TD>
+<TD>Indique si la rotation est fermée (valeur = 1) ou non. Fermée signifie qu’il existe une transition de la dernière à la première action et que la rotation ne comporte donc ni début ni fin.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrServiceKm></A>
+<DIV id=ServiceKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ServiceKm</SPAN></DIV>
+<DIV id=ServiceKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ServiceKm</TD>
+<TD>Servicekilometer</TD>
+<TD>Service-km, definiert als Summe über die Längen aller Umlaufelemente vom Typ Fahrplanfahrt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ServiceKm</TD>
+<TD>Service kilometers</TD>
+<TD>Public transport service kilometers, defined as the total length summed up from the kilometers of the line block's block items of the 'vehicle journey' type.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmService</TD>
+<TD>KmService</TD>
+<TD>Km de service, définis comme somme des longueurs de tous les éléments de rotation du type service.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrServiceMi></A>
+<DIV id=ServiceMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ServiceMi</SPAN></DIV>
+<DIV id=ServiceMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ServiceMi</TD>
+<TD>Servicemeilen</TD>
+<TD>Service-Meilen, definiert als Summe über die Längen aller Umlaufelemente vom Typ Fahrplanfahrt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ServiceMi</TD>
+<TD>Service miles</TD>
+<TD>Public transport service miles, defined as the total length summed up from the miles of the line block's block items of the 'vehicle journey' type.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiService</TD>
+<TD>MileService</TD>
+<TD>Miles de service, définis comme somme des longueurs de tous les éléments de rotation du type service.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrServiceTime></A>
+<DIV id=ServiceTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ServiceTime</SPAN></DIV>
+<DIV id=ServiceTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ServiceZeit</TD>
+<TD>Servicezeit</TD>
+<TD>Servicezeit, definiert als Summe über die Dauern aller Umlaufelemente vom Typ Fahrplanfahrt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ServiceTime</TD>
+<TD>Service time</TD>
+<TD>Public transport service time, defined as the total duration summed up from the durations of the line block's block items of the 'vehicle journey' type.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TService</TD>
+<TD>TpsService</TD>
+<TD>Temps de service, défini comme somme des durées de tous les éléments de rotation du type service.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrStartDayIndex></A>
+<DIV id=StartDayIndexSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>StartDayIndex</SPAN></DIV>
+<DIV id=StartDayIndexSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>CalendarDay</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>StartTagIndex</TD>
+<TD>Starttag-Index</TD>
+<TD>Index des Kalendertags, an dem das erste Umlaufelement des Umlaufs beginnt, bezogen auf den Kalender (und nicht auf den Umlaufbildungszeitraum).</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>StartDayIndex</TD>
+<TD>Start day index</TD>
+<TD>Index of the calendar day, when the first block item of the line block starts; refers to the calendar (does not regard the line blocking time interval).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>IndiceJourDéb</TD>
+<TD>Indice Jour Début</TD>
+<TD>Indice du jour calendaire où le premier élément de rotation de la rotation commence, rapporté au calendrier (et non à l’intervalle de calcul des rotations).</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrStartTime></A>
+<DIV id=StartTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>StartTime</SPAN></DIV>
+<DIV id=StartTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>time</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>StartZeit</TD>
+<TD>Startzeit</TD>
+<TD>Zeitpunkt, an dem das erste Umlaufelement des Umlaufs beginnt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>StartTime</TD>
+<TD>Start time</TD>
+<TD>Time when the first block item of the line block starts.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>HDébut</TD>
+<TD>Heure Début</TD>
+<TD>Instant de début du premier élément de rotation de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrTimeFault></A>
+<DIV id=TimeFaultSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>TimeFault</SPAN></DIV>
+<DIV id=TimeFaultSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CheckBlocks</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Zeitbruch</TD>
+<TD>Hat Zeitbruch</TD>
+<TD>Zeigt bei einem geprüften Umlauf an, dass es einen Zeitbruch gibt, dass also eine Aktivität beginnt, bevor die vorausgehende Aktivität geendet hat.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>TimeFault</TD>
+<TD>Has time fault</TD>
+<TD>Indicates that the checked line block includes a time fault which means that an activity starts before the previous activity is completed.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ErreurTemps</TD>
+<TD>Erreur temporelle</TD>
+<TD>Indique pour une rotation vérifiée qu’il existe une erreur temporelle, c.-à-d. qu’une activité commence avant la fin de l’activité précédente.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrTimeOutsideDepot></A>
+<DIV id=TimeOutsideDepotSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>TimeOutsideDepot</SPAN></DIV>
+<DIV id=TimeOutsideDepotSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>ZeitAussDepot</TD>
+<TD>Zeit außerhalb Depot</TD>
+<TD>Zeit außerhalb Depot, definiert als Summe über die Dauer aller Umlaufelemente außer Stillstand mit der Kennzeichnung 'im Depot'.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>TimeOutsideDepot</TD>
+<TD>Time outside depot</TD>
+<TD>Time outside of depot, defined as sum over the durations of all block items except for standstills with 'in depot' flag.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TpsHorsDépôt</TD>
+<TD>Temps hors dépôt</TD>
+<TD>Temps hors du dépôt, défini comme somme des durées de tous les éléments de rotation à l’exception des arrêts techniques avec l’identifiant «&nbsp;Dans dépôt&nbsp;».</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrToStopPointName></A>
+<DIV id=ToStopPointNameSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ToStopPointName</SPAN></DIV>
+<DIV id=ToStopPointNameSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>string</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>NachHPunktName</TD>
+<TD>Nach-Haltepunkt-Name</TD>
+<TD>Name des Haltepunkts, an dem das letzte Umlaufelement des Umlaufs endet.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ToStopPointName</TD>
+<TD>To stop point name</TD>
+<TD>Name of the stop point where the last block item of the line block ends.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NomPArrêtD</TD>
+<TD>NomPArrêtDest</TD>
+<TD>Nom du point d’arrêt de fin du dernier élément de rotation de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrToStopPointNo></A>
+<DIV id=ToStopPointNoSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>ToStopPointNo</SPAN></DIV>
+<DIV id=ToStopPointNoSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>index</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>NachHPunktNr</TD>
+<TD>Nach-Haltepunkt-Nummer</TD>
+<TD>Nummer des Haltepunkts, an dem das letzte Umlaufelement des Umlaufs endet.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>ToStopPointNo</TD>
+<TD>To stop point number</TD>
+<TD>Number of the stop point where the last block item of the line block ends.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NumPArrêtD</TD>
+<TD>NumPArrêtDest</TD>
+<TD>Numéro du point d’arrêt de fin du dernier élément de rotation de la rotation.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrUnchecked></A>
+<DIV id=UncheckedSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>Unchecked</SPAN></DIV>
+<DIV id=UncheckedSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Optional</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CheckBlocks, InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>Ungeprüft</TD>
+<TD>Ungeprüft</TD>
+<TD>Zeigt an ob der Umlauf ungeprüft (Wert=1) oder geprüft (Wert=0) ist.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>Unchecked</TD>
+<TD>Unchecked</TD>
+<TD>Indicates whether the block is unchecked (0=checked, 1=not checked).</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NonVérifié</TD>
+<TD>Non vérifié</TD>
+<TD>Indique si la rotation est non vérifiée (valeur = 1) ou vérifiée (valeur = 0).</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrUserDefinedKm></A>
+<DIV id=UserDefinedKmSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>UserDefinedKm</SPAN></DIV>
+<DIV id=UserDefinedKmSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>BenutzerDefKm</TD>
+<TD>Aktivitäten-Kilometer</TD>
+<TD>Summe der Längen der benutzerdefinierten Aktivitäten im Umlauf, also aller Umlaufelemente eines benutzerdefinierten Umlaufelement-Typs.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>UserDefinedKm</TD>
+<TD>Activity kilometers</TD>
+<TD>Sum of the lengths of the user-defined activities in the line block, i.e. all block items of a user-defined block item type.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>KmDéfUtilisateur</TD>
+<TD>Km d’activité</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrUserDefinedMi></A>
+<DIV id=UserDefinedMiSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>UserDefinedMi</SPAN></DIV>
+<DIV id=UserDefinedMiSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>longLength</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>BenutzerDefMi</TD>
+<TD>Aktivitäten-Meilen</TD>
+<TD>Summe der Längen der benutzerdefinierten Aktivitäten im Umlauf, also aller Umlaufelemente eines benutzerdefinierten Umlaufelement-Typs.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>UserDefinedMi</TD>
+<TD>Activity miles</TD>
+<TD>Sum of the lengths of the user-defined activities in the line block, i.e. all block items of a user-defined block item type.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>MiDéfUtilisateur</TD>
+<TD>Miles d’activité</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrUserDefinedTime></A>
+<DIV id=UserDefinedTimeSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>UserDefinedTime</SPAN></DIV>
+<DIV id=UserDefinedTimeSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>durationInHours</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CalculatedAlwaysUpToDate</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>BenutzerDefZeit</TD>
+<TD>Aktivitäten-Zeit</TD>
+<TD>Summe der Dauern der benutzerdefinierten Aktivitäten im Umlauf, also aller Umlaufelemente eines benutzerdefinierten Umlaufelement-Typs.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>UserDefinedTime</TD>
+<TD>Activity time</TD>
+<TD>Sum of the durations of the user-defined activities in the line block, i.e. all block items of a user-defined block item type.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>TpsDéfUtilisateur</TD>
+<TD>Temps d’activité</TD>
+<TD></TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrVehCombNo></A>
+<DIV id=VehCombNoSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>VehCombNo</SPAN></DIV>
+<DIV id=VehCombNoSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>VehCombNo</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>true</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Input</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Mandatory</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationInput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>InputAttribute</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>FzgKombNr</TD>
+<TD>Fahrzeugkombinations-Nummer</TD>
+<TD>Nummer der eingesetzten Fahrzeugkombination.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>VehCombNo</TD>
+<TD>Vehicle combination number</TD>
+<TD>Number of the deployed vehicle combination.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>NumCombiVéh</TD>
+<TD>NumCombinaisonVéh</TD>
+<TD>Numéro de la combinaison de véhicules utilisée.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV>
+<DIV><A name=AttrVehFault></A>
+<DIV id=VehFaultSectionHeading class=SectionHeading><SPAN class=SectionHeadingIcon><!-- --></SPAN><SPAN class=SectionHeadingText>VehFault</SPAN></DIV>
+<DIV id=VehFaultSectionContent class=SectionContent>
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH>Value type</TH>
+<TD>bool</TD></TR>
+<TR>
+<TH>Editable</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>In/Output</TH>
+<TD>Output</TD></TR>
+<TR>
+<TH>Type</TH>
+<TD>Calculated</TD></TR>
+<TR>
+<TH>Category</TH>
+<TD>PuTOperationOutput</TD></TR>
+<TR>
+<TH>Source</TH>
+<TD>CheckBlocks</TD></TR>
+<TR>
+<TH>Modules</TH>
+<TD>betr</TD></TR>
+<TR>
+<TH>Minimum</TH>
+<TD>0</TD></TR>
+<TR>
+<TH>Maximum</TH>
+<TD>1</TD></TR>
+<TR>
+<TH>Default value</TH>
+<TD>false</TD></TR>
+<TR>
+<TH>Cross value</TH>
+<TD>Ignore</TD></TR>
+<TR>
+<TH>Can be temporary</TH>
+<TD>false</TD></TR></TBODY></TABLE>
+<P>Names in other languages: 
+<DIV>
+<TABLE>
+<TBODY>
+<TR>
+<TH></TH>
+<TH>Short name</TH>
+<TH>Long name</TH>
+<TH>Description</TH></TR>
+<TR>
+<TD>DEU</TD>
+<TD>FzgFehler</TD>
+<TD>Hat Fahrzeugfehler</TD>
+<TD>Zeigt bei einem geprüften Umlauf an, dass die Fahrzeugkombination des Umlaufs nicht mit der Fahrzeugkombination eines gebundenen Fahrplanfahrtabschnitts übereinstimmt.</TD></TR>
+<TR>
+<TD>ENG</TD>
+<TD>VehFault</TD>
+<TD>Has vehicle fault</TD>
+<TD>Indicates that the vehicle combination of the checked line block differs from the vehicle combination of a bound vehicle journey section.</TD></TR>
+<TR>
+<TD>FRA</TD>
+<TD>ErreurVéh</TD>
+<TD>Erreur de véhicule</TD>
+<TD>Indique pour une rotation vérifiée que la combinaison de véhicules de la rotation ne coïncide pas avec la combinaison de véhicules d’une section de service associée.</TD></TR></TBODY></TABLE></DIV>
+<P></P></DIV></DIV></DIV></DIV>
+        <div class="SectionHeading" id="seealsoSectionHeading"><span class="SectionHeadingIcon"><!-- --></span><span class="SectionHeadingText">See Also</span></div><div id="seealsoSectionContent" class="SectionContent"><p id=dxseealsocontent><a href="VISUMLIB~IBlock.html">IBlock</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IBlock_attributes.html">IBlock Attributes</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IBlock_relations.html">IBlock Relations</a>
+&nbsp;|&nbsp;<a href="VISUMLIB~IBlock_referencedby.html">IBlock ReferencedBy</a>
+</p>
+</p></div>
+    </div>
+    <div id="FooterContent">
+        <div style="float: left">
+                <p class="copyrightfooter">Copyright © 2024 PTV Planung Transport Verkehr GmbH</p>
+            </div>
+            <img style="float: right;" src="images/PTV_small.jpg" />
+    </div>
+    
+</body>
+</html>

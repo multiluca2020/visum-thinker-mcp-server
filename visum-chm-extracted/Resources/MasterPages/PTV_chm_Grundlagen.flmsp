@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<html xmlns:MadCap="http://www.madcapsoftware.com/Schemas/MadCap.xsd" MadCap:lastBlockDepth="5" MadCap:lastHeight="78" MadCap:lastWidth="709">
+    <head>
+        <link href="../Stylesheets/PTV_Standard.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <MadCap:breadcrumbsProxy style="margin-top: 0;" class="breadcrumbsProxyGrundlagen" />
+        <MadCap:bodyProxy />
+        <MadCap:snippetBlock src="../Snippets/Copyrightfooter.flsnp" />
+    </body>
+</html>

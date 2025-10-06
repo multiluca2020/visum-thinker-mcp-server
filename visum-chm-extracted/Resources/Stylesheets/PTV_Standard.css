@@ -1,0 +1,2647 @@
+/*<meta />*/
+
+@namespace MadCap url(http://www.madcapsoftware.com/Schemas/MadCap.xsd);
+
+/*In diesen Zeilen stehen Kommentare. Die verschieben sich, wenn man in Flare am Stylesheet arbeitet. Originalposition nur in der Vorlage. Achtung: keine Sonderzeichen in Kommentaren verwenden*/
+/*XXXUEXXX Texte zum Uebersetzen*/
+/* ---------------------------------------------------------------- UEBERSCHRIFTEN ----------------------------------------------------------------*/
+/* ---------------------------------------------------------------- UEBERSCHRIFTEN ----------------------------------------------------------------*/
+/*--------------------------- h1- h6 Ueberschriften Styles davon h6 eventuell loeschen XXX---------------------------------*/
+/* Keine autom. Numm. da fuer OH. Die autom. Numm. im PDF css */
+/*----------- p.Heading_Schritt1 -- p.Heading_Schritt -- p.Heading_Schritt_Buchstabe: Ueberschriften Styles pruefen wo und wofuer XXXX ---*/
+/* -------------------------------------------------- STANDARD STYLES - SCHRITTE  - RESULTANTSANGABEN --------------------------------------------------*/
+/* -------------------------------------------------- STANDARD STYLES - SCHRITTE  - RESULTANTSANGABEN --------------------------------------------------*/
+/* --------------------------------------- p  Standardabsatz      --------------------------------*/
+/* --------------------------------------- p.Text_1 pruefen wo und wofuer    --------------------------------*/
+/* --------------------------------------- P.StepFirst Erster Schritt --------------------------------*/
+/* --------------------------------------- P.Step Folgeschritt nicht der erste --------------------------------*/
+/* --------------------------------------- span.StepNumber Zeichenformat Schrittnummer --------------------------------*/
+/* --------------------------------------- P.Result  Resultatsangabe Ende Handlungsanweisung --------------------------------*/
+/* --------------------------------------- P.Stepresult  Resultatsangabe nach Schritt --------------------------------*/
+/* --------------------------------------- BODY  offen  wg p.text noch noetig pruefen XXXXXX--------------------------------*/
+/* ------------------------------------------------------------------- UNNNUMERIERTE LISTEN UND STEPONE -----------------------------------------------------------------------------------*/
+/* ------------------------------------------------------------------- UNNNUMERIERTE LISTEN UND STEPONE -----------------------------------------------------------------------------------*/
+/* ---------------------------------------LI  Listen-Style --------------------------------*/
+/* ---------------------------------------LI.Stepone Listen-Style fuer Einzelschritt --------------------------------*/
+/* ---------------------------------------LI.List0 eingerueckte Liste ----------------------------------------------------*/
+/* ---------------------------------------LI.LI2 eingerueckte Liste ----------------------------------------------------*/
+/* ---------------------------------------LI.List0 Liste ----------------------------------------------------*/
+/* ---------------------------------------LI.List1Tab eingerueckte Liste  ----------------------------------------------------*/
+/* ---------------------------------------LI.List2Tab eingerueckte Liste in Tabellen ----------------------------------------------------*/
+
+BODY
+{
+	font-size: 9pt;
+	mc-disabled: false;
+}
+
+/* ---------------------------------------ul Listen-Style pruefen, ob noetig --------------------------------*/
+
+p
+{
+	font-size: 9pt;
+	font-family: Arial;
+	text-align: left;
+}
+
+p.Text
+{
+	font-size: 9pt;
+	margin-top: 3pt;
+	margin-bottom: 6pt;
+}
+
+/* ---------------------------------------ol Listen-Style pruefen, ob noetig--------------------------------*/
+
+p.Text2
+{
+	font-size: 9pt;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+	margin-left: 16px;
+}
+
+/* ------------------------------------------------------------------------------- TABELLEN --------------------------------------------------------------*/
+/* ------------------------------------------------------------------------------- TABELLEN --------------------------------------------------------------*/
+/* --------------------------------------- p.Titel_von_Tabellen noetig XXXXX da label table unten --------------------------------*/
+
+h1
+{
+	text-align: left;
+	font-family: Arial;
+	font-weight: bold;
+	margin-bottom: 2pt;
+	margin-top: 10pt;
+	font-size: 14pt;
+}
+
+/* --------------------------------------- td Standardzeile noetig da bereits unten th und td --------------------------------*/
+/* --------------------------------------- td Standardzelle --------------------------------*/
+
+h1.NoNumber
+{
+	text-align: left;
+	font-family: Arial;
+	font-weight: bold;
+	margin-bottom: 2pt;
+	margin-top: 10pt;
+	font-size: 14pt;
+}
+
+/* --------------------------------------- th Tabellenkopzeile OFFEN Text fett einfuegen noch identisch mit td kann geloescht werden wenn per Absatz style fett --------------------------------*/
+
+h2
+{
+	text-align: left;
+	font-family: Arial;
+	font-weight: bold;
+	margin-bottom: 2pt;
+	margin-top: 10pt;
+	font-size: 12pt;
+}
+
+/*--- P.Tabledist Absatz fuer Abstand ueber Tabelle. Ggf: Ziel das Style abzuschaffen wenn Abstand p oder der Tabelle zugewiesen wirdXXXX  ---*/
+
+h3
+{
+	text-align: left;
+	font-family: Arial;
+	font-weight: bold;
+	margin-bottom: 2pt;
+	margin-top: 10pt;
+	font-size: 10pt;
+}
+
+/* --------------------------------------- p.Label_table   Tabellenuntertitel zaehlt autom. hoch --------------------------------*/
+
+h4
+{
+	text-align: left;
+	font-family: Arial;
+	font-weight: bold;
+	margin-bottom: 2pt;
+	margin-top: 10pt;
+	font-size: 9pt;
+}
+
+/*---------------------------  p.CellCaption    Tabellenkopfzeile  fett  --------------------------------*/
+
+h5
+{
+	font-weight: bold;
+	margin-top: 9pt;
+	margin-bottom: 2pt;
+	font-family: Arial;
+	font-size: 9pt;
+}
+
+h6
+{
+	font-weight: bold;
+	font-family: Arial;
+	font-size: 9pt;
+}
+
+/*---------------------------  p.CellText    Tabellenstandardzeile  fett  --------------------------------*/
+
+p.Heading_Schritt1
+{
+	font-weight: bold;
+	font-style: normal;
+	mc-auto-number-format: 'Schritt {n=1}: ';
+}
+
+/*---------------------------   P.CellText_mid   Tabellenstandardzeile  zentriert  --------------------------------*/
+
+p.Heading_Schritt
+{
+	font-weight: bold;
+	font-style: normal;
+	mc-auto-number-format: 'Schritt {n+}: ';
+}
+
+/*---------------------------   p.CellText_right  Tabellenstandardzeile  rechtsbuendig  --------------------------------*/
+
+p.Heading_Schritt_Buchstabe
+{
+	font-weight: bold;
+	font-style: normal;
+	mc-auto-number-format: 'Schritt {n}{a+}: ';
+}
+
+/*---------------------------  p.CellText_Var  Tabellenstandardzeile  XXX pruefen  --------------------------------*/
+
+p.img
+{
+	margin-top: 0pt;
+	vertical-align: top;
+	margin-bottom: 3pt;
+}
+
+/*---------------------------  table.PTVStandard  fuer alle mehrzeiligen und mehrspaltigen Tabellen mit Rahmenlinien hinw margin entfernt   --------------------------------*/
+
+p.Text_1
+{
+	font-size: 9pt;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+	font-family: Wingdings;
+}
+
+/*---------------------------  table.Startscreen EUSKA Anordnung der StascreenElemente kann ggf Standard werden, hinw margin entfernt  --------------------------------*/
+
+p.StepFirst
+{
+	font-size: 9pt;
+	margin-top: 6pt;
+	margin-bottom: 6pt;
+	border-top-style: none;
+	border-bottom-style: none;
+	text-align: left;
+	mc-auto-number-position: inside-head;
+	mc-auto-number-format: '{n=1}.  ';
+	mc-auto-number-offset: 5px;
+	margin-left: 16px;
+	text-indent: -16px;
+}
+
+/*---------------------------  td.startscreen EUSKA Anordnung der StascreenElemente kann ggf Standard werden  --------------------------------*/
+
+p.Step
+{
+	font-size: 9pt;
+	margin-top: 0pt;
+	margin-bottom: 6pt;
+	border-top-style: none;
+	border-bottom-style: none;
+	text-align: left;
+	mc-auto-number-position: inside-head;
+	mc-auto-number-offset: 10px;
+	mc-auto-number-format: '{n+}.  ';
+	margin-left: 16px;
+	text-indent: -16px;
+}
+
+/*---------------------------  table.PTVHintTipWarning fuer HintTipWarning einzellig  --------------------------------*/
+
+span.StepNumber
+{
+	font-family: Arial;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 8.0pt;
+	color: #000000;
+	letter-spacing: 0.00em;
+}
+
+p.Result
+{
+	font-size: 9pt;
+	margin-top: 6pt;
+	margin-bottom: 6pt;
+	font-style: italic;
+}
+
+/*---------------------------  td.hint muss hint tip warning zugewiesen werden damit seitliche Linien entfernt werden  --------------------------------*/
+
+p.Stepresult
+{
+	font-size: 9pt;
+	font-style: italic;
+	margin-top: 6pt;
+	margin-bottom: 6pt;
+	mc-auto-number-position: none;
+	margin-left: 16px;
+}
+
+LI
+{
+	font-size: 9pt;
+	margin-right: 2pt;
+	margin-top: 0pt;
+	margin-bottom: 2pt;
+	font-family: Arial;
+	margin-left: 0pt;
+	list-style: disc;
+	display: list-item;
+	page-break-inside: avoid;
+	list-style-position: outside;
+	list-style-image: url('../Images_4_all/ICO_List.png');
+}
+
+/*---------------------------  th.standard wozu da Absatz Style pruefen loeschen XXXXX  --------------------------------*/
+
+LI.Stepone
+{
+	list-style-type: circle;
+	text-align: left;
+	margin-top: 6pt;
+	margin-bottom: 6pt;
+	margin-left: -16pt;
+	list-style-image: url('../Images_4_all/ICO_StepOne.png');
+}
+
+LI.List0
+{
+	margin-left: -13pt;
+	text-indent: 0px;
+	padding-left: 0pt;
+}
+
+/*---------------------------  p.Cell_StepResult wozu da keine nummerierte HA in Tabellen pruefen loeschen XXX --------------------------------*/
+
+LI.List1
+{
+	margin-left: 0pt;
+}
+
+/*-----------------------------------------------------------  PRE STYLES DUCH IMPORT  ------------------------------------------------------------*/
+/*-----------------------------------------------------------  PRE STYLES DUCH IMPORT  ------------------------------------------------------------*/
+/*----------  pre: die Formatierung stammt vom Original. D.h. die Leerzeichen oder tabs werden in die Hilfe ausgegeben ---------*/
+
+LI.List2
+{
+	margin-left: 15pt;
+}
+
+LI.List0Tab
+{
+	font-size: 9pt;
+	display: list-item;
+	list-style: disc;
+	margin-bottom: 1pt;
+	margin-top: 0pt;
+	list-style-position: outside;
+	text-indent: 0px;
+	padding-left: 1pt;
+	margin-left: -15pt;
+}
+
+/* ----------------------------------------------------------------------------------------- FORMELN ---------------------------------------------------------------------------*/
+/* ----------------------------------------------------------------------------------------- FORMELN ---------------------------------------------------------------------------*/
+/*---------------------------  p.Formula Formeln  ----------------------------------*/
+
+LI.List1Tab
+{
+	font-size: 9pt;
+	display: list-item;
+	list-style: disc;
+	margin-bottom: 1pt;
+	margin-top: 0pt;
+	list-style-position: outside;
+	text-indent: 0px;
+	padding-left: 1pt;
+	margin-left: 0pt;
+}
+
+/*---------------------------  p.Formel kursiv ----------------------------------*/
+
+LI.List2Tab
+{
+	font-size: 9pt;
+	display: list-item;
+	list-style: disc;
+	list-style-type: circle;
+	list-style-position: outside;
+	margin-bottom: 1pt;
+	margin-top: 0pt;
+	padding-left: 1pt;
+	margin-left: 15pt;
+}
+
+/* --------------------------   MadCap|equation Formeleditor   ------------------------------------ */
+
+ul
+{
+	display: block;
+	margin-top: 0pt;
+	margin-bottom: 3pt;
+}
+
+/*---------------------------  p.Formelnummerierung --- Anwendung pruefen wozu --------------------------------*/
+
+p.Titel_von_Tabellen
+{
+	display: none;
+}
+
+tr
+{
+	vertical-align: top;
+}
+
+tr.Symbol1
+{
+	vertical-align: top;
+	width: 30px;
+}
+
+/* ------------------------------------------------------------------------------- HINWEISE UND TIPPS --------------------------------------------------------------------------------*/
+/* ------------------------------------------------------------------------------- HINWEISE UND TIPPS --------------------------------------------------------------------------------*/
+/*--------------------------- Ein Hint in Tabelle Hint ------------------------------*/
+/*XXXUEXXX Texte zum Uebersetzen*/
+
+td
+{
+	font-size: 9pt;
+	font-family: Arial;
+	text-align: left;
+	border-left-style: solid;
+	border-left-width: 1px;
+	border-left-color: #000000;
+	border-right-style: solid;
+	border-right-width: 1px;
+	border-right-color: #000000;
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-top-color: #000000;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #000000;
+	padding-left: 2px;
+	padding-right: 2px;
+	vertical-align: top;
+}
+
+/*-------- Hints in Tabelle Hint. Nach Umbruch die Hints in den Folgeabsaetzen mit p formatieren. "fett" ueber Tabellenzellen-Style  ----------*/
+/*XXXUEXXX Texte zum Uebersetzen*/
+
+th
+{
+	font-size: 9pt;
+	font-family: Arial;
+	text-align: left;
+	border-left-style: solid;
+	border-left-width: 1px;
+	border-left-color: #000000;
+	border-right-style: solid;
+	border-right-width: 1px;
+	border-right-color: #000000;
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-top-color: #000000;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #000000;
+	padding-left: 2px;
+	padding-right: 2px;
+	vertical-align: top;
+}
+
+/*--------------------------- Ein Tipp in Tabelle Hint (Hints und Tipps haben gleiche Tabellen! Keine Tabelle Tipp mehr)-----------------------*/
+/*XXXUEXXX Texte zum Uebersetzen*/
+
+p.Tabledist
+{
+	font-size: 3pt;
+	margin-bottom: 0pt;
+	margin-top: 0pt;
+}
+
+/*------------ Tipps in Tabelle Hint. Nach Umbruch die Tipps in den Folgeabsaetzen mit p formatieren. "fett" ueber Tabellenzellen-Style  -------------*/
+/*XXXUEXXX Texte zum Uebersetzen*/
+
+p.Label_table
+{
+	mc-auto-number-format: 'GT: Tabelle {n+}: ';
+	margin-bottom: 4pt;
+	text-indent: -18pt;
+	margin-left: 20pt;
+	margin-top: 2pt;
+}
+
+/*------------ Eine Warnung in Tabelle Hint. fett ueber Tabellenzellen-Style  -------------*/
+/*XXXUEXXX Texte zum Uebersetzen*/
+
+p.CellCaption
+{
+	font-size: 9pt;
+	margin-top: 1pt;
+	margin-bottom: 1pt;
+	font-weight: bold;
+	font-style: normal;
+}
+
+/*------------ Warnungen in Tabelle Hint. Nach Umbruch die Warnungen in den Folgeabsaetzen mit p formatieren. "fett" ueber Tabellenzellen-Style  -------------*/
+/*XXXUEXXX Texte zum Uebersetzen*/
+
+p.CellText
+{
+	font-size: 9pt;
+	margin-top: 1pt;
+	margin-bottom: 3pt;
+	page-break-inside: avoid;
+}
+
+/* ---------------------------------------------------------------------------------- GRAFIKEN ---------------------------------------------------------------------------------------------*/
+/* ---------------------------------------------------------------------------------- GRAFIKEN ---------------------------------------------------------------------------------------------*/
+/*--------------------------- P.Image f�r Grafiken und Screenshots die NICHT in OH sollen ----------------------------*/
+
+p.CellText_mid
+{
+	font-size: 9pt;
+	text-align: Center;
+	margin-left: 2pt;
+	margin-right: 2pt;
+	margin-top: 1pt;
+	margin-bottom: 3pt;
+}
+
+/*--------P.ImageOH f�r Grafiken und Screenshots die in die OH sollen ----------------------------*/
+
+p.CellText_right
+{
+	font-size: 9pt;
+	text-align: right;
+	margin-left: 2pt;
+	margin-right: 2pt;
+	margin-top: 1pt;
+	margin-bottom: 3pt;
+}
+
+/* -----------------------    img.img_3 pruefen wo und wofuer -------------------------- */
+
+p.CellText_Var
+{
+	font-size: 9pt;
+	margin-left: 2pt;
+	margin-right: 2pt;
+	margin-top: 1pt;
+	margin-bottom: 3pt;
+}
+
+/*-------- p.Label_images Grafikuntertitel zaehlt autom. hoch  ----------------------------*/
+
+table.PTVStandard
+{
+	width: 100%;
+	font-size: 9pt;
+	font-family: Arial;
+	vertical-align: top;
+	margin-top: 8px;
+	margin-bottom: 12px;
+	border-collapse: collapse;
+}
+
+/*--------------- pre.Input aus Word da pre f�r Eingabe XXXXX Dann ersetzen und hier loeschen ----------------------------*/
+
+table.PTVStandard2
+{
+	width: 100%;
+	font-size: 9pt;
+	font-family: Arial;
+	vertical-align: top;
+	margin-top: 8px;
+	margin-bottom: 12px;
+	margin-left: 16px;
+	border-collapse: collapse;
+}
+
+table.PTVStandard_SingleCells
+{
+	width: 100%;
+	font-size: 9pt;
+	font-family: Arial;
+	vertical-align: top;
+	margin-top: 8px;
+	margin-bottom: 12px;
+	border-collapse: collapse;
+	mc-caption-repeat: true;
+	widows: 1;
+	orphans: 1;
+}
+
+/*--------------- pre.Input_tabwide aus Word da pre f�r Eingabe XXXXX Dann ersetzen und hier loeschen -----------------------------*/
+
+table.PTVManyCells
+{
+	width: 491 px;
+	font-size: 9pt;
+	font-family: Arial;
+	vertical-align: top;
+	margin-top: 8px;
+	margin-bottom: 12px;
+	margin-left: 16px;
+	border-collapse: collapse;
+}
+
+/*--------------- aus Word da pre f�r Eingabe. Dann ersetzen und hier loeschen -----------------------------*/
+
+table.Startscreen
+{
+	width: 100%;
+	font-size: 9pt;
+	font-family: Arial;
+	vertical-align: top;
+	border-collapse: collapse;
+}
+
+/*--------------- Standarddfliesstext ausserhalb von Tabellen -----------------------------*/
+
+td.startscreen
+{
+	font-size: 9pt;
+	font-family: Arial;
+	text-align: left;
+	border-top-style: none;
+	border-right-style: none;
+	border-left-style: none;
+	border-bottom-style: none;
+	vertical-align: top;
+	margin-top: 0px;
+}
+
+/* ---------------------------- Standarddfliesstext eingerueckt ausserhalb von Tabellen -------------------------*/
+
+table.PTVHintTipWarning
+{
+	width: 100%;
+	font-size: 9pt;
+	font-family: Arial;
+	vertical-align: top;
+	border-collapse: collapse;
+	margin-top: 8px;
+	margin-bottom: 12px;
+}
+
+/* ---------------------------------------------------------------------------- span ZEICHEN STYLES -------------------------------------------------------------------------*/
+/* ---------------------------------------------------------------------------- span ZEICHEN STYLES -------------------------------------------------------------------------*/
+
+table.PTVHintTipWarning2
+{
+	width: 100%;
+	font-size: 9pt;
+	font-family: Arial;
+	vertical-align: top;
+	border-collapse: collapse;
+	margin-top: 8px;
+	margin-bottom: 12px;
+	margin-left: 16px;
+}
+
+/* ----------------------------span.bulletsymbol  offen ob notwendig pruefen -------------------------*/
+
+td.hint
+{
+	font-size: 9pt;
+	font-family: Arial;
+	font-weight: normal;
+	text-align: left;
+	border-top-style: 1px;
+	border-top-style: solid;
+	border-top-color: #000000;
+	border-right-style: none;
+	border-left-style: none;
+	border-bottom-style: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #000000;
+	padding-right: 2px;
+	padding-left: 2px;
+}
+
+/* ---------------------------- span.formula Text fuer Formel nciht aus Formeleditor  -------------------------*/
+
+th.standard
+{
+	font-family: Arial;
+	font-size: 9pt;
+	text-align: left;
+	padding-left: 2px;
+	padding-right: 2px;
+	vertical-align: top;
+	border-top-style: 1px;
+	border-top-style: solid;
+	border-top-color: #000000;
+	border-right-style: 1px;
+	border-right-style: solid;
+	border-right-color: #000000;
+	border-left-style: 1px;
+	border-left-style: solid;
+	border-left-color: #000000;
+	border-bottom-style: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #000000;
+}
+
+/* ---------------------------- span.Standard Standardtext -------------------------*/
+
+p.Cell_StepResult
+{
+	font-size: 9pt;
+	font-style: italic;
+	margin-top: 6pt;
+	margin-bottom: 6pt;
+	mc-auto-number-position: none;
+	margin-left: 40px;
+}
+
+/* ---------------------------- span.formula_subscript tiefgestellt -------------------------*/
+
+pre
+{
+	
+}
+
+pre.Code
+{
+	font-size: 8pt;
+	margin: 0;
+}
+
+/* ---------------------------- span.formula_superscript hochgestellt -------------------------*/
+
+p.Formula
+{
+	font-family: "Times New Roman";
+}
+
+/* ---------------------------- span.formula_symbol Symbol in Fomeln -------------------------*/
+
+span.formula_1
+{
+	font-style: italic;
+	font-family: Symbol;
+}
+
+/* ---------------------------- span.formula_symbol_subscript Symbol in Fomeln tiefgestellt-------------------------*/
+
+MadCap|equation
+{
+	font-family: 'Times New Roman';
+	font-size: 10pt;
+	vertical-align: bottom;
+}
+
+/* ---------------------------- span.formula_number Nr Fomel-------------------------*/
+
+p.Formula_number
+{
+	font-family: "Times New Roman";
+	mc-auto-number-position: inside-tail;
+	mc-auto-number-class: formula_number;
+	mc-auto-number-format: 'GF: [{n+}]';
+}
+
+/* ---------------------------- span.gui_element GUITexte  -------------------------*/
+
+p.Formula_number2
+{
+	font-family: "Times New Roman";
+	mc-auto-number-position: inside-tail;
+	mc-auto-number-class: formula_number;
+	mc-auto-number-format: 'GF: [{n+}.{n=1}]';
+}
+
+/* ---------------------------- span.hyperlink  0000ff hyperlinkblau NICHT FUER PDF -------------------------*/
+
+p.Formula_number2ff
+{
+	font-family: "Times New Roman";
+	mc-auto-number-format: 'GF: [{n}.{n+}]';
+	mc-auto-number-class: formula_number;
+	mc-auto-number-position: inside-tail;
+}
+
+/* ---------------------------- span.input Text durch Anwender eingegeben -------------------------*/
+
+p.Hint
+{
+	font-size: 9pt;
+	border-top-style: none;
+	border-bottom-style: none;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+	font-style: normal;
+	mc-auto-number-format: 'Hinweis: ';
+}
+
+/* ---------------------------- span.kursiv nicht verwenden XXXX pruefen wo loeschen da dafuer span.path -------------------------*/
+
+p.Hints
+{
+	font-size: 9pt;
+	border-top-style: none;
+	border-bottom-style: none;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+	mc-auto-number-format: 'Hinweise: ';
+}
+
+/* ---------------------------- span.path  Pfadangaben ------------------------*/
+
+p.Tipp
+{
+	font-size: 9pt;
+	border-top-style: none;
+	border-bottom-style: none;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+	mc-auto-number-format: 'Tipp: ';
+}
+
+p.Tipps
+{
+	font-size: 9pt;
+	border-top-style: none;
+	border-bottom-style: none;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+	mc-auto-number-format: 'Tipps: ';
+}
+
+p.Warning
+{
+	font-size: 9pt;
+	font-weight: bold;
+	border-top-style: none;
+	border-bottom-style: none;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+	mc-auto-number-format: 'Warnung: ';
+	mc-disabled: false;
+}
+
+p.Warnings
+{
+	font-size: 9pt;
+	font-weight: bold;
+	border-top-style: none;
+	border-bottom-style: none;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+	mc-auto-number-format: 'Warnungen: ';
+	mc-disabled: false;
+}
+
+/*-------------p.copyrightfooter f�r snippet Kopfzeile Fusszeile ----------------------*/
+
+p.Image
+{
+	display: none;
+	margin-left: 12pt;
+}
+
+/*-------------PTV Querverweis-Styles  ----------------------*/
+
+p.ImageOH
+{
+	margin-bottom: 2pt;
+	margin-left: 12pt;
+}
+
+img.img_3
+{
+	visibility: visible;
+	mso-wrap-style: square;
+	border-top-style: solid;
+	border-top-width: 1pt;
+	border-bottom-style: solid;
+	border-bottom-width: 1pt;
+	border-left-style: solid;
+	border-left-width: 1pt;
+	border-right-style: solid;
+	border-right-width: 1pt;
+}
+
+p.Label_images
+{
+	mc-auto-number-format: 'GI: Abbildung {n+}: ';
+	margin-left: 20px;
+	text-indent: -20px;
+	margin-bottom: 4pt;
+	margin-top: 0px;
+}
+
+pre.Input
+{
+	font-size: 8pt;
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-left: 0;
+	font-family: monospace;
+}
+
+pre.Input_tabwide
+{
+	margin-top: 0;
+	margin-bottom: 0;
+	font-family: monospace;
+	font-size: 8pt;
+	margin-left: 0;
+}
+
+p.Reference
+{
+	margin-left: 16px;
+	text-indent: -16px;
+	margin-top: 0pt;
+	margin-bottom: 2pt;
+}
+
+p.List_Text0
+{
+	margin-left: 22px;
+	margin-top: 0pt;
+	margin-bottom: 4pt;
+}
+
+p.List_Text1
+{
+	margin-left: 40px;
+	margin-top: 0pt;
+	margin-bottom: 4pt;
+}
+
+p.List_Text2
+{
+	margin-left: 60px;
+	margin-top: 0pt;
+	margin-bottom: 4pt;
+}
+
+span.author
+{
+	font-weight: bold;
+	font-style: normal;
+	mc-disabled: false;
+}
+
+span.bulletsymbol
+{
+	font-family: Courier;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 11.0pt;
+	color: #000000;
+	letter-spacing: 0.00em;
+	mc-disabled: false;
+}
+
+span.formula
+{
+	font-family: 'Times New Roman';
+	font-style: italic;
+}
+
+span.Standard
+{
+	font-family: 'Arial';
+	font-size: 9pt;
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+	mc-disabled: false;
+}
+
+span.formula_subscript
+{
+	font-family: 'Times New Roman';
+	font-style: italic;
+	vertical-align: sub;
+	font-size: 80%;
+}
+
+span.formula_superscript
+{
+	font-family: 'Times New Roman';
+	font-style: italic;
+	font-size: 80%;
+	vertical-align: super;
+}
+
+span.formula_symbol
+{
+	font-family: Symbol;
+}
+
+span.formula_symbol_subscript
+{
+	font-family: Symbol;
+	font-style: italic;
+	vertical-align: sub;
+	font-size: 80%;
+}
+
+span.formula_number
+{
+	font-size: 9pt;
+	font-family: Arial;
+	float: right;
+}
+
+span.gui_element
+{
+	font-weight: bold;
+}
+
+span.hyperlink
+{
+	color: #0000ff;
+	mc-disabled: false;
+}
+
+/*------------------------------------ ab hier madcap eigen und fragwuerdige wofuer XXXXXX -----------------------------------------------------------*/
+/*------------------------------------ ab hier madcap eigen und fragwuerdige wofuer XXXXXX -----------------------------------------------------------*/
+/*----------------------------------------*/
+/*MadCap|xref.ParaTextOnly */
+/*{*/
+/*	mc-format: '{paratext}';*/
+/*}*/
+
+span.input
+{
+	font-family: monospace;
+}
+
+span.kursiv
+{
+	font-style: italic;
+	mc-disabled: false;
+}
+
+span.path
+{
+	font-style: italic;
+}
+
+span.shortcut
+{
+	text-transform: capitalize;
+	font-variant: small-caps;
+}
+
+span.symbol
+{
+	font-family: Symbol;
+	font-style: normal;
+	font-weight: normal;
+	letter-spacing: 0.00em;
+	text-decoration: none;
+}
+
+p.copyrightfooter
+{
+	font-size: 8pt;
+	margin-bottom: 0;
+	margin-top: 1.12em;
+	text-align: left;
+	color: #808080;
+}
+
+MadCap|xref
+{
+	mc-format: '({u}{paratext}{/u})';
+	color: #0000ff;
+}
+
+MadCap|xref.themenheadings
+{
+	color: inherit;
+	mc-format: '{paratext}';
+}
+
+MadCap|xref.sieheUeberschrSeite
+{
+	mc-format: '{color black}({/color}{u}{paratext}{/u}{color black}){/color}';
+	text-decoration: none;
+}
+
+/*------------- P.Footer Fusszeile a6a6a6 mittelgrau wofuer XXXXXX ---------------------------*/
+
+MadCap|xref.siehe_1
+{
+	text-decoration: none;
+	mc-format: '{color black}({/color}{u}{paratext}{/u}';
+}
+
+/*------------- MadCap|xref.ParaTextOnly qv XXXXXX ---------------------------*/
+
+MadCap|xref.siehe_2
+{
+	text-decoration: none;
+	mc-format: '{color black} und {/color}{u}{color blue}{paratext}{/color}{/u}{color black}){/color}';
+}
+
+MadCap|xref.Schrittnummer
+{
+	mc-format: '{paranumonly}';
+}
+
+MadCap|xref.Label_formula
+{
+	mc-format: '[{paranumonly}]';
+}
+
+MadCap|xref.Label_Image
+{
+	mc-format: '{paranumonly}';
+}
+
+MadCap|xref.Label_Table
+{
+	mc-format: '{paranumonly}';
+}
+
+MadCap|xref.Benutzerhandbuch
+{
+	text-decoration: none;
+	mc-format: '{color black}({/color}{color Blue}Anwendung: {/color}{u}{paratext}{/u}{color black}){/color}';
+}
+
+MadCap|breadcrumbsProxy
+{
+	font-size: 8pt;
+	font-family: Arial;
+	mc-breadcrumbs-prefix: '  >> ';
+	margin-bottom: 5px;
+	margin-top: 0px;
+	padding-bottom: 2px;
+	padding-top: 2px;
+	padding-left: 2px;
+	color: #FFFFFF;
+	border-bottom-width: 0px;
+	mc-breadcrumbs-count: 4;
+	background-color: #d653d3;
+}
+
+a.MCBreadcrumbsLink
+{
+	color: #ffffff;
+	mc-disabled: false;
+}
+
+MadCap|xref.Grundlagen
+{
+	text-decoration: none;
+	mc-format: '{color black}({/color}{color Blue}Grundlagen: {/color}{u}{paratext}{/u}{color black}){/color}';
+}
+
+/* -----------------------    DIV AENDERUNGSMODUS XXXXX LOESCHEN WENN NICHT VEERWENDET -------------------------- */
+
+p.Title
+{
+	text-align: left;
+	margin-top: 22.000pt;
+	margin-bottom: 11.000pt;
+	font-family: Arial;
+	font-weight: bold;
+	font-size: 18.0pt;
+}
+
+p.Extract
+{
+	margin-left: 18.000pt;
+	margin-right: 18.000pt;
+	text-align: left;
+	margin-top: 7.000pt;
+	margin-bottom: 0.000pt;
+	font-family: "Times New Roman";
+	mc-disabled: false;
+}
+
+p.Footnote
+{
+	margin-left: 12.000pt;
+	margin-right: 0.000pt;
+	text-align: left;
+	text-indent: -12.000pt;
+	margin-top: 3.000pt;
+	margin-bottom: 0.000pt;
+	font-family: "Times New Roman";
+	mc-disabled: false;
+}
+
+span.PageNumber
+{
+	font-weight: bold;
+}
+
+span.EquationVariables
+{
+	font-style: italic;
+	mc-disabled: false;
+}
+
+span.Emphasis
+{
+	font-style: italic;
+	mc-disabled: false;
+}
+
+span.Callout
+{
+	font-family: Arial;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 8.0pt;
+	color: #000000;
+	letter-spacing: 0.00em;
+	mc-disabled: false;
+}
+
+span.EquationNumber
+{
+	font-family: Arial;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 8.0pt;
+	color: #000000;
+	letter-spacing: 0.00em;
+	mc-disabled: false;
+}
+
+span.ChapterNumber
+{
+	font-family: Arial;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 10.0pt;
+	color: #000000;
+	letter-spacing: 0.04em;
+	mc-disabled: false;
+}
+
+span.WebJump
+{
+	mc-disabled: false;
+}
+
+span.Superscript
+{
+	font-style: normal;
+	font-weight: normal;
+	color: #000000;
+	letter-spacing: 0.00em;
+	font-family: Arial;
+	font-size: 80%;
+	vertical-align: super;
+}
+
+span.Underline
+{
+	font-style: normal;
+	font-weight: normal;
+	color: #000000;
+	letter-spacing: 0.00em;
+	mc-disabled: false;
+}
+
+span.Bold
+{
+	font-style: normal;
+	font-weight: bold;
+	color: #000000;
+	letter-spacing: 0.00em;
+	mc-disabled: false;
+}
+
+span.BlueBold
+{
+	font-weight: bold;
+	color: #2e97dc;
+	mc-disabled: false;
+}
+
+span.White
+{
+	color: #ffffff;
+	letter-spacing: 0.00em;
+	text-decoration: none;
+	mc-disabled: false;
+}
+
+/* -----------------------    DL DD DT DEFINITIONSLISTE FUER GLOSSAR BISHER NICHT VERWENDET -------------------------- */
+
+span.Emphasis
+{
+	font-style: italic;
+}
+
+span.Subscript
+{
+	font-style: normal;
+	font-weight: normal;
+	color: #000000;
+	letter-spacing: 0.00em;
+	font-family: Arial;
+	vertical-align: sub;
+}
+
+p.Footer
+{
+	color: #a6a6a6;
+	margin-top: 6pt;
+	margin-bottom: 3pt;
+	text-align: right;
+}
+
+/* -----------------------    Link style wo und wofuer XXXXXXXXXXXXX -------------------------- */
+
+MadCap|xref.ParaTextOnly
+{
+	mc-format: '{paraxml}';
+}
+
+/* -----------------------  a style   wo und wofuer XXXXXXXXXXXXX -------------------------- */
+
+img.img_1
+{
+	visibility: visible;
+	mso-wrap-style: square;
+}
+
+/* -------------------------------------------------------------------------------------------    ausgeblendet -------------------------------------------------------------------------------- */
+/* html.Grundlagen body */
+/*{*/
+/*	background-color: #e0ffff; */
+/*}*/
+/*Grundlagen */
+/*{*/
+/*	mc-master-page: url('../MasterPages/PTV_chm_Grundlagen.flmsp');*/
+/*}*/
+
+span.gui_element_1
+{
+	font-weight: bold;
+	font-family: Wingdings;
+}
+
+span.span_1
+{
+	font-family: Wingdings;
+	mc-disabled: false;
+}
+
+/*-----------------------------------------------------------------------------------------@media print----------------------------------------------------------------------------------------------------------------*/
+
+span.span_2
+{
+	font-family: 'Wingdings 3';
+	mc-disabled: false;
+}
+
+p.CellText_1
+{
+	font-size: 9pt;
+	margin-left: 2pt;
+	margin-right: 2pt;
+	margin-top: 1pt;
+	margin-bottom: 1pt;
+	font-family: Wingdings;
+}
+
+span.span_3
+{
+	font-family: Webdings;
+	mc-disabled: false;
+}
+
+span.gui_element_2
+{
+	font-weight: bold;
+	font-family: 'SymbolProp BT';
+}
+
+img.img_2
+{
+	z-index: 3;
+	visibility: visible;
+	mso-wrap-style: square;
+	mso-width-percent: 0;
+	mso-height-percent: 0;
+	mso-wrap-distance-left: 9pt;
+	mso-wrap-distance-top: 0;
+	mso-wrap-distance-right: 9pt;
+	mso-wrap-distance-bottom: 0;
+	mso-position-horizontal: absolute;
+	mso-position-horizontal-relative: char;
+	mso-position-vertical: absolute;
+	mso-position-vertical-relative: line;
+	mso-width-percent: 0;
+	mso-height-percent: 0;
+	mso-width-relative: page;
+	mso-height-relative: page;
+	margin-left: 0;
+}
+
+div.div_1
+{
+	left: 20517;
+	top: 45811;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #f2f2f2;
+	mc-disabled: false;
+}
+
+div.div_2
+{
+	left: 40679;
+	top: 50851;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #fcc;
+	mc-disabled: false;
+}
+
+div.div_3
+{
+	left: 40679;
+	top: 54452;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #fcc;
+	mc-disabled: false;
+}
+
+div.div_4
+{
+	left: 40679;
+	top: 58052;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #fcc;
+	mc-disabled: false;
+}
+
+div.div_5
+{
+	left: 17636;
+	top: 53012;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #f2f2f2;
+	mc-disabled: false;
+}
+
+div.div_6
+{
+	left: 28438;
+	top: 46531;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #9cf;
+	mc-disabled: false;
+}
+
+div.div_7
+{
+	left: 60841;
+	top: 45811;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #f2f2f2;
+	mc-disabled: false;
+}
+
+div.div_8
+{
+	left: 18356;
+	top: 54452;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #c00000;
+	mc-disabled: false;
+}
+
+div.div_9
+{
+	left: 30598;
+	top: 47971;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #039;
+	mc-disabled: false;
+}
+
+div.div_10
+{
+	left: 62281;
+	top: 46531;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #005800;
+	mc-disabled: false;
+}
+
+div.div_11
+{
+	left: 30598;
+	top: 57332;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: red;
+	mc-disabled: false;
+}
+
+div.div_12
+{
+	left: 62281;
+	top: 50131;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #00b050;
+	mc-disabled: false;
+}
+
+div.div_13
+{
+	left: 42119;
+	top: 51863;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #0083e6;
+	mc-disabled: false;
+}
+
+div.div_14
+{
+	left: 42045;
+	top: 55575;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #0083e6;
+	mc-disabled: false;
+}
+
+div.div_15
+{
+	left: 42119;
+	top: 59069;
+	visibility: visible;
+	mso-wrap-style: square;
+	v-text-anchor: middle;
+	background-color: #0083e6;
+	mc-disabled: false;
+}
+
+dl
+{
+	display: list-item;
+	mc-disabled: false;
+}
+
+dd
+{
+	display: list-item;
+	mc-disabled: false;
+}
+
+dt
+{
+	display: list-item;
+	mc-disabled: false;
+}
+
+a
+{
+	mc-format: '{b}{/b}';
+	mc-disabled: false;
+}
+
+MadCap|xref.H2
+{
+	mc-format: '{h2}';
+}
+
+MadCap|relationshipsProxy
+{
+	border-top-width: 2px;
+	margin-top: 30px;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #c0c0c0;
+	mc-output-support: htmlhelp;
+	padding-top: 12px;
+	padding-left: 0px;
+	border-top-color: #c0c0c0;
+	border-top-style: double;
+}
+
+@media print
+{
+	p.Text
+	{
+		text-align: justify;
+	}
+
+	h1
+	{
+		text-align: left;
+		font-family: Arial;
+		font-weight: bold;
+		margin-top: 10pt;
+		font-size: 14pt;
+		mc-auto-number-position: outside-head;
+		mc-auto-number-format: 'GA: {n+} ';
+		margin-bottom: 2pt;
+		mc-auto-number-offset: 70px;
+	}
+
+	h2
+	{
+		text-align: left;
+		font-family: Arial;
+		font-weight: bold;
+		margin-top: 10pt;
+		font-size: 12pt;
+		mc-auto-number-position: outside-head;
+		mc-auto-number-format: 'GA: {n}.{n+} ';
+		orphans: 3;
+		widows: 3;
+		margin-bottom: 2pt;
+		mc-auto-number-offset: 70px;
+	}
+
+	h3
+	{
+		text-align: left;
+		font-family: Arial;
+		font-weight: bold;
+		margin-top: 10pt;
+		font-size: 10pt;
+		mc-auto-number-position: outside-head;
+		mc-auto-number-format: 'GA: {n}.{n}.{n+} ';
+		orphans: 3;
+		widows: 3;
+		margin-bottom: 2pt;
+		mc-auto-number-offset: 70px;
+	}
+
+	h4
+	{
+		text-align: left;
+		font-family: Arial;
+		font-weight: bold;
+		margin-top: 10pt;
+		font-size: 9pt;
+		mc-auto-number-position: outside-head;
+		mc-auto-number-format: 'GA: {n}.{n}.{n}.{n+} ';
+		orphans: 3;
+		widows: 3;
+		margin-bottom: 2pt;
+		mc-auto-number-offset: 70px;
+		mc-heading-level: 4;
+	}
+
+	h5
+	{
+		font-weight: bold;
+		margin-top: 9pt;
+		font-family: Arial;
+		font-size: 9pt;
+		mc-auto-number-format: '{ =0}';
+		mc-heading-level: 0;
+		margin-bottom: 2pt;
+	}
+
+	h1.NoNumber
+	{
+		text-align: left;
+		font-family: Arial;
+		font-weight: bold;
+		margin-bottom: 2pt;
+		margin-top: 10pt;
+		font-size: 14pt;
+		mc-auto-number-format: '{ =0}';
+	}
+
+	MadCap|xref
+	{
+		mc-format: '(siehe {paratext} auf Seite {page})';
+		color: #000000;
+	}
+
+	MadCap|tocProxy
+	{
+		border-top-width: 0px;
+	}
+
+	td.PDFTitleTD
+	{
+		background-color: #5b5b5a;
+		border-top-style: none;
+		border-right-style: none;
+		border-left-style: none;
+		border-bottom-style: none;
+		border-bottom-style: none;
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	p.PDFTitletext
+	{
+		font-family: Arial;
+		font-weight: bold;
+		font-size: 20pt;
+		color: #FFFFFF;
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	MadCap|xref.Benutzerhandbuch
+	{
+		mc-format: '(siehe Benutzerhandbuch: Kap. {paranum}, Seite {page})';
+	}
+
+	MadCap|xref.Grundlagen
+	{
+		mc-format: '(siehe Grundlagen: Kap. {paranum}, Seite {page})';
+	}
+
+	MadCap|xref.sieheUeberschrSeite
+	{
+		mc-format: '(siehe „{paratext}“ auf Seite {page})';
+	}
+
+	MadCap|xref.siehe_1
+	{
+		mc-format: '(siehe „{paratext}“ auf Seite {page}';
+	}
+
+	MadCap|xref.siehe_2
+	{
+		mc-format: ' und „{paratext}“ auf Seite {page})';
+	}
+
+	MadCap|xref.themenheadings
+	{
+		mc-format: '{paratext}';
+	}
+
+	p.ListOf
+	{
+		orphans: 2;
+		widows: 2;
+		mc-short-line-tighten-maximum: 6;
+		mc-short-line-loosen-end-length: 10;
+		mc-short-line-loosen-maximum: 5;
+		mc-short-line-method: tighten-loosen;
+		mc-short-line: hyphenated-last-word;
+		mc-hyphenate: always;
+		mc-short-line-step: 0, 5;
+		mc-leader-align: right;
+		text-align: left;
+		margin-left: 0;
+		margin-bottom: 1.12pt;
+		margin-top: 1.12pt;
+		padding-left: 0px;
+		padding-right: 0px;
+		padding-top: 0px;
+		padding-bottom: 0px;
+		mc-leader-indent: 5pt;
+		mc-multiline-indent: 0, 4in;
+	}
+
+	p.IndexHeading
+	{
+		font-size: 14pt;
+		text-align: left;
+		text-decoration: none;
+	}
+
+	MadCap|indexProxy
+	{
+		mc-output-support: pdf;
+		mc-leader-offset: 25px;
+	}
+
+	p.Index1
+	{
+		widows: 3;
+		orphans: 3;
+		mc-hyphenate-shortest-word: 5;
+		mc-short-line-tighten-maximum: 7;
+		mc-short-line-method: tighten;
+		font-weight: bold;
+		font-style: normal;
+		margin-bottom: 2.12pt;
+		margin-top: 2.12pt;
+	}
+
+	p.Index2
+	{
+		mc-short-line-method: tighten;
+		mc-short-line-tighten-maximum: 6;
+		widows: 3;
+		orphans: 3;
+		mc-leader-format: 'none';
+		mc-leader-align: left;
+		margin-left: 20px;
+		margin-top: 2.12pt;
+		margin-bottom: 2pt;
+	}
+
+	p.Index3
+	{
+		margin-left: 40px;
+		margin-top: 2.12pt;
+		margin-bottom: 2.12pt;
+	}
+
+	p.TOC1
+	{
+		text-indent: 0;
+		margin-right: 0;
+		margin-left: 0;
+		margin-top: 3.12px;
+		margin-bottom: 3.12px;
+	}
+
+	p.TOC2
+	{
+		text-indent: -10px;
+		margin-left: 20pt;
+		margin-top: 1.12pt;
+		margin-bottom: 2.12pt;
+	}
+
+	p.TOC3
+	{
+		margin-left: 30pt;
+		text-indent: -10px;
+		margin-top: 2.12pt;
+		margin-bottom: 2.12pt;
+	}
+
+	p.TOC4
+	{
+		text-indent: -10px;
+		margin-left: 40pt;
+		margin-top: 1.12pt;
+		margin-bottom: 1.12pt;
+	}
+
+	MadCap|listOfProxy
+	{
+		padding-left: 0px;
+	}
+
+	p.Label_table
+	{
+		mc-auto-number-format: 'GT: Tabelle {n+}: ';
+		mc-auto-number-offset: 0;
+		margin-left: 0;
+		text-indent: 0;
+		mc-auto-number-position: inside-head;
+		page-break-before: avoid;
+		column-break-before: avoid;
+		page-break-inside: avoid;
+		column-break-inside: avoid;
+	}
+
+	p.Label_images
+	{
+		mc-auto-number-format: 'GI: Abbildung {n+}: ';
+		margin-top: 2px;
+		mc-auto-number-offset: 0;
+		margin-left: 20px;
+		text-indent: -20px;
+		border-left-style: none;
+		border-left-width: 1px;
+		border-right-style: none;
+		border-right-width: 1px;
+		border-top-style: none;
+		border-top-width: 1px;
+		border-bottom-style: none;
+		border-bottom-width: 1px;
+		mc-auto-number-position: inside-head;
+		page-break-before: avoid;
+		column-break-before: avoid;
+		page-break-inside: avoid;
+		column-break-inside: avoid;
+	}
+
+	p
+	{
+		margin-top: inherit;
+		margin-bottom: inherit;
+		widows: 2;
+		orphans: 2;
+	}
+
+	td
+	{
+		orphans: 2;
+		widows: 2;
+	}
+
+	tr
+	{
+		orphans: 2;
+		widows: 2;
+	}
+
+	th
+	{
+		orphans: 2;
+		widows: 2;
+	}
+
+	table
+	{
+		orphans: 2;
+		widows: 2;
+		page-break-inside: avoid;
+	}
+
+	tbody
+	{
+		orphans: 2;
+		widows: 2;
+	}
+
+	thead
+	{
+		orphans: 2;
+		widows: 2;
+		page-break-inside: avoid;
+	}
+
+	p.CellText
+	{
+		
+	}
+
+	p.CellCaption
+	{
+		
+	}
+
+	p.CellText_mid
+	{
+		
+	}
+
+	p.CellText_right
+	{
+		
+	}
+
+	p.CellText_Var
+	{
+		
+	}
+
+	p.Titel_von_Tabellen
+	{
+		mc-leader-format: 'dot';
+		margin-left: 0;
+		text-indent: -30px;
+		float: left;
+		font-size: 9pt;
+		display: list-item;
+	}
+
+	p.Formula
+	{
+		margin-top: 6pt;
+		margin-bottom: 6pt;
+		mc-auto-number-class: formula_number;
+	}
+
+	p.Formula_number
+	{
+		margin-top: 6pt;
+		margin-bottom: 6pt;
+		vertical-align: top;
+	}
+
+	p.Formula_number2
+	{
+		margin-top: 6pt;
+		margin-bottom: 6pt;
+	}
+
+	p.Formula_number2ff
+	{
+		margin-top: 6pt;
+		margin-bottom: 6pt;
+	}
+
+	p.Image
+	{
+		display: block;
+		margin-top: 4pt;
+		margin-bottom: 4pt;
+	}
+
+	MadCap|xref.Label_Table
+	{
+		text-decoration: none;
+	}
+
+	p.ImageOH
+	{
+		margin-top: 4px;
+	}
+
+	LI
+	{
+		list-style-image: url('../Images_4_all/ICO_List.png');
+	}
+
+	span.Subscript
+	{
+		vertical-align: sub;
+		font-size: 80%;
+	}
+
+	span.Superscript
+	{
+		vertical-align: super;
+	}
+
+	p.Heading_Schritt
+	{
+		page-break-after: avoid;
+	}
+
+	p.Heading_Schritt_Buchstabe
+	{
+		page-break-after: avoid;
+	}
+
+	p.Heading_Schritt1
+	{
+		page-break-after: avoid;
+	}
+
+	img
+	{
+		
+	}
+}
+
+MadCap|relationshipsHeading.concept
+{
+	margin-top: 1pt;
+	margin-bottom: 1pt;
+	padding-top: 1pt;
+	padding-bottom: 1pt;
+	font-size: 9pt;
+	font-weight: bold;
+	mc-label: 'Übergeordnetes Thema:';
+}
+
+MadCap|relationshipsHeading.reference
+{
+	margin-top: 1pt;
+	margin-bottom: 1pt;
+	font-size: 9pt;
+	font-weight: bold;
+	mc-label: 'Zugehörige Themen:';
+}
+
+MadCap|relationshipsHeading.task
+{
+	margin-top: 1pt;
+	margin-bottom: 1pt;
+	font-size: 9pt;
+	font-weight: bold;
+	mc-label: 'Informationen zum Bearbeiten:';
+}
+
+MadCap|relationshipsHeading
+{
+	font-size: 10pt;
+	font-weight: bold;
+	font-style: normal;
+	mc-label: 'Siehe auch:';
+}
+
+p.Concept
+{
+	margin: 2pt;
+	mc-disabled: false;
+}
+
+p.ConceptContext
+{
+	margin: 2pt;
+	mc-disabled: false;
+}
+
+MadCap|relationshipsItem
+{
+	font-size: 9pt;
+	margin-left: 12pt;
+	line-height: 4pt;
+}
+
+@media non-print
+{
+	LI.List1
+	{
+		list-style-image: url('../../TitelCopyright/ICO_List.png');
+	}
+
+	LI
+	{
+		list-style-image: url('../Images_4_all/ICO_List.png');
+		list-style-type: disc;
+		display: list-item;
+	}
+
+	p.Hint
+	{
+		background-color: #f8f8ff;
+	}
+
+	table.PTVHintTipWarning
+	{
+		border-left: none;
+		border-right: none;
+		background-color: #f8f8ff;
+	}
+
+	td.hint
+	{
+		background-color: #f8f8ff;
+	}
+
+	table.PTVHintTipWarning2
+	{
+		
+	}
+
+	MadCap|breadcrumbsProxy.breadcrumbsProxyGrundlagen
+	{
+		background-color: #00accd;
+	}
+
+	html.Grundlagen
+	{
+		mc-master-page: url('../MasterPages/PTV_chm_Grundlagen.flmsp');
+	}
+
+	img
+	{
+		
+	}
+}
+
+html.Grundlagen
+{
+	
+}
+
+img
+{
+	
+}
+
+a.GlossaryPageTerm
+{
+	mc-disabled: false;
+}
+
+a.Popup
+{
+	mc-disabled: false;
+}
+
+abbr
+{
+	mc-disabled: false;
+}
+
+acronym
+{
+	mc-disabled: false;
+}
+
+address
+{
+	mc-disabled: false;
+}
+
+area
+{
+	mc-disabled: false;
+}
+
+b
+{
+	mc-disabled: false;
+}
+
+big
+{
+	mc-disabled: false;
+}
+
+blockquote
+{
+	mc-disabled: false;
+}
+
+br
+{
+	mc-disabled: false;
+}
+
+button
+{
+	mc-disabled: false;
+}
+
+caption
+{
+	mc-disabled: false;
+}
+
+center
+{
+	mc-disabled: false;
+}
+
+cite
+{
+	mc-disabled: false;
+}
+
+code
+{
+	mc-disabled: false;
+}
+
+col
+{
+	mc-disabled: false;
+}
+
+colgroup
+{
+	mc-disabled: false;
+}
+
+del
+{
+	mc-disabled: false;
+}
+
+dir
+{
+	mc-disabled: false;
+}
+
+div
+{
+	mc-disabled: false;
+}
+
+div.GlossaryPageDefinition
+{
+	mc-disabled: false;
+}
+
+div.GlossaryPageEntry
+{
+	mc-disabled: false;
+}
+
+div.GlossaryPageHeading
+{
+	mc-disabled: false;
+}
+
+div.GlossaryPageTerm
+{
+	mc-disabled: false;
+}
+
+em
+{
+	mc-disabled: false;
+}
+
+fieldset
+{
+	mc-disabled: false;
+}
+
+form
+{
+	mc-disabled: false;
+}
+
+frame
+{
+	mc-disabled: false;
+}
+
+frameset
+{
+	mc-disabled: false;
+}
+
+hr
+{
+	mc-disabled: false;
+}
+
+i
+{
+	mc-disabled: false;
+}
+
+ins
+{
+	mc-disabled: false;
+}
+
+kbd
+{
+	mc-disabled: false;
+}
+
+MadCap|endnoteBlock
+{
+	mc-disabled: false;
+}
+
+MadCap|endnotesBlock
+{
+	mc-disabled: false;
+}
+
+MadCap|endnotesProxy
+{
+	mc-disabled: false;
+}
+
+MadCap|expanding
+{
+	mc-disabled: false;
+}
+
+MadCap|expandingBody
+{
+	mc-disabled: false;
+}
+
+MadCap|expandingHead
+{
+	mc-disabled: false;
+}
+
+MadCap|footnote
+{
+	mc-disabled: false;
+}
+
+MadCap|footnoteBlock
+{
+	mc-disabled: false;
+}
+
+MadCap|footnotesBlock
+{
+	mc-disabled: false;
+}
+
+MadCap|glossaryProxy
+{
+	mc-disabled: false;
+}
+
+MadCap|glossaryTerm
+{
+	mc-disabled: false;
+}
+
+MadCap|glossaryTerm.Expanding
+{
+	mc-disabled: false;
+}
+
+MadCap|glossaryTerm.Hyperlink
+{
+	mc-disabled: false;
+}
+
+MadCap|glossaryTerm.Popup
+{
+	mc-disabled: false;
+}
+
+MadCap|helpControlList
+{
+	mc-disabled: false;
+}
+
+MadCap|helpControlListItem
+{
+	mc-disabled: false;
+}
+
+MadCap|helpControlListItemLink
+{
+	mc-disabled: false;
+}
+
+MadCap|helpControlMenu
+{
+	mc-disabled: false;
+}
+
+MadCap|helpControlMenuItem
+{
+	mc-disabled: false;
+}
+
+MadCap|helpControlMenuItem.Highlighted
+{
+	mc-disabled: false;
+}
+
+MadCap|popup
+{
+	mc-disabled: false;
+}
+
+MadCap|popupBody
+{
+	mc-disabled: false;
+}
+
+MadCap|popupHead
+{
+	mc-disabled: false;
+}
+
+MadCap|qrCode
+{
+	mc-disabled: false;
+}
+
+MadCap|section
+{
+	mc-disabled: false;
+}
+
+MadCap|toggler
+{
+	mc-disabled: false;
+}
+
+map
+{
+	mc-disabled: false;
+}
+
+menu
+{
+	mc-disabled: false;
+}
+
+noframes
+{
+	mc-disabled: false;
+}
+
+o
+{
+	mc-disabled: false;
+}
+
+object
+{
+	mc-disabled: false;
+}
+
+ol
+{
+	mc-disabled: false;
+}
+
+p.MiniTOC1
+{
+	mc-disabled: false;
+}
+
+p.MiniTOC2
+{
+	mc-disabled: false;
+}
+
+p.MiniTOC3
+{
+	mc-disabled: false;
+}
+
+p.MiniTOC4
+{
+	mc-disabled: false;
+}
+
+p.MiniTOC5
+{
+	mc-disabled: false;
+}
+
+p.MiniTOC6
+{
+	mc-disabled: false;
+}
+
+p.MiniTOC7
+{
+	mc-disabled: false;
+}
+
+p.MiniTOC8
+{
+	mc-disabled: false;
+}
+
+p.MiniTOC9
+{
+	mc-disabled: false;
+}
+
+s
+{
+	mc-disabled: false;
+}
+
+samp
+{
+	mc-disabled: false;
+}
+
+script
+{
+	mc-disabled: false;
+}
+
+select
+{
+	mc-disabled: false;
+}
+
+small
+{
+	mc-disabled: false;
+}
+
+span.boolean
+{
+	mc-disabled: false;
+}
+
+span.state
+{
+	mc-disabled: false;
+}
+
+strike
+{
+	mc-disabled: false;
+}
+
+strong
+{
+	mc-disabled: false;
+}
+
+style
+{
+	mc-disabled: false;
+}
+
+sub
+{
+	mc-disabled: false;
+}
+
+sup
+{
+	mc-disabled: false;
+}
+
+textarea
+{
+	mc-disabled: false;
+}
+
+tfoot
+{
+	mc-disabled: false;
+}
+
+tt
+{
+	mc-disabled: false;
+}
+
+var
+{
+	mc-disabled: false;
+}
+
+LI.List1
+{
+	list-style-image: url('../../TitelCopyright/ICO_List.png');
+}
+
+LI
+{
+	list-style-image: url('../Images_4_all/ICO_List.png');
+	list-style-type: disc;
+	display: list-item;
+}
+
+p.Hint
+{
+	background-color: #f8f8ff;
+}
+
+table.PTVHintTipWarning
+{
+	border-left: none;
+	border-right: none;
+	background-color: #f8f8ff;
+}
+
+td.hint
+{
+	background-color: #f8f8ff;
+}
+
+table.PTVHintTipWarning2
+{
+	
+}
+
+MadCap|breadcrumbsProxy.breadcrumbsProxyGrundlagen
+{
+	background-color: #00accd;
+}
+
+html.Grundlagen
+{
+	mc-master-page: url('../MasterPages/PTV_chm_Grundlagen.flmsp');
+}
+
+img
+{
+	
+}
+

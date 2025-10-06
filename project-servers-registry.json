@@ -1,5 +1,16 @@
 {
-  "servers": {},
-  "nextPort": 7901,
-  "lastUpdate": "2025-09-26T02:32:00.000Z"
+  "servers": {
+    "100625_Versione_base_v0.3_sub_ok_priv_10176442": {
+      "projectId": "100625_Versione_base_v0.3_sub_ok_priv_10176442",
+      "projectPath": "H:\\go\\italferr2025\\Campoleone\\100625_Versione_base_v0.3_sub_ok_priv.ver",
+      "projectName": "100625_Versione_base_v0.3_sub_ok_priv",
+      "port": 7901,
+      "pid": 52468,
+      "startTime": 1759708046704,
+      "startTimeString": "06/10/2025, 09:47:26",
+      "status": "ready"
+    }
+  },
+  "nextPort": 7902,
+  "lastUpdate": "2025-10-05T23:48:36.115Z"
 }

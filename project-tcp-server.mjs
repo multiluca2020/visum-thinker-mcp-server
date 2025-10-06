@@ -81,7 +81,7 @@ class ProjectTcpServer {
           buffer += data.toString();
           
           let newlineIndex;
-          while ((newlineIndex = buffer.indexOf('\\n')) !== -1) {
+          while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
             const messageStr = buffer.slice(0, newlineIndex).trim();
             buffer = buffer.slice(newlineIndex + 1);
             
@@ -106,10 +106,14 @@ class ProjectTcpServer {
       
       socket.on('close', () => {
         const clientInfo = this.clients.get(clientId);
-        const duration = Date.now() - clientInfo.connectTime;
-        console.log(`🔌 Client ${clientId} disconnesso dal progetto ${this.projectName}`);
-        console.log(`   ⏱️ Durata: ${Math.round(duration/1000)}s | Richieste: ${clientInfo.requests}`);
-        this.clients.delete(clientId);
+        if (clientInfo) {
+          const duration = Date.now() - clientInfo.connectTime;
+          console.log(`🔌 Client ${clientId} disconnesso dal progetto ${this.projectName}`);
+          console.log(`   ⏱️ Durata: ${Math.round(duration/1000)}s | Richieste: ${clientInfo.requests}`);
+          this.clients.delete(clientId);
+        } else {
+          console.log(`🔌 Client ${clientId} disconnesso (già rimosso)`);
+        }
       });
       
       socket.on('error', (error) => {
@@ -137,7 +141,7 @@ class ProjectTcpServer {
   
   sendToClient(socket, message) {
     const jsonStr = JSON.stringify(message);
-    const data = jsonStr + '\\n';
+    const data = jsonStr + '\n';
     socket.write(data);
   }
   

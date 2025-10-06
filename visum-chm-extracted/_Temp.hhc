@@ -1,0 +1,35 @@
+<html>
+<head>
+</head>
+<body>
+<!-- Sitemap 1.0 -->
+<object type="text/site properties">
+	<param name="SiteType" value="toc">
+	<param name="Window Styles" value="0x800027">
+	<param name="ExWindow Styles" value="0x0">
+	</object>
+<ul>
+	<li><object type="text/sitemap">
+		<param name="Name" value="Start page">
+		<param name="Local" value="TitelCopyright/Startseite_VISUM.htm">
+			</object>
+	<li><object type="text/sitemap">
+		<param name="Name" value="Imprint">
+		<param name="Local" value="TitelCopyright/1_0_Impressum.htm#Imprint">
+			</object>
+	</ul>
+<object type="text/sitemap">
+	<param name="Name" value="Visum – COM">
+	<param name="Merge" value="VisumCOMpur.chm::\VisumCOM.hhc">
+	</object>
+<ul>
+	<li><object type="text/sitemap">
+		<param name="Name" value="Visum – Python">
+			</object>
+	<object type="text/sitemap">
+		<param name="Name" value="Visum – Python">
+		<param name="Merge" value="VisumPy.chm::\index.hhc">
+			</object>
+	</ul>
+</body>
+</html>
