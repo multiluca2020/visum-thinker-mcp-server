@@ -67,3 +67,67 @@ You can find more info and examples at https://modelcontextprotocol.io/llms-full
 - **Persistent storage with auto-save functionality**
 - **Knowledge transfer between servers and sessions**
 - **Complete backup and restore capabilities**
+
+## Visum PRT Assignment Workflow
+
+### When to Use `list-prt-demand-segments.js`
+
+**ALWAYS run this script when:**
+
+1. **User asks to list/show PRT modes or demand segments**
+   - "Quali sono i modi PRT disponibili?"
+   - "Mostrami i demand segments per PRT"
+   - "Elenca i transport systems di tipo PRT"
+
+2. **Before creating a PrT Assignment procedure**
+   - User requests: "Crea una procedura di assegnazione al trasporto privato"
+   - You need to configure DSEGSET attribute
+   - Need to ask user which segments to include
+
+3. **Interactive segment selection**
+   - After showing available segments, ask user:
+     - "Vuoi includere tutti i segments o solo alcuni?"
+     - "Quali modi PRT vuoi includere? (C per Car, H per HGV, ...)"
+   - Use the DSEGSET output based on user's choice
+
+### Script Output Structure
+
+```javascript
+{
+  prt_tsys: [{code: "CAR", name: "Car"}, {code: "HGV", name: "HGV"}],
+  mode_mapping: {
+    "C": {mode_name: "Car", tsys_code: "CAR"},
+    "H": {mode_name: "HGV", tsys_code: "HGV"}
+  },
+  segments_by_mode: {
+    "C": ["C_CORRETTA_AM", "C_CORRETTA_IP1", ...],
+    "H": ["H_INIZIALE_AM", ...]
+  },
+  dsegset: "C_CORRETTA_AM,C_CORRETTA_IP1,...",  // All segments comma-separated
+  total: 36
+}
+```
+
+### Usage Pattern
+
+```javascript
+// 1. Run script to list available PRT segments
+node list-prt-demand-segments.js
+
+// 2. Show results to user and ask for selection
+// 3. Based on user choice:
+//    - All modes: use complete dsegset
+//    - Specific mode (e.g., "C"): filter segments_by_mode["C"]
+//    - Multiple modes: combine segments from selected modes
+
+// 4. Configure PrT Assignment with chosen DSEGSET
+```
+
+### Important Notes
+
+- **Modes and TSys are NOT directly linked** in some Visum projects
+- Connection is via **name matching** (Mode "Car" → TSys "Car")
+- **Demand segments** have MODE attribute linking them to Modes
+- **Transport Systems** have TYPE attribute (TYPE="PRT" for PRT systems)
+
+See `LIST_PRT_SEGMENTS_GUIDE.md` for complete documentation.

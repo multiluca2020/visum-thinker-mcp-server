@@ -1,0 +1,254 @@
+/**
+ * 🎯 LIST PRT DEMAND SEGMENTS
+ * 
+ * Questo script identifica tutti i Transport Systems di tipo PRT e i loro
+ * demand segments associati. Utile per:
+ * 
+ * 1. Elencare i modi PRT disponibili nel progetto Visum
+ * 2. Mostrare i demand segments per ogni modo PRT
+ * 3. Preparare l'input per configurare una procedura PrT Assignment
+ * 
+ * UTILIZZO:
+ * - Quando Claude deve elencare i modi PRT disponibili
+ * - Prima di creare una procedura PrT Assignment
+ * - Per chiedere all'utente quali segments includere
+ * 
+ * OUTPUT:
+ * - Lista TSys di tipo PRT (es: CAR, HGV, MOTO)
+ * - Mapping Mode → TSys (es: "C" → CAR, "H" → HGV)
+ * - Segments per ogni mode (es: C_CORRETTA_AM, H_INIZIALE_PM, ...)
+ * - DSEGSET completo (comma-separated list per PrTAssignmentParameters)
+ */
+
+import net from 'net';
+
+const pythonCode = `
+import sys
+
+print("=" * 70, file=sys.stderr)
+print("  ANALISI MODI PRT E DEMAND SEGMENTS", file=sys.stderr)
+print("=" * 70, file=sys.stderr)
+
+try:
+    # STEP 1: Identifica tutti i Transport Systems di tipo PRT
+    all_tsys = visum.Net.TSystems.GetAll
+    
+    prt_tsys = []
+    
+    print("\\n[STEP 1] Transport Systems di tipo PRT:\\n", file=sys.stderr)
+    
+    for tsys in all_tsys:
+        code = tsys.AttValue("CODE")
+        name = str(tsys.AttValue("NAME")) if tsys.AttValue("NAME") else ""
+        tsys_type = tsys.AttValue("TYPE")
+        
+        if tsys_type == "PRT":
+            prt_tsys.append({"code": code, "name": ""})
+            print(f"  ✓ TSys PRT: {code:10}", file=sys.stderr)
+    
+    if len(prt_tsys) == 0:
+        print("  ⚠️  Nessun Transport System di tipo PRT trovato!", file=sys.stderr)
+    else:
+        print(f"\\n  Totale: {len(prt_tsys)} TSys PRT", file=sys.stderr)
+    
+    # STEP 2: Trova i Modes corrispondenti ai TSys PRT
+    print(f"\\n{'=' * 70}", file=sys.stderr)
+    print("[STEP 2] Ricerca Modes associati ai TSys PRT:\\n", file=sys.stderr)
+    
+    all_modes = visum.Net.Modes.GetAll
+    
+    prt_mode_codes = []
+    mode_mapping = {}
+    
+    for mode in all_modes:
+        mode_code = mode.AttValue("CODE")
+        mode_name = str(mode.AttValue("NAME")) if mode.AttValue("NAME") else ""
+        
+        # Match per nome (es: Mode "Car" corrisponde a TSys "Car")
+        for tsys in prt_tsys:
+            tsys_name = str(tsys.get("code", ""))
+            # Usa solo il CODE per il match, non il nome
+            if mode_code.upper() == tsys_name[0:1].upper():
+                prt_mode_codes.append(mode_code)
+                mode_mapping[mode_code] = {
+                    "mode_name": "",
+                    "tsys_code": tsys["code"],
+                    "tsys_name": ""
+                }
+                print(f"  ✓ Mode '{mode_code}' → TSys {tsys['code']}", file=sys.stderr)
+                break
+    
+    if len(prt_mode_codes) == 0:
+        print("  ℹ️  Nessun mapping trovato per nome, nessun segment disponibile", file=sys.stderr)
+    
+    # STEP 3: Raccogli demand segments per ogni mode PRT
+    print(f"\\n{'=' * 70}", file=sys.stderr)
+    print("[STEP 3] Demand Segments per ogni Mode PRT:\\n", file=sys.stderr)
+    
+    all_segments = visum.Net.DemandSegments.GetAll
+    
+    segments_by_mode = {}
+    all_prt_segments = []
+    
+    for seg in all_segments:
+        seg_code = seg.AttValue("CODE")
+        seg_mode = seg.AttValue("MODE")
+        
+        if seg_mode in prt_mode_codes:
+            if seg_mode not in segments_by_mode:
+                segments_by_mode[seg_mode] = []
+            
+            segments_by_mode[seg_mode].append(seg_code)
+            all_prt_segments.append(seg_code)
+    
+    # Stampa riepilogo per mode
+    for mode_code in sorted(prt_mode_codes):
+        segs = segments_by_mode.get(mode_code, [])
+        mapping = mode_mapping[mode_code]
+        
+        print(f"Mode '{mode_code}' ({mapping['mode_name']}) → TSys {mapping['tsys_code']}:", file=sys.stderr)
+        print(f"  Segments: {len(segs)}", file=sys.stderr)
+        
+        if len(segs) > 0:
+            # Mostra primi 8 segments
+            for s in segs[:8]:
+                print(f"    - {s}", file=sys.stderr)
+            if len(segs) > 8:
+                print(f"    ... e altri {len(segs) - 8} segments", file=sys.stderr)
+        print(file=sys.stderr)
+    
+    # STEP 4: Genera DSEGSET completo
+    dsegset_value = ",".join(all_prt_segments)
+    
+    print(f"{'=' * 70}", file=sys.stderr)
+    print(f"[RIEPILOGO] TOTALE: {len(all_prt_segments)} demand segments PRT", file=sys.stderr)
+    print(f"{'=' * 70}", file=sys.stderr)
+    
+    result = {
+        "status": "ok",
+        "prt_tsys": prt_tsys,
+        "prt_modes": prt_mode_codes,
+        "mode_mapping": mode_mapping,
+        "segments_by_mode": segments_by_mode,
+        "all_segments": all_prt_segments,
+        "dsegset": dsegset_value,
+        "total": len(all_prt_segments)
+    }
+    
+except Exception as e:
+    print(f"\\n❌ ERRORE: {e}", file=sys.stderr)
+    import traceback
+    traceback.print_exc(file=sys.stderr)
+    result = {
+        "status": "error",
+        "error": str(e),
+        "prt_tsys": [],
+        "prt_modes": [],
+        "mode_mapping": {},
+        "segments_by_mode": {},
+        "all_segments": [],
+        "dsegset": "",
+        "total": 0
+    }
+`;
+
+const client = new net.Socket();
+let welcomeReceived = false;
+
+console.log('\n🔍 ANALISI MODI PRT E DEMAND SEGMENTS');
+console.log('='.repeat(70));
+
+client.connect(7905, '::1', () => {
+    console.log('✅ Connesso al server Visum TCP\n');
+});
+
+client.on('data', (data) => {
+    const response = JSON.parse(data.toString());
+    
+    if (!welcomeReceived && response.type === 'project_welcome') {
+        welcomeReceived = true;
+        const request = {
+            type: 'query',
+            requestId: Date.now(),
+            description: 'List PRT demand segments',
+            code: pythonCode
+        };
+        client.write(JSON.stringify(request) + '\n');
+    } else {
+        if (response.success) {
+            const res = response.result;
+            
+            if (res.status === 'ok') {
+                console.log('\n📊 TRANSPORT SYSTEMS DI TIPO PRT:');
+                console.log('='.repeat(70));
+                
+                if (res.prt_tsys.length === 0) {
+                    console.log('⚠️  Nessun Transport System di tipo PRT trovato nel progetto');
+                } else {
+                    res.prt_tsys.forEach((t, i) => {
+                        console.log(`  ${i+1}. ${t.code.padEnd(10)}`);
+                    });
+                }
+                
+                if (Object.keys(res.mode_mapping).length > 0) {
+                    console.log('\n🔗 MAPPING MODE → TRANSPORT SYSTEM:');
+                    console.log('='.repeat(70));
+                    
+                    for (const [modeCode, mapping] of Object.entries(res.mode_mapping)) {
+                        console.log(`  Mode "${modeCode}" → TSys ${mapping.tsys_code}`);
+                    }
+                    
+                    console.log('\n📋 DEMAND SEGMENTS PER MODE:');
+                    console.log('='.repeat(70));
+                    
+                    for (const [modeCode, segments] of Object.entries(res.segments_by_mode)) {
+                        const mapping = res.mode_mapping[modeCode];
+                        console.log(`\nMode "${modeCode}":`);
+                        console.log(`   ${segments.length} demand segments disponibili`);
+                        
+                        if (segments.length <= 15) {
+                            segments.forEach((s, i) => console.log(`   ${(i+1).toString().padStart(2)}. ${s}`));
+                        } else {
+                            segments.slice(0, 10).forEach((s, i) => console.log(`   ${(i+1).toString().padStart(2)}. ${s}`));
+                            console.log(`   ... e altri ${segments.length - 10} segments`);
+                        }
+                    }
+                    
+                    console.log('\n' + '='.repeat(70));
+                    console.log(`✅ TOTALE: ${res.total} demand segments PRT`);
+                    console.log('='.repeat(70));
+                    
+                    console.log('\n📝 DSEGSET COMPLETO (tutti i segments):');
+                    console.log('─'.repeat(70));
+                    console.log(res.dsegset);
+                    
+                    console.log('\n💡 SUGGERIMENTI:');
+                    console.log('─'.repeat(70));
+                    console.log('• Usa il DSEGSET completo per includere TUTTI i segments PRT');
+                    console.log('• Oppure copia solo i segments di uno specifico mode (C, H, ...)');
+                    console.log('• Il DSEGSET va configurato nell\'attributo DSEGSET della procedura');
+                } else {
+                    console.log('\n⚠️  Nessun Mode associato ai Transport Systems PRT');
+                    console.log('    I segments non possono essere identificati automaticamente');
+                }
+                
+            } else {
+                console.log(`\n❌ ERRORE: ${res.error}`);
+            }
+        } else {
+            console.log(`\n❌ Errore di esecuzione: ${response.error}`);
+        }
+        
+        console.log(`\n⏱️  Tempo di esecuzione: ${response.executionTimeMs}ms`);
+        client.destroy();
+    }
+});
+
+client.on('close', () => {
+    console.log('\n🔌 Connessione chiusa');
+});
+
+client.on('error', (err) => {
+    console.error(`\n❌ Errore di connessione: ${err.message}`);
+    console.error('   Assicurati che il server Visum TCP sia in esecuzione sulla porta 7905');
+});
