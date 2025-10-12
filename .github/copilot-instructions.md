@@ -24,7 +24,59 @@ You can find more info and examples at https://modelcontextprotocol.io/llms-full
    - Supports large projects (Campoleone: 166K nodes, 409K links)
    - Provides immediate MCP response with background project loading
 
-2. **sequential_thinking**: Main tool for step-by-step reasoning with support for:
+2. **visum_create_procedure**: 🎯 Create Visum procedures (Assignments, Models, etc.)
+   - Verified API using `visum.Procedures.Operations.AddOperation()`
+   - Supports: PrT Assignment, PuT Assignment, Demand Model, Matrix Calculation
+   - **⚠️ CRITICAL:** Returns `actual_position` (NOT requested position!)
+   - ALWAYS save and use `actual_position` for subsequent operations
+   - See `VISUM_PROCEDURES_API.md` for complete documentation
+
+3. **visum_list_demand_segments**: 📋 List demand segments for configuration
+   - Shows all available PrT demand segments with numbering (1-36)
+   - Can filter by mode (C, H, etc.)
+   - Returns numbered list for easy user selection
+   - **ALWAYS use this before configuring DSEGSET** - Ask user which segments to include
+   - Show the 4 selection options to the user
+
+4. **visum_configure_dsegset**: ⚙️ Configure demand segments on procedures
+   - Applies DSEGSET to PrT Assignment procedures
+   - **⚠️ CRITICAL:** Use `actual_position` from visum_create_procedure!
+   - Supports 4 input formats:
+     * Numeric selection: `segmentNumbers: "1-10,15,20"`
+     * Mode filter: `filterMode: "C"` or `"H"`
+     * ALL keyword: `dsegset: "ALL"` (use filterMode instead if fails)
+     * Explicit codes: `dsegset: "C_CORRETTA_AM,C_CORRETTA_IP1,..."`
+   - See `WORKFLOW_PRT_ASSIGNMENT.md` for complete workflow
+
+## 🤖 Interactive Workflow for AI Assistants
+
+**⚠️ IMPORTANT:** When creating and configuring PrT procedures, follow this pattern:
+
+1. **Create Procedure** → Save `actual_position` from response
+2. **List Segments** → Show numbered list (1-36) to user
+3. **Ask User** → Present 4 options: "all", "mode filter", "numbers", or "codes"
+4. **Configure** → Use saved `actual_position` + user's choice
+
+**See `CLAUDE_WORKFLOW_GUIDE.md` for complete interactive workflow patterns!**
+
+### Quick Example:
+```javascript
+// Step 1: Create
+response = visum_create_procedure({procedureType: "PrT_Assignment"})
+position = response.actual_position  // e.g., 580
+
+// Step 2: List & Ask
+visum_list_demand_segments()
+// Show to user: "Found 36 segments. Options: 1) all, 2) mode C/H, 3) numbers 1-10, 4) codes"
+
+// Step 3: Configure with user's choice
+visum_configure_dsegset({
+  procedurePosition: position,  // ⚠️ Use actual_position!
+  segmentNumbers: "1-10"        // or filterMode: "C", etc.
+})
+```
+
+5. **sequential_thinking**: Main tool for step-by-step reasoning with support for:
    - Sequential thought progression
    - Thought revision capabilities
    - Branching reasoning paths

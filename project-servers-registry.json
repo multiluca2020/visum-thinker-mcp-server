@@ -4,13 +4,13 @@
       "projectId": "100625_Versione_base_v0.3_sub_ok_priv_10176442",
       "projectPath": "H:\\go\\italferr2025\\Campoleone\\100625_Versione_base_v0.3_sub_ok_priv.ver",
       "projectName": "100625_Versione_base_v0.3_sub_ok_priv",
-      "port": 7905,
-      "pid": 49168,
-      "startTime": 1759739232242,
-      "startTimeString": "06/10/2025, 18:27:12",
+      "port": 7909,
+      "pid": 10292,
+      "startTime": 1760046001265,
+      "startTimeString": "10/10/2025, 07:40:01",
       "status": "ready"
     }
   },
-  "nextPort": 7906,
-  "lastUpdate": "2025-10-06T08:28:13.346Z"
+  "nextPort": 7910,
+  "lastUpdate": "2025-10-09T21:41:06.697Z"
 }

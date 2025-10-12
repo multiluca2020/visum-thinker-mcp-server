@@ -2131,6 +2131,707 @@ server.tool(
   }
 );
 
+// =============================================================================
+// VISUM PROCEDURES CREATION TOOLS
+// =============================================================================
+
+// Create Visum Procedure Tool
+server.tool(
+  "visum_create_procedure",
+  "🎯 Create a Visum procedure (PrT Assignment, PuT Assignment, etc.) using the verified Visum API. This tool uses the correct visum.Procedures.Operations.AddOperation() method discovered on 2025-10-10.",
+  {
+    projectId: z.string().describe("Project ID of the active Visum project"),
+    procedureType: z.enum(["PrT_Assignment", "PuT_Assignment", "Demand_Model", "Matrix_Calculation"]).describe("Type of procedure to create"),
+    position: z.number().optional().describe("Position where to insert the procedure (1-20, default: 20 = append at end)"),
+    parameters: z.record(z.any()).optional().describe("Optional parameters to configure the procedure")
+  },
+  async ({ projectId, procedureType, position = 20, parameters = {} }) => {
+    try {
+      // Map procedure types to OPERATIONTYPE codes
+      const operationTypeCodes: Record<string, number> = {
+        "PrT_Assignment": 101,  // OperationTypeAssignmentPrT
+        "PuT_Assignment": 100,  // OperationTypeAssignmentPuT (was 102 - FIXED!)
+        "Demand_Model": 103,    // OperationTypeCalculateSkimMatrixPrT
+        "Matrix_Calculation": 104
+      };
+      
+      const operationCode = operationTypeCodes[procedureType];
+      
+      // Check if we need to add Delete Assignment Results before PrT/PuT Assignment
+      const needsDeleteBefore = procedureType === "PrT_Assignment" || procedureType === "PuT_Assignment";
+      const deleteOperationType = 9; // OperationTypeInitAssignment - deletes previous assignment results
+      
+      // Generate Python code to create the procedure
+      const pythonCode = `
+try:
+    operations_container = visum.Procedures.Operations
+    
+    # Step 0: Find or create "Visum-BOT" group
+    print("Searching for Visum-BOT group...")
+    visum_bot_group = None
+    
+    # Search for existing Visum-BOT group by name
+    all_ops = list(operations_container.GetAll)
+    for op in all_ops:
+        try:
+            op_type = op.AttValue("OPERATIONTYPE")
+            if op_type == 75:  # Group type
+                group_params = op.GroupParameters
+                group_name = group_params.AttValue("Name")
+                if group_name == "Visum-BOT":
+                    visum_bot_group = op
+                    group_pos = op.AttValue("NO")
+                    print(f"Found existing Visum-BOT group at position {group_pos}")
+                    break
+        except:
+            continue
+    
+    # Create group if not found
+    if visum_bot_group is None:
+        print("Creating new Visum-BOT group...")
+        # Count top-level operations only
+        top_level_ops = operations_container.GetChildren()
+        top_level_count = len(list(top_level_ops)) if top_level_ops else 0
+        visum_bot_group = operations_container.AddOperation(top_level_count + 1)
+        visum_bot_group.SetAttValue("OPERATIONTYPE", 75)  # Group type
+        # Set group name via GroupParameters
+        group_params = visum_bot_group.GroupParameters
+        group_params.SetAttValue("Name", "Visum-BOT")
+        group_pos = visum_bot_group.AttValue("NO")
+        print(f"Visum-BOT group created at position {group_pos}")
+    
+    # Count existing operations in the Visum-BOT group
+    group_children = operations_container.GetChildren(visum_bot_group)
+    group_children_count = len(list(group_children)) if group_children else 0
+    print(f"Visum-BOT group currently has {group_children_count} operations")
+    
+    ${needsDeleteBefore ? `
+    # Step 1: Create "Initialize Assignment" operation at END of Visum-BOT group
+    print("Creating Initialize Assignment (DELETE) at end of Visum-BOT group...")
+    delete_rel_pos = group_children_count + 1
+    delete_op = operations_container.AddOperation(delete_rel_pos, visum_bot_group)
+    delete_op.SetAttValue("OPERATIONTYPE", ${deleteOperationType})
+    delete_position = delete_op.AttValue("NO")
+    
+    print(f"Initialize Assignment created at position {delete_position} (relative pos {delete_rel_pos} in group)")
+    ` : ''}
+    
+    # Step 2: Create the assignment operation at END of Visum-BOT group
+    print(f"Creating ${procedureType} at end of Visum-BOT group...")
+    # Next position after delete (or after existing operations if no delete)
+    assignment_rel_pos = group_children_count + ${needsDeleteBefore ? '2' : '1'}
+    new_op = operations_container.AddOperation(assignment_rel_pos, visum_bot_group)
+    
+    # Set operation type
+    new_op.SetAttValue("OPERATIONTYPE", ${operationCode})
+    
+    # Get ACTUAL position from the operation itself (not from count!)
+    actual_position = new_op.AttValue("NO")
+    
+    # VERIFY: Read back the operation type to confirm
+    verify_type = new_op.AttValue("OPERATIONTYPE")
+    print(f"${procedureType} operation created at position {actual_position}")
+    print(f"Verified type code: {verify_type} (expected: ${operationCode})")
+    
+    # Configure parameters if provided
+    params_configured = []
+    ${Object.entries(parameters).length > 0 ? `
+    try:
+        # Access specific parameters object based on type
+        ${procedureType === 'PrT_Assignment' ? `
+        params = new_op.PrTAssignmentParameters
+        eq_params = new_op.PrTEquilibriumAssignmentParameters
+        
+        # Configure equilibrium parameters
+        ${parameters.numIterations ? `eq_params.SetAttValue("NUMITER", ${parameters.numIterations})
+        params_configured.append("NUMITER=${parameters.numIterations}")` : ''}
+        ${parameters.precisionDemand ? `eq_params.SetAttValue("PRECISIONDEMAND", ${parameters.precisionDemand})
+        params_configured.append("PRECISIONDEMAND=${parameters.precisionDemand}")` : ''}
+        ` : ''}
+        
+        print(f"   Parameters configured: {params_configured}")
+    except Exception as e:
+        print(f"   Warning: Could not configure all parameters: {e}")
+    ` : ''}
+    
+    # Verify creation using actual position
+    created_op = visum.Procedures.Operations.ItemByKey(actual_position)
+    operation_type = created_op.AttValue("OPERATIONTYPE")
+    
+    result = {
+        "status": "success",
+        "procedure_type": "${procedureType}",
+        "operation_code": ${operationCode},
+        "requested_position": ${position},
+        "actual_position": actual_position,
+        "group_position": group_pos,
+        "group_name": "Visum-BOT",
+        ${needsDeleteBefore ? `"delete_position": delete_position,` : ''}
+        "parameters_configured": params_configured,
+        "verified": operation_type == ${operationCode},
+        ${needsDeleteBefore ? 
+          `"message": f"Visum-BOT group at position {group_pos}. Delete operation at {delete_position}, ${procedureType} at {actual_position} (both inside group)"` :
+          `"message": f"${procedureType} created at position {actual_position} inside Visum-BOT group (position {group_pos})"`
+        }
+    }
+    
+except Exception as e:
+    import traceback
+    result = {
+        "status": "error",
+        "error": str(e),
+        "traceback": traceback.format_exc(),
+        "procedure_type": "${procedureType}",
+        "attempted_position": ${position}
+    }
+`;
+      
+      // Execute via project_execute
+      const result = await serverManager.executeCommand(projectId, pythonCode, `Create ${procedureType} procedure`);
+      
+      if (result.success && result.result?.status === 'success') {
+        const hasDelete = result.result.delete_position !== undefined;
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Procedura Visum Creata nel Gruppo "${result.result.group_name}"**\n\n` +
+                    `📦 **Gruppo:** ${result.result.group_name}\n` +
+                    `   • Posizione gruppo: ${result.result.group_position}\n\n` +
+                    (hasDelete ? 
+                      `🗑️ **Delete Assignment Results:**\n` +
+                      `   • Posizione: ${result.result.delete_position}\n` +
+                      `   • Tipo: Initialize Assignment (code 9)\n` +
+                      `   • Dentro gruppo: ${result.result.group_name}\n\n` : '') +
+                    `✅ **${procedureType}:**\n` +
+                    `   • Posizione: ${result.result.actual_position}\n` +
+                    `   • Tipo: ${procedureType.replace('_', ' ')} (code ${result.result.operation_code})\n` +
+                    `   • Dentro gruppo: ${result.result.group_name}\n` +
+                    `   • Verificata: ${result.result.verified ? '✅' : '❌'}\n\n` +
+                    (result.result.parameters_configured.length > 0 ? 
+                      `**Parametri Configurati:**\n${result.result.parameters_configured.map((p: string) => `• ${p}`).join('\n')}\n\n` : '') +
+                    `⏱️ **Tempo esecuzione:** ${result.executionTimeMs}ms\n\n` +
+                    `⚠️ **IMPORTANTE:**\n` +
+                    `• Tutte le operazioni sono nel gruppo **${result.result.group_name}** (posizione ${result.result.group_position})\n` +
+                    (hasDelete ?
+                      `• Delete: posizione **${result.result.delete_position}**\n` +
+                      `• Assignment: posizione **${result.result.actual_position}**\n` +
+                      `• Usa posizione **${result.result.actual_position}** per configurare DSEGSET!\n\n` :
+                      `• Usa posizione **${result.result.actual_position}** per configurare questa procedura!\n\n`) +
+                    `💡 **Suggerimento:** Tutte le operazioni MCP sono organizzate nel gruppo "${result.result.group_name}" per facile gestione!`
+            }
+          ]
+        };
+      } else {
+        const errorMsg = result.result?.error || result.error || 'Unknown error';
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore Creazione Procedura**\n\n` +
+                    `**Tipo richiesto:** ${procedureType}\n` +
+                    `**Posizione:** ${position}\n` +
+                    `**Errore:** ${errorMsg}\n\n` +
+                    (result.result?.traceback ? `**Traceback:**\n\`\`\`\n${result.result.traceback}\n\`\`\`\n\n` : '') +
+                    `💡 **Suggerimento:** Verifica che la posizione sia valida (1-20) e che il progetto sia caricato correttamente.`
+            }
+          ]
+        };
+      }
+      
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}\n\n` +
+                  `Consulta VISUM_PROCEDURES_API.md per la documentazione completa.`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// List Demand Segments Tool
+server.tool(
+  "visum_list_demand_segments",
+  "📋 List all available demand segments for PrT (Private Transport) modes in the loaded Visum project. Use this before configuring DSEGSET on a procedure.",
+  {
+    projectId: z.string().describe("Project ID of the active Visum project"),
+    filterMode: z.string().optional().describe("Optional: Filter by mode code (e.g., 'C' for Car, 'H' for HGV)")
+  },
+  async ({ projectId, filterMode }) => {
+    try {
+      const pythonCode = `
+try:
+    import sys
+    
+    # Find all PrT Transport Systems
+    all_tsys = visum.Net.TSystems.GetAll
+    prt_tsys = []
+    
+    for tsys in all_tsys:
+        code = tsys.AttValue("CODE")
+        name = tsys.AttValue("NAME")
+        tsys_type = tsys.AttValue("TYPE")
+        
+        if tsys_type == "PRT":
+            prt_tsys.append({"code": code, "name": name})
+    
+    # Find corresponding Modes
+    all_modes = visum.Net.Modes.GetAll
+    prt_mode_codes = []
+    mode_mapping = {}
+    
+    for mode in all_modes:
+        mode_code = mode.AttValue("CODE")
+        mode_name = mode.AttValue("NAME")
+        
+        for tsys in prt_tsys:
+            if mode_name.upper() == tsys["name"].upper():
+                prt_mode_codes.append(mode_code)
+                mode_mapping[mode_code] = {
+                    "mode_name": mode_name,
+                    "tsys_code": tsys["code"]
+                }
+                break
+    
+    # Collect demand segments by mode
+    all_segments = visum.Net.DemandSegments.GetAll
+    segments_by_mode = {}
+    all_prt_segments = []
+    
+    for seg in all_segments:
+        seg_code = seg.AttValue("CODE")
+        seg_mode = seg.AttValue("MODE")
+        
+        if seg_mode in prt_mode_codes:
+            if seg_mode not in segments_by_mode:
+                segments_by_mode[seg_mode] = []
+            segments_by_mode[seg_mode].append(seg_code)
+            all_prt_segments.append(seg_code)
+    
+    ${filterMode ? `
+    # Filter by specific mode
+    if "${filterMode}" in segments_by_mode:
+        filtered_segments = segments_by_mode["${filterMode}"]
+        dsegset = ",".join(filtered_segments)
+    else:
+        filtered_segments = []
+        dsegset = ""
+    
+    result = {
+        "status": "success",
+        "filter_mode": "${filterMode}",
+        "segments": filtered_segments,
+        "dsegset": dsegset,
+        "total": len(filtered_segments),
+        "all_modes": list(segments_by_mode.keys())
+    }
+    ` : `
+    # Return all PrT segments with numbering
+    dsegset = ",".join(all_prt_segments)
+    
+    # Create numbered list for user selection
+    numbered_segments = []
+    idx = 1
+    for mode_code in sorted(segments_by_mode.keys()):
+        for seg in segments_by_mode[mode_code]:
+            numbered_segments.append({
+                "number": idx,
+                "code": seg,
+                "mode": mode_code
+            })
+            idx += 1
+    
+    result = {
+        "status": "success",
+        "prt_tsys": prt_tsys,
+        "mode_mapping": mode_mapping,
+        "segments_by_mode": segments_by_mode,
+        "numbered_segments": numbered_segments,
+        "dsegset": dsegset,
+        "total": len(all_prt_segments),
+        "modes_available": list(segments_by_mode.keys())
+    }
+    `}
+    
+except Exception as e:
+    import traceback
+    result = {
+        "status": "error",
+        "error": str(e),
+        "traceback": traceback.format_exc()
+    }
+`;
+      
+      const result = await serverManager.executeCommand(projectId, pythonCode, "List PrT demand segments");
+      
+      if (result.success && result.result?.status === 'success') {
+        const res = result.result;
+        
+        if (filterMode) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `📋 **Demand Segments - Mode ${filterMode}**\n\n` +
+                      `**Segments trovati:** ${res.total}\n` +
+                      `**Segments:**\n${res.segments.map((s: string) => `• ${s}`).join('\n')}\n\n` +
+                      `**DSEGSET string:**\n\`\`\`\n${res.dsegset}\n\`\`\`\n\n` +
+                      `**Modi disponibili:** ${res.all_modes.join(', ')}\n\n` +
+                      `💡 **Prossimo passo:** Usa \`visum_configure_dsegset\` per applicare questi segments alla procedura`
+              }
+            ]
+          };
+        } else {
+          // Create numbered list grouped by mode
+          let numberedList = '';
+          for (const [mode, segments] of Object.entries(res.segments_by_mode)) {
+            const modeInfo = res.mode_mapping[mode];
+            numberedList += `\n**Mode ${mode}** (${modeInfo.mode_name} → TSys ${modeInfo.tsys_code}):\n`;
+            
+            const modeSegments = res.numbered_segments.filter((s: any) => s.mode === mode);
+            numberedList += modeSegments.map((s: any) => `  ${s.number}. ${s.code}`).join('\n') + '\n';
+          }
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: `📋 **Demand Segments PrT Disponibili**\n\n` +
+                      `**Transport Systems PrT:** ${res.prt_tsys.length}\n` +
+                      `${res.prt_tsys.map((t: any) => `• ${t.code}: ${t.name}`).join('\n')}\n\n` +
+                      `**Modi PrT:** ${res.modes_available.join(', ')}\n` +
+                      `**Totale segments:** ${res.total}\n` +
+                      numberedList + '\n' +
+                      `**DSEGSET completo (tutti i ${res.total} segments):**\n\`\`\`\n${res.dsegset}\n\`\`\`\n\n` +
+                      `💡 **Come procedere:**\n\n` +
+                      `**Opzione 1 - Tutti i segments:**\n` +
+                      `Rispondi: "Usa tutti" o "tutti"\n\n` +
+                      `**Opzione 2 - Solo un modo:**\n` +
+                      `Rispondi: "Solo C" o "Solo H"\n\n` +
+                      `**Opzione 3 - Selezione personalizzata:**\n` +
+                      `Rispondi con i numeri: "1,2,3,5,7" o "1-10,15,20"\n\n` +
+                      `**Opzione 4 - Copia manuale:**\n` +
+                      `Copia i codici segments desiderati dalla lista sopra`
+              }
+            ]
+          };
+        }
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore nel listare demand segments**\n\n${result.result?.error || result.error}`
+            }
+          ]
+        };
+      }
+      
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Configure DSEGSET Tool
+server.tool(
+  "visum_configure_dsegset",
+  "⚙️ Configure demand segments (DSEGSET) on a PrT Assignment procedure. Use visum_list_demand_segments first to see available segments. Accepts segment codes OR numbers from the numbered list.",
+  {
+    projectId: z.string().describe("Project ID of the active Visum project"),
+    procedurePosition: z.number().describe("Position of the PrT Assignment procedure to configure (typically 20)"),
+    dsegset: z.string().optional().describe("Comma-separated list of demand segment codes (e.g., 'C_CORRETTA_AM,C_CORRETTA_IP1,...') OR 'ALL' for all segments"),
+    segmentNumbers: z.string().optional().describe("Alternative: comma-separated numbers from visum_list_demand_segments (e.g., '1,2,3,5-10')"),
+    filterMode: z.string().optional().describe("Alternative: mode code to use all segments from that mode (e.g., 'C', 'H')"),
+    additionalParams: z.record(z.any()).optional().describe("Optional additional parameters (NUMITER, PRECISIONDEMAND, etc.)")
+  },
+  async ({ projectId, procedurePosition, dsegset, segmentNumbers, filterMode, additionalParams = {} }) => {
+    try {
+      // First, resolve the DSEGSET based on input type
+      let resolvedDsegset = '';
+      let segmentCount = 0;
+      
+      if (segmentNumbers) {
+        // User provided numbers - need to fetch segments and resolve
+        const listPythonCode = `
+try:
+    # Get all PrT segments with numbers
+    all_tsys = visum.Net.TSystems.GetAll
+    prt_tsys = []
+    for tsys in all_tsys:
+        if tsys.AttValue("TYPE") == "PRT":
+            prt_tsys.append({"code": tsys.AttValue("CODE"), "name": tsys.AttValue("NAME")})
+    
+    all_modes = visum.Net.Modes.GetAll
+    prt_mode_codes = []
+    for mode in all_modes:
+        for tsys in prt_tsys:
+            if mode.AttValue("NAME").upper() == tsys["name"].upper():
+                prt_mode_codes.append(mode.AttValue("CODE"))
+                break
+    
+    all_segments = visum.Net.DemandSegments.GetAll
+    segments_by_mode = {}
+    all_prt_segments = []
+    for seg in all_segments:
+        seg_code = seg.AttValue("CODE")
+        seg_mode = seg.AttValue("MODE")
+        if seg_mode in prt_mode_codes:
+            if seg_mode not in segments_by_mode:
+                segments_by_mode[seg_mode] = []
+            segments_by_mode[seg_mode].append(seg_code)
+            all_prt_segments.append(seg_code)
+    
+    # Create numbered list
+    numbered_segments = []
+    idx = 1
+    for mode_code in sorted(segments_by_mode.keys()):
+        for seg in segments_by_mode[mode_code]:
+            numbered_segments.append({"number": idx, "code": seg})
+            idx += 1
+    
+    result = {"status": "success", "numbered_segments": numbered_segments, "all_segments": all_prt_segments}
+except Exception as e:
+    result = {"status": "error", "error": str(e)}
+`;
+        
+        const listResult = await serverManager.executeCommand(projectId, listPythonCode, "Get numbered segments");
+        if (!listResult.success || listResult.result?.status !== 'success') {
+          throw new Error(`Failed to resolve segment numbers: ${listResult.result?.error || listResult.error}`);
+        }
+        
+        // Parse segment numbers (supports "1,2,3" and "1-5" notation)
+        const numberedSegs = listResult.result.numbered_segments;
+        const selectedNumbers: number[] = [];
+        
+        segmentNumbers.split(',').forEach(part => {
+          part = part.trim();
+          if (part.includes('-')) {
+            const [start, end] = part.split('-').map(n => parseInt(n.trim()));
+            for (let i = start; i <= end; i++) {
+              selectedNumbers.push(i);
+            }
+          } else {
+            selectedNumbers.push(parseInt(part));
+          }
+        });
+        
+        // Get segment codes for selected numbers
+        const selectedCodes = numberedSegs
+          .filter((s: any) => selectedNumbers.includes(s.number))
+          .map((s: any) => s.code);
+        
+        resolvedDsegset = selectedCodes.join(',');
+        segmentCount = selectedCodes.length;
+        
+      } else if (filterMode) {
+        // User wants all segments from a specific mode
+        const listPythonCode = `
+try:
+    all_tsys = visum.Net.TSystems.GetAll
+    prt_tsys = []
+    for tsys in all_tsys:
+        if tsys.AttValue("TYPE") == "PRT":
+            prt_tsys.append({"code": tsys.AttValue("CODE"), "name": tsys.AttValue("NAME")})
+    
+    all_modes = visum.Net.Modes.GetAll
+    prt_mode_codes = []
+    for mode in all_modes:
+        for tsys in prt_tsys:
+            if mode.AttValue("NAME").upper() == tsys["name"].upper():
+                prt_mode_codes.append(mode.AttValue("CODE"))
+                break
+    
+    all_segments = visum.Net.DemandSegments.GetAll
+    mode_segments = []
+    for seg in all_segments:
+        seg_code = seg.AttValue("CODE")
+        seg_mode = seg.AttValue("MODE")
+        if seg_mode == "${filterMode}":
+            mode_segments.append(seg_code)
+    
+    result = {"status": "success", "segments": mode_segments}
+except Exception as e:
+    result = {"status": "error", "error": str(e)}
+`;
+        
+        const listResult = await serverManager.executeCommand(projectId, listPythonCode, "Get mode segments");
+        if (!listResult.success || listResult.result?.status !== 'success') {
+          throw new Error(`Failed to get segments for mode ${filterMode}: ${listResult.result?.error || listResult.error}`);
+        }
+        
+        resolvedDsegset = listResult.result.segments.join(',');
+        segmentCount = listResult.result.segments.length;
+        
+      } else if (dsegset === 'ALL' || dsegset === 'all' || dsegset === 'tutti') {
+        // User wants all segments
+        const listPythonCode = `
+try:
+    all_tsys = visum.Net.TSystems.GetAll
+    prt_tsys = []
+    for tsys in all_tsys:
+        if tsys.AttValue("TYPE") == "PRT":
+            prt_tsys.append({"code": tsys.AttValue("CODE")})
+    
+    all_modes = visum.Net.Modes.GetAll
+    prt_mode_codes = []
+    for mode in all_modes:
+        for tsys in prt_tsys:
+            if mode.AttValue("NAME").upper() == tsys["name"].upper():
+                prt_mode_codes.append(mode.AttValue("CODE"))
+                break
+    
+    all_segments = visum.Net.DemandSegments.GetAll
+    all_prt_segments = []
+    for seg in all_segments:
+        if seg.AttValue("MODE") in prt_mode_codes:
+            all_prt_segments.append(seg.AttValue("CODE"))
+    
+    result = {"status": "success", "segments": all_prt_segments}
+except Exception as e:
+    result = {"status": "error", "error": str(e)}
+`;
+        
+        const listResult = await serverManager.executeCommand(projectId, listPythonCode, "Get all segments");
+        if (!listResult.success || listResult.result?.status !== 'success') {
+          throw new Error(`Failed to get all segments: ${listResult.result?.error || listResult.error}`);
+        }
+        
+        resolvedDsegset = listResult.result.segments.join(',');
+        segmentCount = listResult.result.segments.length;
+        
+      } else if (dsegset) {
+        // User provided explicit segment codes
+        resolvedDsegset = dsegset;
+        segmentCount = dsegset.split(',').length;
+      } else {
+        throw new Error("Must provide either 'dsegset', 'segmentNumbers', 'filterMode', or dsegset='ALL'");
+      }
+      
+      // Now configure the procedure with the resolved DSEGSET
+      const pythonCode = `
+try:
+    # Access the procedure operation
+    operation = visum.Procedures.Operations.ItemByKey(${procedurePosition})
+    
+    # Verify it's a PrT Assignment
+    op_type = operation.AttValue("OPERATIONTYPE")
+    if op_type != 101:
+        raise Exception(f"Operation at position ${procedurePosition} is not a PrT Assignment (type {op_type}, expected 101)")
+    
+    # Access PrT Assignment parameters
+    params = operation.PrTAssignmentParameters
+    
+    # Configure DSEGSET
+    dsegset_value = """${resolvedDsegset}"""
+    segment_count = ${segmentCount}
+    
+    print(f"Configuring DSEGSET with {segment_count} segments...")
+    params.SetAttValue("DSEGSET", dsegset_value)
+    print(f"DSEGSET configured successfully")
+    
+    # Configure additional parameters
+    params_configured = ["DSEGSET"]
+    
+    ${Object.entries(additionalParams).map(([key, value]) => `
+    try:
+        ${key === 'NUMITER' || key === 'PRECISIONDEMAND' ? 
+          `eq_params = operation.PrTEquilibriumAssignmentParameters
+        eq_params.SetAttValue("${key}", ${typeof value === 'string' ? `"${value}"` : value})` :
+          `params.SetAttValue("${key}", ${typeof value === 'string' ? `"${value}"` : value})`
+        }
+        params_configured.append("${key}=${value}")
+        print(f"Parameter ${key} set to ${value}")
+    except Exception as e:
+        print(f"Warning: Could not set ${key}: {e}")
+    `).join('\n')}
+    
+    # Verify configuration
+    try:
+        configured_dsegset = params.AttValue("DSEGSET")
+        verified = configured_dsegset == dsegset_value
+    except:
+        verified = False
+        configured_dsegset = "Could not verify"
+    
+    result = {
+        "status": "success",
+        "procedure_position": ${procedurePosition},
+        "segments_configured": segment_count,
+        "dsegset_length": len(dsegset_value),
+        "parameters_set": params_configured,
+        "verified": verified,
+        "message": f"DSEGSET configured with {segment_count} demand segments"
+    }
+    
+except Exception as e:
+    import traceback
+    result = {
+        "status": "error",
+        "error": str(e),
+        "traceback": traceback.format_exc(),
+        "procedure_position": ${procedurePosition}
+    }
+`;
+      
+      const result = await serverManager.executeCommand(projectId, pythonCode, "Configure DSEGSET on PrT Assignment");
+      
+      if (result.success && result.result?.status === 'success') {
+        const res = result.result;
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **DSEGSET Configurato**\n\n` +
+                    `**Procedura:** Posizione ${res.procedure_position}\n` +
+                    `**Segments configurati:** ${res.segments_configured}\n` +
+                    `**Lunghezza DSEGSET:** ${res.dsegset_length} caratteri\n` +
+                    `**Verificato:** ${res.verified ? '✅ Sì' : '⚠️ Non verificato'}\n\n` +
+                    `**Parametri configurati:**\n${res.parameters_set.map((p: string) => `• ${p}`).join('\n')}\n\n` +
+                    `**Messaggio:** ${res.message}\n\n` +
+                    `⏱️ **Tempo esecuzione:** ${result.executionTimeMs}ms\n\n` +
+                    `🎉 **La procedura è ora pronta per l'esecuzione!**\n` +
+                    `Vai in Visum → Procedures → Operations → Posizione ${res.procedure_position} per eseguire.`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore Configurazione DSEGSET**\n\n${result.result?.error || result.error}\n\n` +
+                    (result.result?.traceback ? `**Traceback:**\n\`\`\`\n${result.result.traceback}\n\`\`\`\n\n` : '') +
+                    `💡 Verifica che la procedura alla posizione ${procedurePosition} sia un PrT Assignment (tipo 101)`
+            }
+          ]
+        };
+      }
+      
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
 // Open Project with TCP Server Tool - DEFAULT FOR OPENING PROJECTS
 server.tool(
   "project_open",

@@ -1,0 +1,13 @@
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "method": "tools/call",
+  "params": {
+    "name": "project_execute",
+    "arguments": {
+      "projectId": "100625_Versione_base_v0.3_sub_ok_priv_10176442",
+      "code": "try:\n    proc_seq = visum.Procedures.ProcedureSequence\n    prt_func = visum.Procedures.Functions.PrTAssignmentBPR\n    proc_seq.AddProcedure(prt_func)\n    result = {'status': 'success', 'position': proc_seq.Count}\nexcept Exception as e:\n    result = {'status': 'error', 'error': str(e)}",
+      "description": "Aggiungi PrT Assignment alla Procedure Sequence"
+    }
+  }
+}

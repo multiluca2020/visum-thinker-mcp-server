@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "npm run build && node build/index.js",
+    "call": "node mcp-quick-call.js",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

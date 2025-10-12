@@ -1,0 +1,13 @@
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "project_execute",
+    "arguments": {
+      "projectId": "100625_Versione_base_v0.3_sub_ok_priv_10176442",
+      "code": "# Crea PrT Assignment con DSEGSET\ntry:\n    procedures = visum.Procedures\n    proc_seq = procedures.ProcedureSequence\n    \n    # Crea nuova procedura PrT Assignment\n    prt_func = procedures.Functions.PrTAssignmentBPR\n    \n    # Configura DSEGSET con tutti i 36 segmenti\n    dsegset = \"C_CORRETTA_AM,C_CORRETTA_IP1,C_CORRETTA_IP2,C_CORRETTA_MD,C_CORRETTA_PM1,C_CORRETTA_PM2,C_CORRETTA_S,C_INIZIALE_AM,C_INIZIALE_IP1,C_INIZIALE_IP2,C_INIZIALE_MD,C_INIZIALE_PM1,C_INIZIALE_PM2,C_INIZIALE_S,C_NESTED_AM,C_NESTED_IP1,C_NESTED_IP2,C_NESTED_MD,C_NESTED_PM1,C_NESTED_PM2,C_NESTED_S,C_SOGLIA_AM,C_SOGLIA_PM1,C_SOGLIA_S,H_CORRETTA_AM,H_CORRETTA_IP1,H_CORRETTA_IP2,H_CORRETTA_MD,H_CORRETTA_PM1,H_CORRETTA_PM2,H_CORRETTA_S,H_INIZIALE_AM,H_INIZIALE_IP1,H_INIZIALE_IP2,H_INIZIALE_MD,H_INIZIALE_S\"\n    \n    prt_func.SetAttValue(\"DSEGSET\", dsegset)\n    prt_func.SetAttValue(\"MaxIter\", 20)\n    prt_func.SetAttValue(\"GapCriterion\", 0.01)\n    \n    # Aggiungi alla Procedure Sequence\n    proc_seq.AddProcedure(prt_func)\n    \n    result = {\n        'status': 'success',\n        'procedure_created': True,\n        'dsegset_configured': dsegset,\n        'total_segments': 36,\n        'procedure_position': proc_seq.Count,\n        'max_iterations': 20,\n        'gap_criterion': 0.01\n    }\nexcept Exception as e:\n    result = {'status': 'error', 'error': str(e)}",
+      "description": "Crea procedura PrT Assignment BPR con 36 segmenti di domanda"
+    }
+  }
+}

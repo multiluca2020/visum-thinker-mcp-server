@@ -1,8 +1,56 @@
 # Visum Thinker MCP Server
 
-A Model Context Protocol (MCP) server that provides structured sequential thinking capabilities for problem-solving and analysis. This server enables AI assistants to break down complex problems into manageable steps, revise thoughts, and explore alternative reasoning paths.
+A Model Context Protocol (MCP) server that provides **PTV Visum automation** and sequential thinking capabilities for transportation planning and analysis.
+
+## 🎯 Quick Start
+
+**New to Visum automation?** → Start here: **[QUICKSTART_PRT_WORKFLOW.md](QUICKSTART_PRT_WORKFLOW.md)**
+
+**AI Assistant integration?** → Read: **[CLAUDE_WORKFLOW_GUIDE.md](CLAUDE_WORKFLOW_GUIDE.md)**
+
+**Full Documentation?** → See: **[DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md)**
+
+## ✨ New Features (2025-10-10)
+
+### 🚗 **Interactive Visum Procedure Creation**
+
+Create and configure PTV Visum procedures (PrT Assignment, PuT Assignment, etc.) through an intuitive interactive workflow:
+
+```javascript
+// 1. Create procedure → Get actual position
+visum_create_procedure({procedureType: "PrT_Assignment"})
+// → Returns: actual_position: 580
+
+// 2. List available demand segments (numbered 1-36)
+visum_list_demand_segments()
+
+// 3. Configure with user's choice
+visum_configure_dsegset({
+  procedurePosition: 580,        // Use actual_position!
+  segmentNumbers: "1-10"         // or filterMode: "C", etc.
+})
+```
+
+**Key Features:**
+- ✅ **Automatic position detection** - No manual position tracking
+- ✅ **Numbered segment selection** - Easy "1-10" notation instead of long codes
+- ✅ **4 flexible input formats** - Numbers, mode filter, ALL keyword, or explicit codes
+- ✅ **Interactive workflow** - AI assistants guide users through configuration
+- ✅ **Complete validation** - Automatic verification of all configurations
+
+**See [QUICKSTART_PRT_WORKFLOW.md](QUICKSTART_PRT_WORKFLOW.md) for the 3-step workflow!**
 
 ## Features
+
+### 🚗 Visum Transportation Planning
+
+- **Procedure Management**: Create PrT/PuT Assignment, Demand Models, Matrix Calculations
+- **Demand Segments**: List and configure demand segments with numbered selection
+- **Interactive Configuration**: Guide users through DSEGSET setup with 4 input formats
+- **Smart Position Tracking**: Automatically track actual procedure positions
+- **Complete Validation**: Verify all configurations before execution
+
+### 🧠 Sequential Thinking
 
 - **Step-by-step reasoning**: Break down complex problems into sequential thoughts
 - **Dynamic revision**: Revise and refine thoughts as understanding deepens  
@@ -10,15 +58,13 @@ A Model Context Protocol (MCP) server that provides structured sequential thinki
 - **Adaptive planning**: Adjust the total number of thoughts dynamically
 - **State management**: Maintain thinking context across multiple tool calls
 - **Progress tracking**: Monitor completion status and thought progression
-- **PDF Analysis**: Load and analyze PDF documents for problem-solving context
+
+### 📄 PDF Analysis
+
+- **PDF Loading**: Load and analyze PDF documents for problem-solving context
 - **Content Search**: Find relevant sections in PDFs based on queries and search terms
 - **Persistent Storage**: Auto-save state to disk, survive server restarts
 - **Knowledge Transfer**: Export/import thinking sessions between servers
-- **🚗 Visum Integration**: Complete PTV Visum COM API integration for transportation planning
-  - **Smart Path Learning**: Automatically discovers and remembers custom Visum installation paths
-  - **Zero Configuration**: Once set up, works seamlessly across server restarts
-  - **Demo Mode**: Full functionality testing without requiring Visum installation
-  - **Transportation Analysis**: Load models, run calculations, analyze networks and matrices
 
 ## Installation
 
