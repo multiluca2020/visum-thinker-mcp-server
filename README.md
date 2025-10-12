@@ -12,23 +12,35 @@ A Model Context Protocol (MCP) server that provides **PTV Visum automation** and
 
 ## ✨ New Features (2025-10-10)
 
-### 🚗 **Interactive Visum Procedure Creation**
+### 🚗 **Interactive Visum Procedure Creation with Auto-Organization**
 
-Create and configure PTV Visum procedures (PrT Assignment, PuT Assignment, etc.) through an intuitive interactive workflow:
+Create and configure PTV Visum procedures with **automatic organization in "Visum-BOT" group**:
 
 ```javascript
-// 1. Create procedure → Get actual position
+// 1. Create procedure → Automatic group creation + delete operation
 visum_create_procedure({procedureType: "PrT_Assignment"})
-// → Returns: actual_position: 580
+// → Returns: 
+//   - group_position: 577 (Visum-BOT group)
+//   - delete_position: 580 (Initialize Assignment)
+//   - actual_position: 581 (PrT Assignment) ⭐ Use this!
 
 // 2. List available demand segments (numbered 1-36)
 visum_list_demand_segments()
 
 // 3. Configure with user's choice
 visum_configure_dsegset({
-  procedurePosition: 580,        // Use actual_position!
+  procedurePosition: 581,        // Use actual_position!
   segmentNumbers: "1-10"         // or filterMode: "C", etc.
 })
+```
+
+**✨ Automatic Features:**
+- 📦 **Group Organization:** All MCP operations in "Visum-BOT" group
+- 🗑️ **Auto-Delete:** Initialize Assignment added before PrT/PuT assignments
+- 🔄 **Group Reuse:** Subsequent calls add to existing group
+- 📍 **Smart Positioning:** Operations added at end of group
+
+**📖 Documentation:** See [VISUM_BOT_GROUP.md](VISUM_BOT_GROUP.md) for complete details
 ```
 
 **Key Features:**

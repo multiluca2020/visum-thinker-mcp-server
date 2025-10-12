@@ -27,9 +27,11 @@ You can find more info and examples at https://modelcontextprotocol.io/llms-full
 2. **visum_create_procedure**: 🎯 Create Visum procedures (Assignments, Models, etc.)
    - Verified API using `visum.Procedures.Operations.AddOperation()`
    - Supports: PrT Assignment, PuT Assignment, Demand Model, Matrix Calculation
+   - **📦 AUTO-ORGANIZATION:** All operations created inside "Visum-BOT" group
+   - **🔄 AUTO-DELETE:** PrT/PuT Assignments automatically include Initialize Assignment (delete) operation
    - **⚠️ CRITICAL:** Returns `actual_position` (NOT requested position!)
    - ALWAYS save and use `actual_position` for subsequent operations
-   - See `VISUM_PROCEDURES_API.md` for complete documentation
+   - See `VISUM_PROCEDURES_API.md` and `VISUM_BOT_GROUP.md` for complete documentation
 
 3. **visum_list_demand_segments**: 📋 List demand segments for configuration
    - Shows all available PrT demand segments with numbering (1-36)
