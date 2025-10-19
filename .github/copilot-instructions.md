@@ -50,6 +50,63 @@ You can find more info and examples at https://modelcontextprotocol.io/llms-full
      * Explicit codes: `dsegset: "C_CORRETTA_AM,C_CORRETTA_IP1,..."`
    - See `WORKFLOW_PRT_ASSIGNMENT.md` for complete workflow
 
+5. **project_list_available_layouts**: 📂 List available Global Layout files
+   - Shows all .lay files in project directory
+   - Returns filename, size (MB), and full path
+   - **ALWAYS use this before loading a layout** - Ask user which to load
+   - See `GLOBAL_LAYOUTS_WORKFLOW.md` for complete documentation
+
+6. **project_load_global_layout**: 🎨 Load Global Layout into project
+   - Loads .lay file into active Visum project
+   - Use filename from `project_list_available_layouts`
+   - Can use just filename (searches project dir) or full path
+   - **⚠️ CORRECT API:** Uses `visum.LoadGlobalLayout(file_path)`
+   - Loading time: ~1-6 seconds depending on file size
+   - See `GLOBAL_LAYOUTS_WORKFLOW.md` for usage examples
+
+7. **project_export_visible_tables**: 📊 Export GUI-visible tables to CSV
+   - **COMPLETE SOLUTION** - Exports ONLY tables visible in Global Layout
+   - Parses .lay XML file to extract exact table/column definitions
+   - **Supports sub-attributes (formula columns):** VEHKMTRAVPRT_DSEG(C_CORRETTA_FERIALE,AP)
+   - Maintains exact column order as displayed to user
+   - CSV format: semicolon delimiter, UTF-8 encoding, no empty lines
+   - Filename: `{projectName}_{tableName}.csv`
+   - **WORKFLOW:** List layouts → User selects → Export tables
+   - **Performance:** 227K rows × 29 cols in ~6.7 seconds
+   - See `TABLE_EXPORT_WORKFLOW.md` for complete guide
+   - Standalone script: `export-all-tables-from-layout.py`
+
+
+## 🎨 Global Layouts Workflow
+
+**Interactive Pattern:**
+1. **List Layouts** → Show available .lay files to user
+2. **User Selects** → User chooses which layout to load
+3. **Load Layout** → Activate selected layout in Visum
+
+**Example:**
+```javascript
+// Step 1: List
+response = project_list_available_layouts({projectId: "S000009result_1278407893"})
+// Shows: tabelle_report.lay (11.36 MB)
+
+// Step 2: User selects "tabelle_report.lay"
+
+// Step 3: Load
+project_load_global_layout({
+  projectId: "S000009result_1278407893",
+  layoutFile: "tabelle_report.lay"  // or full path
+})
+```
+
+**Key Discovery:** 
+- ✅ Correct method: `visum.LoadGlobalLayout(path)`
+- ❌ Don't use: `project_list_global_layouts` (deprecated - API not accessible)
+- ❌ Don't use: `visum.IO.LoadGlobalLayout()` (doesn't exist)
+- ❌ Don't use: `visum.Graphics.AssociateGlobalLayoutFile()` (visum.Graphics doesn't exist)
+
+See `GLOBAL_LAYOUTS_WORKFLOW.md` for complete guide!
+
 ## 🤖 Interactive Workflow for AI Assistants
 
 **⚠️ IMPORTANT:** When creating and configuring PrT procedures, follow this pattern:

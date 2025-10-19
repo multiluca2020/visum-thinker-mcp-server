@@ -776,6 +776,969 @@ server.tool(
 );
 
 // =============================================================================
+// GLOBAL LAYOUTS MANAGEMENT TOOLS
+// =============================================================================
+
+// List Available Global Layout Files (.lay) in project directory
+server.tool(
+  "project_list_available_layouts",
+  "📂 List all Global Layout files (.lay) available in the project directory. Shows filename, size, and full path. ALWAYS use this before loading a layout to show available options to the user.",
+  {
+    projectId: z.string().describe("Project identifier returned by project_open (e.g. S000009result_1278407893)")
+  },
+  async ({ projectId }) => {
+    try {
+      // Python code to search for .lay files in project directory
+      const pythonCode = `
+import os
+result = {'layouts': [], 'count': 0, 'project_dir': None}
+try:
+    # Get project path - try different methods
+    project_path = None
+    try:
+        # Method 1: Try GetPath with file type parameter (1 = .ver file)
+        project_path = visum.GetPath(1)
+    except:
+        try:
+            # Method 2: Try without parameters
+            project_path = visum.GetPath()
+        except:
+            # Method 3: Use IO.Path if available
+            if hasattr(visum, 'IO') and hasattr(visum.IO, 'Path'):
+                project_path = visum.IO.Path
+    
+    if project_path:
+        project_dir = os.path.dirname(project_path)
+        result['project_dir'] = project_dir
+        result['project_path'] = project_path
+        
+        # Search for .lay files in project directory
+        lay_files = []
+        if os.path.exists(project_dir):
+            for file in os.listdir(project_dir):
+                if file.endswith('.lay'):
+                    full_path = os.path.join(project_dir, file)
+                    file_size = os.path.getsize(full_path)
+                    lay_files.append({
+                        'filename': file,
+                        'path': full_path,
+                        'size_bytes': file_size,
+                        'size_mb': round(file_size / (1024 * 1024), 2)
+                    })
+        
+        # Sort by filename
+        lay_files.sort(key=lambda x: x['filename'])
+        result['layouts'] = lay_files
+        result['count'] = len(lay_files)
+    else:
+        result['error'] = 'Cannot determine project path'
+except Exception as e:
+    result['error'] = str(e)
+result
+`;
+
+      // Use ProjectServerManager to execute Python inside the project TCP server
+      const execResponse: any = await serverManager.executeCommand(projectId, pythonCode, "List available Global Layout files");
+
+      if (!execResponse || execResponse.type === 'error') {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `❌ Errore durante la ricerca: ${execResponse?.message || 'Errore sconosciuto'}`
+            }
+          ]
+        };
+      }
+
+      const result = execResponse.result || {};
+      if (result.error) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `⚠️ Errore durante la ricerca dei file .lay\nErrore: ${result.error}`
+            }
+          ]
+        };
+      }
+
+      let output = `� **Global Layout Files Disponibili**\n\n`;
+      output += `📍 **Directory:** ${result.project_dir}\n`;
+      output += `📊 **Totale file .lay:** ${result.count}\n\n`;
+      
+      if (result.count === 0) {
+        output += 'ℹ️ Nessun file .lay trovato nella directory del progetto.\n';
+      } else {
+        result.layouts.forEach((l: any, idx: number) => {
+          output += `${idx + 1}. **${l.filename}**\n`;
+          output += `   📏 Dimensione: ${l.size_mb} MB (${l.size_bytes.toLocaleString()} bytes)\n`;
+          output += `   📂 Path: \`${l.path}\`\n\n`;
+        });
+      }
+      
+      output += '\n💡 **Uso:** Usa `project_load_global_layout` per caricare uno di questi layout nel progetto.';
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: output
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `❌ Errore: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Load Global Layout Tool - Load a .lay file into the current Visum project
+server.tool(
+  "project_load_global_layout",
+  "🎨 Load a Global Layout (.lay file) into an opened Visum project. The layout file must exist in the project directory or provide full path. ALWAYS use project_list_available_layouts first to show available options to the user.",
+  {
+    projectId: z.string().describe("Project identifier returned by project_open"),
+    layoutFile: z.string().describe("Full path to the .lay file OR just the filename if in project directory (e.g. 'tabelle_report.lay' or 'H:\\path\\to\\layout.lay')")
+  },
+  async ({ projectId, layoutFile }) => {
+    try {
+      // Get project info to determine project directory
+      const pythonCode = `
+import os
+result = {}
+try:
+    layout_file = r'${layoutFile.replace(/\\/g, '\\\\')}'
+    
+    # Se layoutFile non ha path completo, cerca nella directory del progetto
+    if not os.path.isabs(layout_file):
+        # Ottieni directory del progetto corrente - try different methods
+        project_path = None
+        try:
+            project_path = visum.GetPath(1)  # 1 = .ver file type
+        except:
+            try:
+                if hasattr(visum, 'IO') and hasattr(visum.IO, 'Path'):
+                    project_path = visum.IO.Path
+            except:
+                pass
+        
+        if project_path:
+            project_dir = os.path.dirname(project_path)
+            layout_file = os.path.join(project_dir, layout_file)
+        else:
+            result['error'] = 'Cannot determine project path'
+            result['status'] = 'PATH_ERROR'
+    
+    if 'status' not in result:
+        # Verifica esistenza file
+        if not os.path.exists(layout_file):
+            result['error'] = f'File .lay non trovato: {layout_file}'
+            result['status'] = 'FILE_NOT_FOUND'
+        else:
+            result['file_exists'] = True
+            result['file_path'] = layout_file
+            result['file_size'] = os.path.getsize(layout_file)
+            
+            # Carica il Global Layout usando visum.LoadGlobalLayout()
+            try:
+                visum.LoadGlobalLayout(layout_file)
+                result['status'] = 'SUCCESS'
+                result['message'] = 'Global Layout caricato con successo'
+                result['loaded_file'] = os.path.basename(layout_file)
+            except Exception as e:
+                result['error'] = str(e)
+                result['status'] = 'LOAD_FAILED'
+            
+except Exception as e:
+    result = {'error': str(e), 'status': 'EXCEPTION'}
+result
+`;
+      
+      const execResponse: any = await serverManager.executeCommand(projectId, pythonCode, `Load Global Layout: ${layoutFile}`);
+      
+      if (!execResponse || !execResponse.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ Impossibile caricare Global Layout per progetto ${projectId}: ${execResponse?.error || 'Errore sconosciuto'}`
+            }
+          ]
+        };
+      }
+
+      const result = execResponse.result || {};
+      
+      if (result.status === 'SUCCESS') {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Global Layout Caricato**\n\n📂 **File:** ${result.loaded_file}\n📍 **Path:** ${result.file_path}\n📊 **Dimensione:** ${(result.file_size / 1024 / 1024).toFixed(2)} MB\n\n🎨 Il layout è ora attivo nel progetto Visum.`
+            }
+          ]
+        };
+      } else if (result.status === 'FILE_NOT_FOUND') {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **File non trovato**\n\n${result.error}\n\n💡 **Suggerimento:** Usa \`project_list_available_layouts\` per vedere i file .lay disponibili.`
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore durante il caricamento**\n\n${result.error}\n\nStatus: ${result.status}`
+            }
+          ]
+        };
+      }
+      
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Errore: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Export Visible Tables from Layout - Export only tables visible in a Global Layout
+server.tool(
+  "project_export_visible_tables",
+  "📊 Export ONLY tables visible in a Global Layout (.lay file) to CSV files. Maintains exact column order and includes sub-attributes (formula columns). WORKFLOW: 1) List layouts with project_list_available_layouts, 2) User selects layout, 3) Load with project_load_global_layout, 4) Export tables with this tool.",
+  {
+    projectId: z.string().describe("Project identifier returned by project_open"),
+    layoutFile: z.string().describe("Full path to the .lay file OR just filename if in project directory (e.g. 'tabelle_report.lay')")
+  },
+  async ({ projectId, layoutFile }) => {
+    try {
+      const pythonCode = `
+import xml.etree.ElementTree as ET
+import os
+
+layout_file = r'${layoutFile.replace(/\\/g, '\\\\')}'
+result = {}
+
+try:
+    # Se layoutFile non ha path completo, cerca nella directory del progetto
+    if not os.path.isabs(layout_file):
+        project_path = visum.GetPath(1)
+        project_dir = os.path.dirname(project_path)
+        layout_file = os.path.join(project_dir, layout_file)
+        project_name = os.path.basename(project_path).replace('.ver', '')
+    else:
+        project_path = visum.GetPath(1)
+        project_name = os.path.basename(project_path).replace('.ver', '')
+    
+    output_dir = os.path.dirname(project_path)
+    
+    # Verifica esistenza file layout
+    if not os.path.exists(layout_file):
+        result['error'] = f'File .lay non trovato: {layout_file}'
+        result['status'] = 'FILE_NOT_FOUND'
+    else:
+        # Parse layout XML
+        tree = ET.parse(layout_file)
+        root = tree.getroot()
+        
+        # Find all visible tables
+        tables_info = []
+        for list_item in root.iter('listLayoutItem'):
+            graphic = list_item.find('.//listGraphicParameterLayoutItems')
+            if graphic is not None:
+                net_obj_type = graphic.get('netObjectType')
+                if net_obj_type:
+                    # Get table name
+                    table_name_elem = list_item.find('.//caption')
+                    table_name = table_name_elem.get('text', net_obj_type) if table_name_elem is not None else net_obj_type
+                    
+                    # Get all column definitions
+                    col_defs = []
+                    for attr_def in list_item.iter('attributeDefinition'):
+                        col_defs.append(attr_def.attrib)
+                    
+                    tables_info.append({
+                        'name': table_name,
+                        'type': net_obj_type,
+                        'columns': col_defs
+                    })
+        
+        # Map net object types to Visum collections
+        type_to_collection = {
+            'LINK': 'visum.Net.Links',
+            'NODE': 'visum.Net.Nodes',
+            'ZONE': 'visum.Net.Zones',
+            'ODPAIR': 'visum.Net.ODPairs',
+            'LINE': 'visum.Net.Lines',
+            'LINEROUTE': 'visum.Net.LineRoutes',
+            'TIMEPROFILE': 'visum.Net.TimeProfiles',
+            'TIMEPROFILEITEM': 'visum.Net.TimeProfileItems',
+            'VEHJOURNEYSECTION': 'visum.Net.VehicleJourneySections',
+            'STOP': 'visum.Net.Stops',
+            'STOPPOINTAREA': 'visum.Net.StopAreas',
+            'CONNECTOR': 'visum.Net.Connectors',
+            'TURN': 'visum.Net.Turns',
+            'MAINZONE': 'visum.Net.MainZones'
+        }
+        
+        # Export each table
+        results = []
+        for table in tables_info:
+            table_type = table['type']
+            table_name = table['name']
+            
+            # Get collection
+            collection_path = type_to_collection.get(table_type)
+            if not collection_path:
+                results.append({'table': table_name, 'status': 'SKIPPED', 'reason': 'Unknown type'})
+                continue
+            
+            try:
+                collection = eval(collection_path)
+                count = collection.Count
+            except Exception as e:
+                results.append({'table': table_name, 'status': 'ERROR', 'reason': str(e)})
+                continue
+            
+            # Build attribute list with sub-attributes
+            full_attrs = []
+            headers = []
+            
+            for col in table['columns']:
+                attr_id = col['attributeID']
+                sub1 = col.get('subAttributeID1', '')
+                sub2 = col.get('subAttributeID2', '')
+                sub3 = col.get('subAttributeID3', '')
+                
+                # Build full attribute name
+                if sub1 or sub2 or sub3:
+                    subs = [s for s in [sub1, sub2, sub3] if s]
+                    full_attr = attr_id + '(' + ','.join(subs) + ')'
+                    # Create readable header
+                    header = attr_id + '_' + '_'.join(subs)
+                else:
+                    full_attr = attr_id
+                    header = attr_id
+                
+                full_attrs.append(full_attr)
+                headers.append(header)
+            
+            # Get data
+            try:
+                data = collection.GetMultipleAttributes(full_attrs)
+                
+                # Build CSV
+                lines = [';'.join(headers)]
+                
+                for row_tuple in data:
+                    lines.append(';'.join(str(v) for v in row_tuple))
+                
+                # Write file
+                safe_name = table_name.replace('/', '_').replace('\\\\', '_').replace(' ', '_')
+                output_file = os.path.join(output_dir, f'{project_name}_{safe_name}.csv')
+                
+                text = '\\n'.join(lines)
+                with open(output_file, 'w', encoding='utf-8', newline='') as f:
+                    f.write(text)
+                
+                size_mb = os.path.getsize(output_file) / (1024 * 1024)
+                
+                results.append({
+                    'table': table_name,
+                    'type': table_type,
+                    'status': 'SUCCESS',
+                    'file': output_file,
+                    'rows': len(data),
+                    'cols': len(full_attrs),
+                    'size_mb': round(size_mb, 2)
+                })
+                
+            except Exception as e:
+                results.append({
+                    'table': table_name,
+                    'status': 'ERROR',
+                    'reason': str(e)[:100]
+                })
+        
+        result = {
+            'total_tables': len(tables_info),
+            'successful': len([r for r in results if r['status'] == 'SUCCESS']),
+            'errors': len([r for r in results if r['status'] == 'ERROR']),
+            'skipped': len([r for r in results if r['status'] == 'SKIPPED']),
+            'details': results,
+            'layout_file': layout_file,
+            'output_dir': output_dir
+        }
+        
+except Exception as e:
+    result = {'error': str(e), 'status': 'EXCEPTION'}
+
+result
+`;
+
+      const execResponse: any = await serverManager.executeCommand(projectId, pythonCode, `Export visible tables from ${layoutFile}`);
+      
+      if (!execResponse || !execResponse.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ Impossibile esportare tabelle per progetto ${projectId}: ${execResponse?.error || 'Errore sconosciuto'}`
+            }
+          ]
+        };
+      }
+
+      const result = execResponse.result || {};
+      
+      if (result.status === 'FILE_NOT_FOUND') {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **File Layout non trovato**\n\n${result.error}\n\n💡 **Suggerimento:** Usa \`project_list_available_layouts\` per vedere i file .lay disponibili.`
+            }
+          ]
+        };
+      } else if (result.status === 'EXCEPTION') {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore durante l'export**\n\n${result.error}`
+            }
+          ]
+        };
+      }
+      
+      // Format success response
+      const success = result.details?.filter((r: any) => r.status === 'SUCCESS') || [];
+      const errors = result.details?.filter((r: any) => r.status === 'ERROR') || [];
+      const skipped = result.details?.filter((r: any) => r.status === 'SKIPPED') || [];
+      
+      let output = `✅ **Tabelle Esportate da Layout**\n\n`;
+      output += `📂 **Layout:** ${path.basename(result.layout_file || layoutFile)}\n`;
+      output += `📁 **Directory:** ${result.output_dir}\n\n`;
+      output += `📊 **Riepilogo:**\n`;
+      output += `- ✅ Successo: ${result.successful}/${result.total_tables}\n`;
+      if (result.errors > 0) output += `- ❌ Errori: ${result.errors}\n`;
+      if (result.skipped > 0) output += `- ⚠️ Saltate: ${result.skipped}\n`;
+      
+      if (success.length > 0) {
+        output += `\n📄 **File Creati:**\n`;
+        for (const t of success) {
+          output += `\n**${t.table}** (${t.type})\n`;
+          output += `  - Righe: ${t.rows.toLocaleString()}\n`;
+          output += `  - Colonne: ${t.cols}\n`;
+          output += `  - Dimensione: ${t.size_mb} MB\n`;
+          output += `  - File: \`${path.basename(t.file)}\`\n`;
+        }
+      }
+      
+      if (errors.length > 0) {
+        output += `\n❌ **Errori:**\n`;
+        for (const t of errors) {
+          output += `  - ${t.table}: ${t.reason}\n`;
+        }
+      }
+      
+      if (skipped.length > 0) {
+        output += `\n⚠️ **Tabelle Saltate:**\n`;
+        for (const t of skipped) {
+          output += `  - ${t.table}: ${t.reason}\n`;
+        }
+      }
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: output
+          }
+        ]
+      };
+      
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Errore: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// =============================================================================
+// TABLE EXPORT TOOLS
+// =============================================================================
+
+// Export All Tables Tool - Export all Visum tables to CSV files
+server.tool(
+  "project_export_all_tables",
+  "📊 Export all Visum tables (except Network Editor) to CSV files. Each table is saved as ProjectName_TableName.csv in the project directory.",
+  {
+    projectId: z.string().describe("Project identifier returned by project_open"),
+    maxRowsPerTable: z.number().optional().describe("Maximum rows to export per table (default: all rows)")
+  },
+  async ({ projectId, maxRowsPerTable }) => {
+    try {
+      const pythonCode = `
+import os
+import csv
+import time
+
+result = {
+    'exported_tables': [],
+    'failed_tables': [],
+    'total_tables': 0,
+    'total_rows': 0,
+    'total_files': 0
+}
+
+try:
+    # Get project info
+    project_path = visum.GetPath(1)
+    project_dir = os.path.dirname(project_path)
+    project_name = os.path.basename(project_path).replace('.ver', '')
+    
+    result['project_name'] = project_name
+    result['output_dir'] = project_dir
+    
+    # Define tables to export (main collections from visum.Net)
+    # Exclude Network Editor and very large/complex tables
+    tables_to_export = [
+        ('Zones', ['No', 'Name', 'Code', 'XCoord', 'YCoord']),
+        ('Nodes', ['No', 'Name', 'XCoord', 'YCoord', 'TypeNo']),
+        ('Links', ['No', 'Name', 'FromNodeNo', 'ToNodeNo', 'Length', 'TypeNo']),
+        ('Turns', ['No', 'FromLinkNo', 'ToLinkNo', 'ViaNodeNo']),
+        ('MainZones', ['No', 'Name', 'Code']),
+        ('Territories', ['No', 'Name', 'Code']),
+        ('POICategories', ['No', 'Name', 'Code']),
+        ('POIs', ['No', 'Name', 'Code', 'XCoord', 'YCoord']),
+        ('StopAreas', ['No', 'Name', 'Code']),
+        ('StopPoints', ['No', 'Name', 'Code', 'XCoord', 'YCoord']),
+        ('TimeSeriesCont', ['No', 'Name']),
+        ('VehicleJourneys', ['No', 'Name', 'LineNo']),
+        ('Lines', ['No', 'Name', 'TSysCode']),
+        ('LineRoutes', ['No', 'Name', 'LineNo']),
+        ('TimeProfiles', ['No', 'Name', 'Code']),
+        ('DemandSegments', ['Code', 'Name', 'Mode']),
+        ('Modes', ['Code', 'Name', 'Type']),
+        ('TSystems', ['Code', 'Name', 'Type'])
+    ]
+    
+    max_rows = ${maxRowsPerTable || 'None'}
+    
+    # Export each table
+    for table_name, attributes in tables_to_export:
+        try:
+            # Get collection
+            if hasattr(visum.Net, table_name):
+                collection = getattr(visum.Net, table_name)
+                count = collection.Count
+                
+                if count == 0:
+                    result['failed_tables'].append({
+                        'table': table_name,
+                        'reason': 'Empty table (0 rows)'
+                    })
+                    continue
+                
+                # CSV file path
+                csv_file = os.path.join(project_dir, f'{project_name}_{table_name}.csv')
+                
+                # Write CSV
+                with open(csv_file, 'w', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f, delimiter=';')
+                    
+                    # Header
+                    writer.writerow(attributes)
+                    
+                    # Data rows
+                    rows_exported = 0
+                    limit = min(count, max_rows) if max_rows else count
+                    
+                    for i in range(limit):
+                        try:
+                            item = collection.ItemByKey(i + 1)
+                            row = []
+                            for attr in attributes:
+                                try:
+                                    value = item.AttValue(attr)
+                                    row.append(value if value is not None else '')
+                                except:
+                                    row.append('')  # Attribute not available
+                            writer.writerow(row)
+                            rows_exported += 1
+                        except:
+                            # Item not found or error, skip
+                            continue
+                
+                # Record success
+                file_size = os.path.getsize(csv_file)
+                result['exported_tables'].append({
+                    'table': table_name,
+                    'rows': rows_exported,
+                    'file': os.path.basename(csv_file),
+                    'size_kb': round(file_size / 1024, 2)
+                })
+                result['total_rows'] += rows_exported
+                result['total_files'] += 1
+                
+        except Exception as e:
+            result['failed_tables'].append({
+                'table': table_name,
+                'reason': str(e)
+            })
+    
+    result['total_tables'] = len(tables_to_export)
+    result['status'] = 'SUCCESS'
+    
+except Exception as e:
+    result['status'] = 'FAILED'
+    result['error'] = str(e)
+
+result
+`;
+
+      const execResponse: any = await serverManager.executeCommand(projectId, pythonCode, "Export all tables to CSV");
+      
+      if (!execResponse || !execResponse.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ Impossibile esportare tabelle per progetto ${projectId}: ${execResponse?.error || 'Errore sconosciuto'}`
+            }
+          ]
+        };
+      }
+
+      const result = execResponse.result || {};
+      
+      if (result.status === 'SUCCESS') {
+        let output = `✅ **Tabelle Esportate con Successo**\n\n`;
+        output += `📂 **Progetto:** ${result.project_name}\n`;
+        output += `📁 **Directory:** ${result.output_dir}\n\n`;
+        output += `📊 **Statistiche:**\n`;
+        output += `- Tabelle processate: ${result.total_tables}\n`;
+        output += `- File CSV creati: ${result.total_files}\n`;
+        output += `- Totale righe esportate: ${result.total_rows.toLocaleString()}\n\n`;
+        
+        if (result.exported_tables && result.exported_tables.length > 0) {
+          output += `**Tabelle esportate:**\n\n`;
+          result.exported_tables.forEach((table: any) => {
+            output += `✅ **${table.table}**\n`;
+            output += `   📄 File: ${table.file}\n`;
+            output += `   📊 Righe: ${table.rows.toLocaleString()}\n`;
+            output += `   💾 Dimensione: ${table.size_kb} KB\n\n`;
+          });
+        }
+        
+        if (result.failed_tables && result.failed_tables.length > 0) {
+          output += `\n⚠️ **Tabelle non esportate:**\n\n`;
+          result.failed_tables.forEach((table: any) => {
+            output += `❌ ${table.table}: ${table.reason}\n`;
+          });
+        }
+        
+        return {
+          content: [
+            {
+              type: "text",
+              text: output
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore durante l'export**\n\n${result.error}`
+            }
+          ]
+        };
+      }
+      
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Errore: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// =============================================================================
+// EXPORT VISIBLE TABLES FROM GLOBAL LAYOUT
+// =============================================================================
+
+server.tool(
+  "project_export_visible_tables",
+  "🎨 Export tables visible in Global Layout to CSV files (parses .lay XML)",
+  {
+    projectId: z.string().describe("Project identifier"),
+    layoutFile: z.string().optional().describe("Layout filename (default: tabelle_report.lay)")
+  },
+  async ({ projectId, layoutFile }) => {
+    try {
+      const layoutFileName = layoutFile || 'tabelle_report.lay';
+
+      const pythonCode = `
+import os
+import csv
+import xml.etree.ElementTree as ET
+
+result = {
+    'status': 'PENDING',
+    'project_name': '',
+    'layout_file': '',
+    'output_dir': '',
+    'tables': [],
+    'exported_files': [],
+    'total_rows': 0,
+    'errors': []
+}
+
+try:
+    # Get project path and name
+    ver_path = visum.GetPath(1)
+    project_dir = os.path.dirname(ver_path)
+    project_name = os.path.splitext(os.path.basename(ver_path))[0]
+    
+    result['project_name'] = project_name
+    result['output_dir'] = project_dir
+    
+    # Find layout file
+    layout_path = os.path.join(project_dir, '${layoutFileName}')
+    if not os.path.exists(layout_path):
+        raise Exception(f"Layout file non trovato: {layout_path}")
+    
+    result['layout_file'] = layout_path
+    
+    # Parse XML
+    tree = ET.parse(layout_path)
+    root = tree.getroot()
+    
+    # Extract tables
+    for list_item in root.iter('listLayoutItem'):
+        try:
+            # Get table metadata
+            common = list_item.find('.//listLayoutCommonEntries')
+            if common is None:
+                continue
+                
+            list_title = common.get('listTitle', 'Unknown')
+            
+            graphic_params = list_item.find('.//listGraphicParameterLayoutItems')
+            if graphic_params is None:
+                continue
+                
+            net_object_type = graphic_params.get('netObjectType', '')
+            if not net_object_type:
+                continue
+            
+            # Extract columns
+            columns = []
+            for attr_def in list_item.iter('attributeDefinition'):
+                attr_id = attr_def.get('attributeID')
+                if attr_id:
+                    columns.append(attr_id)
+            
+            if not columns:
+                continue
+            
+            result['tables'].append({
+                'title': list_title,
+                'type': net_object_type,
+                'columns': columns,
+                'column_count': len(columns)
+            })
+            
+        except Exception as e:
+            result['errors'].append(f"Error parsing table: {str(e)}")
+    
+    # Map netObjectType to Visum collections
+    collection_mapping = {
+        'LINK': ('Links', 'No'),
+        'NODE': ('Nodes', 'No'),
+        'ZONE': ('Zones', 'No'),
+        'ODPAIR': ('ODPairs', 'No'),
+        'LINE': ('Lines', 'Name'),
+        'LINEROUTE': ('LineRoutes', 'Name'),
+        'STOP': ('StopPoints', 'No'),
+        'TURN': ('Turns', 'No')
+    }
+    
+    # Export each table to CSV
+    for table_info in result['tables']:
+        net_type = table_info['type']
+        
+        if net_type not in collection_mapping:
+            result['errors'].append(f"Collection mapping not found for {net_type}")
+            continue
+        
+        collection_name, key_attr = collection_mapping[net_type]
+        
+        try:
+            # Get collection
+            collection = getattr(visum.Net, collection_name)
+            count = collection.Count
+            
+            if count == 0:
+                result['errors'].append(f"{collection_name}: no data")
+                continue
+            
+            # Create CSV file
+            safe_title = table_info['title'].replace(' ', '_').replace('(', '').replace(')', '')
+            csv_file = os.path.join(project_dir, f"{project_name}_{safe_title}.csv")
+            
+            # Write CSV
+            with open(csv_file, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f, delimiter=';')
+                
+                # Header
+                writer.writerow(table_info['columns'])
+                
+                # Data rows
+                rows_written = 0
+                for i in range(count):
+                    try:
+                        item = collection.ItemByKey(i+1) if key_attr == 'No' else collection.Item(i)
+                        row = []
+                        for col in table_info['columns']:
+                            try:
+                                value = item.AttValue(col)
+                                row.append(value)
+                            except:
+                                row.append('')  # Missing attribute
+                        writer.writerow(row)
+                        rows_written += 1
+                    except:
+                        continue
+            
+            file_size = os.path.getsize(csv_file)
+            result['exported_files'].append({
+                'table': table_info['title'],
+                'file': os.path.basename(csv_file),
+                'rows': rows_written,
+                'columns': table_info['column_count'],
+                'size_kb': round(file_size / 1024, 2)
+            })
+            result['total_rows'] += rows_written
+            
+        except Exception as e:
+            result['errors'].append(f"{net_type}: {str(e)}")
+    
+    result['status'] = 'SUCCESS'
+    
+except Exception as e:
+    result['status'] = 'FAILED'
+    result['error'] = str(e)
+
+result
+`;
+
+      const execResponse: any = await serverManager.executeCommand(projectId, pythonCode, "Export visible tables from layout");
+      
+      if (!execResponse || !execResponse.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ Impossibile esportare tabelle: ${execResponse?.error || 'Errore sconosciuto'}`
+            }
+          ]
+        };
+      }
+
+      const result = execResponse.result || {};
+      
+      if (result.status === 'SUCCESS') {
+        let output = `✅ **Tabelle Visibili Esportate**\n\n`;
+        output += `📂 **Progetto:** ${result.project_name}\n`;
+        output += `🎨 **Layout:** ${layoutFileName}\n`;
+        output += `📁 **Directory:** ${result.output_dir}\n\n`;
+        
+        output += `📊 **Tabelle trovate nel layout:** ${result.tables.length}\n`;
+        output += `📄 **File CSV creati:** ${result.exported_files.length}\n`;
+        output += `📝 **Totale righe esportate:** ${result.total_rows.toLocaleString()}\n\n`;
+        
+        if (result.exported_files && result.exported_files.length > 0) {
+          output += `**File esportati:**\n\n`;
+          result.exported_files.forEach((file: any) => {
+            output += `✅ **${file.table}**\n`;
+            output += `   📄 ${file.file}\n`;
+            output += `   📊 ${file.rows.toLocaleString()} righe × ${file.columns} colonne\n`;
+            output += `   💾 ${file.size_kb} KB\n\n`;
+          });
+        }
+        
+        if (result.errors && result.errors.length > 0) {
+          output += `\n⚠️ **Avvisi:**\n`;
+          result.errors.forEach((err: string) => {
+            output += `- ${err}\n`;
+          });
+        }
+        
+        return {
+          content: [
+            {
+              type: "text",
+              text: output
+            }
+          ]
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore durante l'export**\n\n${result.error}`
+            }
+          ]
+        };
+      }
+      
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Errore: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// =============================================================================
 // PROJECT-SPECIFIC INSTANCE MANAGEMENT TOOLS
 // =============================================================================
 

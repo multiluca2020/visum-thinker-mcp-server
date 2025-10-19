@@ -1,0 +1,13 @@
+{
+  "method": "tools/call",
+  "params": {
+    "name": "project_execute",
+    "arguments": {
+      "projectId": "S000009result_1278407893",
+      "code": "import os\nimport csv\nimport xml.etree.ElementTree as ET\n\nresult = {'status': 'INIT'}\n\ntry:\n    # Get project info\n    ver_path = visum.GetPath(1)\n    project_dir = os.path.dirname(ver_path)\n    project_name = os.path.splitext(os.path.basename(ver_path))[0]\n    \n    result['project_name'] = project_name\n    result['project_dir'] = project_dir\n    \n    # Find layout file\n    layout_file = os.path.join(project_dir, 'tabelle_report.lay')\n    result['layout_exists'] = os.path.exists(layout_file)\n    \n    if not os.path.exists(layout_file):\n        result['status'] = 'LAYOUT_NOT_FOUND'\n    else:\n        # Parse XML\n        tree = ET.parse(layout_file)\n        root = tree.getroot()\n        \n        # Count tables\n        tables_found = []\n        for list_item in root.iter('listLayoutItem'):\n            common = list_item.find('.//listLayoutCommonEntries')\n            if common is not None:\n                title = common.get('listTitle', 'Unknown')\n                tables_found.append(title)\n        \n        result['tables_count'] = len(tables_found)\n        result['tables'] = tables_found[:5]  # First 5\n        \n        # Try export just Links\n        links = visum.Net.Links\n        result['links_count'] = links.Count\n        \n        # Export first 10 links\n        csv_file = os.path.join(project_dir, f'{project_name}_Links_TEST.csv')\n        with open(csv_file, 'w', newline='', encoding='utf-8') as f:\n            writer = csv.writer(f, delimiter=';')\n            writer.writerow(['NO', 'LENGTH', 'NUMLANES'])\n            \n            for i in range(min(10, links.Count)):\n                link = links.ItemByKey(i+1)\n                writer.writerow([\n                    link.AttValue('NO'),\n                    link.AttValue('LENGTH'),\n                    link.AttValue('NUMLANES')\n                ])\n        \n        result['csv_created'] = os.path.exists(csv_file)\n        result['csv_size'] = os.path.getsize(csv_file) if os.path.exists(csv_file) else 0\n        result['status'] = 'SUCCESS'\n        \nexcept Exception as e:\n    result['status'] = 'ERROR'\n    result['error'] = str(e)\n    import traceback\n    result['traceback'] = traceback.format_exc()\n\nresult",
+      "description": "Test XML parsing and CSV export"
+    }
+  },
+  "jsonrpc": "2.0",
+  "id": 1
+}

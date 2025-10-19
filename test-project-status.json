@@ -1,0 +1,8 @@
+{
+  "method": "tools/call",
+  "params": {
+    "name": "project_status"
+  },
+  "jsonrpc": "2.0",
+  "id": 1
+}

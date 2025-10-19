@@ -1,0 +1,13 @@
+{
+  "method": "tools/call",
+  "params": {
+    "name": "project_execute",
+    "arguments": {
+      "projectId": "S000009result_1278407893",
+      "code": "import os\nimport xml.etree.ElementTree as ET\n\nresult = {'tables': []}\n\ntry:\n    # Get layout file\n    ver_path = visum.GetPath(1)\n    project_dir = os.path.dirname(ver_path)\n    lay_file = os.path.join(project_dir, 'tabelle_report.lay')\n    \n    result['lay_file'] = lay_file\n    result['exists'] = os.path.exists(lay_file)\n    \n    # Parse XML\n    tree = ET.parse(lay_file)\n    root = tree.getroot()\n    \n    # Find tables\n    for list_item in root.iter('listLayoutItem'):\n        # Get table name\n        common = list_item.find('.//listLayoutCommonEntries')\n        if common is None:\n            continue\n        \n        table_name = common.get('listTitle', 'N/A')\n        \n        # Get net type\n        graphic = list_item.find('.//listGraphicParameterLayoutItems')\n        net_type = 'N/A'\n        if graphic is not None:\n            net_type = graphic.get('netObjectType', 'N/A')\n        \n        # Get columns\n        columns = []\n        for attr_def in list_item.iter('attributeDefinition'):\n            attr_id = attr_def.get('attributeID')\n            if attr_id:\n                columns.append(attr_id)\n        \n        result['tables'].append({\n            'name': table_name,\n            'type': net_type,\n            'columns': len(columns),\n            'first_5_cols': columns[:5]\n        })\n    \n    result['total'] = len(result['tables'])\n    result['status'] = 'OK'\n    \nexcept Exception as e:\n    result['error'] = str(e)\n\nresult",
+      "description": "List tables and columns from layout XML"
+    }
+  },
+  "jsonrpc": "2.0",
+  "id": 1
+}

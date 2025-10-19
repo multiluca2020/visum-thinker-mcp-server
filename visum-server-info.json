@@ -1,11 +1,1 @@
-{
-  "pid": 20296,
-  "startTime": 1758848129041,
-  "startTimeString": "26/09/2025, 10:55:29",
-  "nodes": 166561,
-  "links": 409842,
-  "zones": 797,
-  "status": "shutting_down",
-  "project": "Campoleone",
-  "shutdownTime": 1758848444814
-}
+{}
