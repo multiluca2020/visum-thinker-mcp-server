@@ -1,0 +1,13 @@
+{
+  "method": "tools/call",
+  "params": {
+    "name": "project_execute",
+    "arguments": {
+      "projectId": "S000009result_1278407893",
+      "code": "exec(open(r'H:\\visum-thinker-mcp-server\\export-gpa-to-image.py').read())",
+      "description": "Export all GPA files to PNG images"
+    }
+  },
+  "jsonrpc": "2.0",
+  "id": 41
+}

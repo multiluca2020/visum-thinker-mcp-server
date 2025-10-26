@@ -1288,6 +1288,248 @@ result
   }
 );
 
+// Export Graphic Layout to PNG - Load .gpa and export as image
+server.tool(
+  "project_export_graphic_layout",
+  "🗺️ Load a Graphic Parameter file (.gpa) and export the network view as PNG image. WORKFLOW: 1) List available .gpa files, 2) User selects layout, 3) Export as PNG with specified resolution. Supports paper formats (A5, A4, A3) in landscape or portrait orientation.",
+  {
+    projectId: z.string().describe("Project identifier returned by project_open"),
+    gpaFile: z.string().describe("Filename of .gpa file (e.g., 'Flussogramma_tpb.gpa') or full path"),
+    outputFile: z.string().optional().describe("Output PNG filename (default: {gpaName}_export.png)"),
+    paperFormat: z.enum(['A5', 'A5_portrait', 'A4', 'A4_portrait', 'A3', 'A3_portrait', 'custom']).optional().describe("Paper format for export. A4=210×297mm landscape (1240×1754px@150dpi), A4_portrait=297×210mm. Overrides width parameter. Default: custom (use width)"),
+    width: z.number().optional().describe("Image width in pixels (default: 1920). Ignored if paperFormat specified (except 'custom')"),
+    dpi: z.number().optional().describe("Resolution in DPI (default: 150). Higher DPI = larger file. 96=screen, 150=print, 300=high quality"),
+    quality: z.number().optional().describe("JPEG quality 0-100 (default: 95, only for .jpg)")
+  },
+  async ({ projectId, gpaFile, outputFile, paperFormat, width, dpi, quality }) => {
+    try {
+      const imageWidth = width || 1920;
+      const imageDpi = dpi || 150;
+      const imageQuality = quality || 95;
+      const usePaperFormat = paperFormat || 'custom';
+
+      const pythonCode = `
+import os
+result = {}
+
+# Paper formats (width, height in mm)
+PAPER_FORMATS = {
+    'A5': (148, 210),
+    'A5_portrait': (210, 148),
+    'A4': (210, 297),
+    'A4_portrait': (297, 210),
+    'A3': (297, 420),
+    'A3_portrait': (420, 297)
+}
+
+def calculate_pixels_from_paper(paper_format, dpi):
+    """Calculate image dimensions from paper format."""
+    if paper_format not in PAPER_FORMATS:
+        return None, None
+    
+    width_mm, height_mm = PAPER_FORMATS[paper_format]
+    width_inches = width_mm / 25.4
+    height_inches = height_mm / 25.4
+    width_px = int(width_inches * dpi)
+    height_px = int(height_inches * dpi)
+    return width_px, height_px
+
+try:
+    # Get project info
+    project_path = visum.GetPath(1)
+    project_dir = os.path.dirname(project_path)
+    project_name = os.path.splitext(os.path.basename(project_path))[0]
+    
+    # Resolve GPA file path
+    gpa_input = r'${gpaFile.replace(/\\/g, '\\\\')}'
+    if not os.path.isabs(gpa_input):
+        gpa_path = os.path.join(project_dir, gpa_input)
+    else:
+        gpa_path = gpa_input
+    
+    if not os.path.exists(gpa_path):
+        result['error'] = f'GPA file not found: {gpa_path}'
+        result['status'] = 'FILE_NOT_FOUND'
+    else:
+        # Load GPA file
+        visum.Net.GraphicParameters.Open(gpa_path)
+        result['gpa_loaded'] = os.path.basename(gpa_path)
+        
+        # Get network bounds from PrintArea
+        printArea = visum.Net.PrintParameters.PrintArea
+        left = printArea.AttValue('LEFTMARGIN')
+        bottom = printArea.AttValue('BOTTOMMARGIN')
+        right = printArea.AttValue('RIGHTMARGIN')
+        top = printArea.AttValue('TOPMARGIN')
+        
+        result['bounds'] = {
+            'left': left,
+            'bottom': bottom,
+            'right': right,
+            'top': top
+        }
+        
+        # Calculate aspect ratio
+        width_net = right - left
+        height_net = top - bottom
+        aspect_ratio = height_net / width_net if width_net > 0 else 1.0
+        result['aspect_ratio'] = round(aspect_ratio, 3)
+        
+        # Determine image dimensions
+        paper_format = '${usePaperFormat}'
+        
+        if paper_format != 'custom':
+            # Use paper format
+            width_px, height_px = calculate_pixels_from_paper(paper_format, ${imageDpi})
+            if width_px is None:
+                result['error'] = f'Invalid paper format: {paper_format}'
+                result['status'] = 'INVALID_PAPER_FORMAT'
+            else:
+                result['paper_format'] = paper_format
+                paper_width_mm, paper_height_mm = PAPER_FORMATS[paper_format]
+                result['paper_size_mm'] = f'{paper_width_mm}×{paper_height_mm}mm'
+        else:
+            # Use custom width, calculate height from aspect ratio
+            width_px = ${imageWidth}
+            height_px = int(width_px * aspect_ratio)
+            result['paper_format'] = 'custom'
+        
+        if result.get('status') != 'INVALID_PAPER_FORMAT':
+            result['width_px'] = width_px
+            result['height_px'] = height_px
+            
+            # Determine output filename
+            ${outputFile ? `output_file = r'${outputFile.replace(/\\/g, '\\\\')}'` : `
+            gpa_basename = os.path.splitext(os.path.basename(gpa_path))[0]
+            output_file = os.path.join(project_dir, f'{gpa_basename}_export.png')`}
+            
+            if not os.path.isabs(output_file):
+                output_file = os.path.join(project_dir, output_file)
+            
+            # Export network image
+            visum.Graphic.ExportNetworkImageFile(
+                output_file,
+                left,
+                bottom,
+                right,
+                top,
+                width_px,
+                ${imageDpi},
+                ${imageQuality}
+            )
+            
+            # Verify export
+            if os.path.exists(output_file):
+                result['success'] = True
+                result['output_file'] = output_file
+                result['size_kb'] = round(os.path.getsize(output_file) / 1024, 2)
+                result['size_mb'] = round(os.path.getsize(output_file) / (1024 * 1024), 2)
+                result['dpi'] = ${imageDpi}
+            else:
+                result['error'] = 'Image file was not created'
+                result['status'] = 'EXPORT_FAILED'
+        
+        result['status'] = result.get('status', 'SUCCESS')
+        
+except Exception as e:
+    result['error'] = str(e)
+    result['status'] = 'EXCEPTION'
+
+result
+`;
+
+      const execResponse: any = await serverManager.executeCommand(projectId, pythonCode, `Export graphic layout: ${gpaFile}`);
+      
+      if (!execResponse || !execResponse.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ Impossibile esportare layout grafico: ${execResponse?.error || 'Errore sconosciuto'}`
+            }
+          ]
+        };
+      }
+
+      const result = execResponse.result || {};
+      
+      if (result.status === 'FILE_NOT_FOUND') {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **File GPA non trovato**\n\n${result.error}\n\n💡 **Suggerimento:** Verifica il nome del file o usa il path completo.`
+            }
+          ]
+        };
+      } else if (result.status === 'INVALID_PAPER_FORMAT') {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Formato carta non valido**\n\n${result.error}\n\n📄 **Formati disponibili:** A5, A5_portrait, A4, A4_portrait, A3, A3_portrait, custom`
+            }
+          ]
+        };
+      } else if (result.status === 'EXCEPTION' || result.status === 'EXPORT_FAILED') {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore durante l'export**\n\n${result.error}\n\nStatus: ${result.status}`
+            }
+          ]
+        };
+      }
+      
+      // Success response
+      let output = `✅ **Layout Grafico Esportato**\n\n`;
+      output += `🗺️ **GPA caricato:** ${result.gpa_loaded}\n`;
+      output += `📍 **Coordinate rete:**\n`;
+      output += `   - Left: ${result.bounds?.left?.toFixed(6)}\n`;
+      output += `   - Bottom: ${result.bounds?.bottom?.toFixed(6)}\n`;
+      output += `   - Right: ${result.bounds?.right?.toFixed(6)}\n`;
+      output += `   - Top: ${result.bounds?.top?.toFixed(6)}\n\n`;
+      
+      output += `🖼️ **Immagine generata:**\n`;
+      output += `   - File: \`${path.basename(result.output_file)}\`\n`;
+      output += `   - Percorso: ${result.output_file}\n`;
+      
+      if (result.paper_format !== 'custom') {
+        output += `   - 📄 Formato carta: **${result.paper_format}** (${result.paper_size_mm})\n`;
+      }
+      
+      output += `   - Dimensioni: ${result.width_px} × ${result.height_px} px\n`;
+      output += `   - Aspect ratio: ${result.aspect_ratio}\n`;
+      output += `   - Risoluzione: ${result.dpi} DPI\n`;
+      output += `   - Dimensione file: ${result.size_kb} KB (${result.size_mb} MB)\n`;
+      
+      if (result.paper_format !== 'custom') {
+        output += `\n💡 L'immagine è ottimizzata per stampa su formato **${result.paper_format}** a ${result.dpi} DPI`;
+      }
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: output
+          }
+        ]
+      };
+      
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Errore: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
 // =============================================================================
 // TABLE EXPORT TOOLS
 // =============================================================================
@@ -1495,249 +1737,6 @@ result
 );
 
 // =============================================================================
-// EXPORT VISIBLE TABLES FROM GLOBAL LAYOUT
-// =============================================================================
-
-server.tool(
-  "project_export_visible_tables",
-  "🎨 Export tables visible in Global Layout to CSV files (parses .lay XML)",
-  {
-    projectId: z.string().describe("Project identifier"),
-    layoutFile: z.string().optional().describe("Layout filename (default: tabelle_report.lay)")
-  },
-  async ({ projectId, layoutFile }) => {
-    try {
-      const layoutFileName = layoutFile || 'tabelle_report.lay';
-
-      const pythonCode = `
-import os
-import csv
-import xml.etree.ElementTree as ET
-
-result = {
-    'status': 'PENDING',
-    'project_name': '',
-    'layout_file': '',
-    'output_dir': '',
-    'tables': [],
-    'exported_files': [],
-    'total_rows': 0,
-    'errors': []
-}
-
-try:
-    # Get project path and name
-    ver_path = visum.GetPath(1)
-    project_dir = os.path.dirname(ver_path)
-    project_name = os.path.splitext(os.path.basename(ver_path))[0]
-    
-    result['project_name'] = project_name
-    result['output_dir'] = project_dir
-    
-    # Find layout file
-    layout_path = os.path.join(project_dir, '${layoutFileName}')
-    if not os.path.exists(layout_path):
-        raise Exception(f"Layout file non trovato: {layout_path}")
-    
-    result['layout_file'] = layout_path
-    
-    # Parse XML
-    tree = ET.parse(layout_path)
-    root = tree.getroot()
-    
-    # Extract tables
-    for list_item in root.iter('listLayoutItem'):
-        try:
-            # Get table metadata
-            common = list_item.find('.//listLayoutCommonEntries')
-            if common is None:
-                continue
-                
-            list_title = common.get('listTitle', 'Unknown')
-            
-            graphic_params = list_item.find('.//listGraphicParameterLayoutItems')
-            if graphic_params is None:
-                continue
-                
-            net_object_type = graphic_params.get('netObjectType', '')
-            if not net_object_type:
-                continue
-            
-            # Extract columns
-            columns = []
-            for attr_def in list_item.iter('attributeDefinition'):
-                attr_id = attr_def.get('attributeID')
-                if attr_id:
-                    columns.append(attr_id)
-            
-            if not columns:
-                continue
-            
-            result['tables'].append({
-                'title': list_title,
-                'type': net_object_type,
-                'columns': columns,
-                'column_count': len(columns)
-            })
-            
-        except Exception as e:
-            result['errors'].append(f"Error parsing table: {str(e)}")
-    
-    # Map netObjectType to Visum collections
-    collection_mapping = {
-        'LINK': ('Links', 'No'),
-        'NODE': ('Nodes', 'No'),
-        'ZONE': ('Zones', 'No'),
-        'ODPAIR': ('ODPairs', 'No'),
-        'LINE': ('Lines', 'Name'),
-        'LINEROUTE': ('LineRoutes', 'Name'),
-        'STOP': ('StopPoints', 'No'),
-        'TURN': ('Turns', 'No')
-    }
-    
-    # Export each table to CSV
-    for table_info in result['tables']:
-        net_type = table_info['type']
-        
-        if net_type not in collection_mapping:
-            result['errors'].append(f"Collection mapping not found for {net_type}")
-            continue
-        
-        collection_name, key_attr = collection_mapping[net_type]
-        
-        try:
-            # Get collection
-            collection = getattr(visum.Net, collection_name)
-            count = collection.Count
-            
-            if count == 0:
-                result['errors'].append(f"{collection_name}: no data")
-                continue
-            
-            # Create CSV file
-            safe_title = table_info['title'].replace(' ', '_').replace('(', '').replace(')', '')
-            csv_file = os.path.join(project_dir, f"{project_name}_{safe_title}.csv")
-            
-            # Write CSV
-            with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f, delimiter=';')
-                
-                # Header
-                writer.writerow(table_info['columns'])
-                
-                # Data rows
-                rows_written = 0
-                for i in range(count):
-                    try:
-                        item = collection.ItemByKey(i+1) if key_attr == 'No' else collection.Item(i)
-                        row = []
-                        for col in table_info['columns']:
-                            try:
-                                value = item.AttValue(col)
-                                row.append(value)
-                            except:
-                                row.append('')  # Missing attribute
-                        writer.writerow(row)
-                        rows_written += 1
-                    except:
-                        continue
-            
-            file_size = os.path.getsize(csv_file)
-            result['exported_files'].append({
-                'table': table_info['title'],
-                'file': os.path.basename(csv_file),
-                'rows': rows_written,
-                'columns': table_info['column_count'],
-                'size_kb': round(file_size / 1024, 2)
-            })
-            result['total_rows'] += rows_written
-            
-        except Exception as e:
-            result['errors'].append(f"{net_type}: {str(e)}")
-    
-    result['status'] = 'SUCCESS'
-    
-except Exception as e:
-    result['status'] = 'FAILED'
-    result['error'] = str(e)
-
-result
-`;
-
-      const execResponse: any = await serverManager.executeCommand(projectId, pythonCode, "Export visible tables from layout");
-      
-      if (!execResponse || !execResponse.success) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `❌ Impossibile esportare tabelle: ${execResponse?.error || 'Errore sconosciuto'}`
-            }
-          ]
-        };
-      }
-
-      const result = execResponse.result || {};
-      
-      if (result.status === 'SUCCESS') {
-        let output = `✅ **Tabelle Visibili Esportate**\n\n`;
-        output += `📂 **Progetto:** ${result.project_name}\n`;
-        output += `🎨 **Layout:** ${layoutFileName}\n`;
-        output += `📁 **Directory:** ${result.output_dir}\n\n`;
-        
-        output += `📊 **Tabelle trovate nel layout:** ${result.tables.length}\n`;
-        output += `📄 **File CSV creati:** ${result.exported_files.length}\n`;
-        output += `📝 **Totale righe esportate:** ${result.total_rows.toLocaleString()}\n\n`;
-        
-        if (result.exported_files && result.exported_files.length > 0) {
-          output += `**File esportati:**\n\n`;
-          result.exported_files.forEach((file: any) => {
-            output += `✅ **${file.table}**\n`;
-            output += `   📄 ${file.file}\n`;
-            output += `   📊 ${file.rows.toLocaleString()} righe × ${file.columns} colonne\n`;
-            output += `   💾 ${file.size_kb} KB\n\n`;
-          });
-        }
-        
-        if (result.errors && result.errors.length > 0) {
-          output += `\n⚠️ **Avvisi:**\n`;
-          result.errors.forEach((err: string) => {
-            output += `- ${err}\n`;
-          });
-        }
-        
-        return {
-          content: [
-            {
-              type: "text",
-              text: output
-            }
-          ]
-        };
-      } else {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `❌ **Errore durante l'export**\n\n${result.error}`
-            }
-          ]
-        };
-      }
-      
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `❌ Errore: ${error instanceof Error ? error.message : String(error)}`
-          }
-        ]
-      };
-    }
-  }
-);
-
 // =============================================================================
 // PROJECT-SPECIFIC INSTANCE MANAGEMENT TOOLS
 // =============================================================================

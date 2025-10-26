@@ -76,6 +76,23 @@ You can find more info and examples at https://modelcontextprotocol.io/llms-full
    - See `TABLE_EXPORT_WORKFLOW.md` for complete guide
    - Standalone script: `export-all-tables-from-layout.py`
 
+8. **project_export_graphic_layout**: 🗺️ Export graphic layouts (.gpa) as PNG images
+   - Load Global Graphic Parameters file and export network visualization
+   - **Auto-extracts bounds** from PrintArea settings (no manual coordinates needed)
+   - **Paper format support:** A5, A4, A3 in landscape/portrait (e.g., A4_portrait)
+   - **Customizable resolution:** width (default 1920px), DPI (default 150), quality
+   - **Auto-calculates height** from network aspect ratio
+   - Returns file path, dimensions, and size
+   - **WORKFLOW:** User provides .gpa filename + paper format → Export as PNG
+   - **Performance:** 1920×2344 px @ 150 DPI in ~27 seconds (1.6 MB)
+   - **Paper sizes @ 150 DPI:**
+     * A5 landscape: 874×1240px (148×210mm)
+     * A4 landscape: 1240×1754px (210×297mm)
+     * A4 portrait: 1754×1240px (297×210mm)
+     * A3 landscape: 1754×2480px (297×420mm)
+   - See `GRAPHIC_EXPORT_WORKFLOW.md` for complete guide
+   - Standalone script: `export-gpa-to-image.py`
+
 
 ## 🎨 Global Layouts Workflow
 
