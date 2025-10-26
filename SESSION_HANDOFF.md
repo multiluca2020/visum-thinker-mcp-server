@@ -293,7 +293,84 @@ echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"project_export_gr
 
 ---
 
+---
+
+## 🆕 UPDATE: Paper Format Support Added (Oct 26, 2025)
+
+### What Changed
+
+Added **paper format parameter** to `project_export_graphic_layout` tool:
+- Users can now request A5, A4, A3 in landscape or portrait
+- Automatic pixel calculation based on paper size and DPI
+- Height automatically adjusted to maintain network aspect ratio
+
+### New Parameter
+
+```typescript
+paperFormat?: 'A5' | 'A5_portrait' | 'A4' | 'A4_portrait' | 'A3' | 'A3_portrait' | 'custom'
+```
+
+### Implementation
+
+**In MCP tool (`src/index.ts` ~line 1290-1500):**
+- Added paper format calculation function in Python code
+- Modified image dimensions logic to use paper format or custom width
+- Enhanced output message to show paper format info
+
+**In standalone script (`export-gpa-to-image.py`):**
+- Added `PAPER_FORMATS` dictionary with mm dimensions
+- Added `calculate_pixels_from_paper()` function
+- Added `get_paper_info()` helper function
+- Updated `export_gpa_to_image()` to accept `paper_format` parameter
+- Updated `main()` to use paper format from config
+
+### User Experience
+
+**Before:**
+```
+User: "Export the graphic layout"
+AI: [exports with default 1920px width]
+```
+
+**After:**
+```
+User: "Export the graphic layout in A4 portrait for printing"
+AI: [exports with A4 portrait format: 1754×1240px @ 150 DPI]
+     "📄 Formato carta: A4_portrait (297×210mm)"
+```
+
+### Quick Reference
+
+| Format | @ 150 DPI | @ 300 DPI |
+|--------|-----------|-----------|
+| A5 landscape | 874×1240 | 1748×2480 |
+| A4 landscape | 1240×1754 | 2480×3508 |
+| A4 portrait | 1754×1240 | 3508×2480 |
+| A3 landscape | 1754×2480 | 3508×4960 |
+
+### Files Modified
+
+1. ✅ `src/index.ts` - Added paperFormat parameter and calculation logic
+2. ✅ `export-gpa-to-image.py` - Added paper format support
+3. ✅ `.github/copilot-instructions.md` - Updated tool #8 description
+4. ✅ `GRAPHIC_EXPORT_WORKFLOW.md` - Added paper format examples and tables
+5. ✅ `SESSION_HANDOFF.md` - Updated tool signature and test cases
+
+### Compilation Status
+
+✅ **Compiled successfully** with `npm run build`
+
+### Testing Needed
+
+Test with Claude:
+1. "Esporta Flussogramma_tpb.gpa in A4 portrait"
+2. "Stampa il network su A3 landscape a 300 DPI"
+3. "Export in A5 for document"
+
+---
+
 **Status:** Ready for production use 🚀  
 **Compilation:** ✅ Success  
 **Testing:** ✅ Verified  
-**Documentation:** ✅ Complete
+**Documentation:** ✅ Complete  
+**Paper Format Support:** ✅ Added Oct 26, 2025
