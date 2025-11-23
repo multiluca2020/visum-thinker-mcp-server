@@ -1,20 +1,35 @@
 """
-Export Visum Graphic Parameters (.gpa) to Image Files (PNG/JPG)
+Export Visum Graphic Parameters (.gpa) to Image Files (PNG/JPG/SVG)
 
 This script loads a .gpa file (graphic parameters) and exports the network view as an image.
 Useful for creating reports, presentations, or documentation from Visum network visualizations.
+
+Supported formats:
+    - Raster: PNG, JPG, BMP, TIF (pixel-based, DPI-dependent)
+    - Vector: SVG (scalable, resolution-independent, requires GUI)
 
 Usage:
     1. Open your Visum project
     2. Run this script in VisumPy console or via project_execute
     3. Script will find all .gpa files in project directory
-    4. Exports each .gpa as a PNG image
+    4. Exports each .gpa in the selected format
 
-Configuration:
-    - Image width: 1920 pixels (HD resolution)
-    - Image format: PNG (can also use .jpg, .bmp, .tif)
-    - DPI: 150 (default, can be changed)
-    - Quality: 100 (for JPG only)
+Configuration (edit CONFIGURATION section below):
+    RASTER FORMATS (PNG/JPG/BMP/TIF):
+        - Paper format: A5, A4, A3, portrait/landscape
+        - Image width: 1920 pixels (or custom)
+        - DPI: 150 (screen: 96, print: 150-300)
+        - Quality: 100 (JPEG only)
+    
+    VECTOR FORMAT (SVG):
+        - Non-scaling stroke: True (keeps line widths constant)
+        - Copy pictures: False (don't copy external images)
+        - ⚠️  Requires Visum GUI to be open and visible!
+
+Examples:
+    - High-quality print: EXPORT_FORMAT='png', PAPER_FORMAT='A4', IMAGE_DPI=300
+    - Screen display: EXPORT_FORMAT='png', PAPER_FORMAT='custom', IMAGE_WIDTH_PIXELS=1920
+    - Vector (editable): EXPORT_FORMAT='svg' (requires visible GUI)
 """
 
 import os
@@ -39,12 +54,25 @@ PAPER_FORMATS = {
     'custom': None           # Use IMAGE_WIDTH_PIXELS directly
 }
 
-# Image export settings
-PAPER_FORMAT = 'A4'         # A5, A4, A3, A5_portrait, A4_portrait, A3_portrait, custom
+# Export format selection
+EXPORT_FORMAT = 'png'       # png, jpg, svg, bmp, tif
+
+# Image export settings (for raster formats: png, jpg, bmp, tif)
+PAPER_FORMAT = 'A5'         # A5, A4, A3, A5_portrait, A4_portrait, A3_portrait, custom
 IMAGE_WIDTH_PIXELS = 1920   # Only used if PAPER_FORMAT='custom'
-IMAGE_FORMAT = 'png'        # png, jpg, bmp, tif
-IMAGE_DPI = 150            # Resolution (96 = screen, 150 = print quality, 300 = high quality)
+IMAGE_DPI = 600            # Resolution (96 = screen, 150 = print, 300 = high quality, 600 = ultra high, 1200 = maximum)
 JPEG_QUALITY = 100         # Quality for JPEG (1-100)
+
+# DPI PRESETS:
+# - 96 DPI:   Screen display, web (A5: 559×827px, A4: 791×1119px)
+# - 150 DPI:  Standard print (A5: 874×1240px, A4: 1240×1754px)
+# - 300 DPI:  High quality print (A5: 1748×2480px, A4: 2480×3508px)
+# - 600 DPI:  Professional print, large format (A5: 3496×4960px, A4: 4960×7016px)
+# - 1200 DPI: Maximum detail, photo-quality (A5: 6992×9921px, A4: 9921×14031px)
+
+# SVG export settings (for vector format)
+SVG_USE_NON_SCALING_STROKE = True   # Keep line widths constant when scaling
+SVG_COPY_PICTURES = False           # Copy external image files
 
 # Output filename pattern
 OUTPUT_PATTERN = "{project_name}_{gpa_name}.{format}"
@@ -52,6 +80,100 @@ OUTPUT_PATTERN = "{project_name}_{gpa_name}.{format}"
 # =============================================================================
 # PAPER SIZE UTILITIES
 # =============================================================================
+
+def scale_legend_text_sizes(scale_factor):
+    """
+    Scale legend text sizes by a given factor.
+    This ensures the legend scales proportionally with the paper format.
+    
+    Args:
+        scale_factor: Multiplication factor (e.g., 2.0 for double size)
+    
+    Returns:
+        dict: Result with scaled attributes or error info
+    """
+    result = {
+        'success': False,
+        'scaled_elements': []
+    }
+    
+    try:
+        # Try to access legend parameters
+        legend_params = visum.Net.GraphicParameters.LegendParameters
+        if not legend_params:
+            result['error'] = 'LegendParameters not available in this GPA'
+            return result
+        
+        legend_general = legend_params.LegendGeneralParameters
+        
+        # Scale title text
+        try:
+            title_text = legend_general.TitleTextParameters
+            old_size = title_text.AttValue('TEXTSIZE')
+            new_size = old_size * scale_factor
+            title_text.SetAttValue('TEXTSIZE', new_size)
+            result['scaled_elements'].append(f'Title: {old_size:.2f} → {new_size:.2f}mm')
+        except Exception as e:
+            result['scaled_elements'].append(f'Title: FAILED ({str(e)})')
+        
+        # Scale element text
+        try:
+            element_text = legend_general.ElementTextParameters
+            old_size = element_text.AttValue('TEXTSIZE')
+            new_size = old_size * scale_factor
+            element_text.SetAttValue('TEXTSIZE', new_size)
+            result['scaled_elements'].append(f'Elements: {old_size:.2f} → {new_size:.2f}mm')
+        except Exception as e:
+            result['scaled_elements'].append(f'Elements: FAILED ({str(e)})')
+        
+        # Scale attribute text
+        try:
+            attr_text = legend_general.AttributeTextParameters
+            old_size = attr_text.AttValue('TEXTSIZE')
+            new_size = old_size * scale_factor
+            attr_text.SetAttValue('TEXTSIZE', new_size)
+            result['scaled_elements'].append(f'Attributes: {old_size:.2f} → {new_size:.2f}mm')
+        except Exception as e:
+            result['scaled_elements'].append(f'Attributes: FAILED ({str(e)})')
+        
+        # Scale label text
+        try:
+            label_text = legend_general.LabelTextParameters
+            old_size = label_text.AttValue('TEXTSIZE')
+            new_size = old_size * scale_factor
+            label_text.SetAttValue('TEXTSIZE', new_size)
+            result['scaled_elements'].append(f'Labels: {old_size:.2f} → {new_size:.2f}mm')
+        except Exception as e:
+            result['scaled_elements'].append(f'Labels: FAILED ({str(e)})')
+        
+        # Scale sub-element text
+        try:
+            sub_text = legend_general.SubElementTextParameters
+            old_size = sub_text.AttValue('TEXTSIZE')
+            new_size = old_size * scale_factor
+            sub_text.SetAttValue('TEXTSIZE', new_size)
+            result['scaled_elements'].append(f'SubElements: {old_size:.2f} → {new_size:.2f}mm')
+        except Exception as e:
+            result['scaled_elements'].append(f'SubElements: FAILED ({str(e)})')
+        
+        # Scale graphic scale text
+        try:
+            scale_text = legend_general.GraphicScaleTextParameters
+            old_size = scale_text.AttValue('TEXTSIZE')
+            new_size = old_size * scale_factor
+            scale_text.SetAttValue('TEXTSIZE', new_size)
+            result['scaled_elements'].append(f'GraphicScale: {old_size:.2f} → {new_size:.2f}mm')
+        except Exception as e:
+            result['scaled_elements'].append(f'GraphicScale: FAILED ({str(e)})')
+        
+        result['success'] = True
+        result['scale_factor'] = scale_factor
+        
+    except Exception as e:
+        result['error'] = str(e)
+    
+    return result
+
 
 def calculate_pixels_from_paper(paper_format, dpi=150, orientation='landscape'):
     """
@@ -187,6 +309,29 @@ def export_gpa_to_image(gpa_file_path, output_image_path, width=None, height=Non
         visum.Net.GraphicParameters.Open(gpa_file_path)
         result['gpa_loaded'] = True
         
+        # Scale legend text sizes based on paper format
+        # Base reference: A4 @ 150 DPI (standard print size)
+        # Calculate scale factor based on deviation from this reference
+        if paper_format and paper_format != 'custom':
+            base_format = paper_format.replace('_portrait', '')
+            
+            # Reference: A4 landscape @ 150 DPI = 1240px width
+            reference_width = 1240  # A4 landscape @ 150 DPI
+            scale_factor = width_px / reference_width
+            
+            print(f"🔧 Scaling legend text by {scale_factor:.2f}x (for {base_format} @ {dpi} DPI)...")
+            legend_scale_result = scale_legend_text_sizes(scale_factor)
+            
+            if legend_scale_result['success']:
+                print(f"   ✅ Legend scaled:")
+                for element in legend_scale_result['scaled_elements']:
+                    print(f"      • {element}")
+                result['legend_scaled'] = True
+                result['legend_scale_factor'] = scale_factor
+            else:
+                print(f"   ⚠️  Legend scaling skipped: {legend_scale_result.get('error', 'No legend in GPA')}")
+                result['legend_scaled'] = False
+        
         # Get network bounds from Print Area
         print(f"📐 Getting network bounds...")
         printArea = visum.Net.PrintParameters.PrintArea
@@ -221,8 +366,11 @@ def export_gpa_to_image(gpa_file_path, output_image_path, width=None, height=Non
             'aspect_ratio': aspect_ratio
         }
         
+        # Determine output format from file extension
+        output_format = os.path.splitext(output_image_path)[1].replace('.', '').upper()
+        
         # Export network image
-        print(f"🎨 Exporting to {IMAGE_FORMAT.upper()} ({width_px}×{height_px}px @ {dpi} DPI)...")
+        print(f"🎨 Exporting to {output_format} ({width_px}×{height_px}px @ {dpi} DPI)...")
         visum.Graphic.ExportNetworkImageFile(
             output_image_path,
             left, bottom, right, top,
@@ -252,6 +400,93 @@ def export_gpa_to_image(gpa_file_path, output_image_path, width=None, height=Non
     return result
 
 
+def export_gpa_to_svg(gpa_file_path, output_svg_path, use_non_scaling_stroke=True, copy_pictures=False):
+    """
+    Export a .gpa file to SVG (vector) format.
+    
+    Args:
+        gpa_file_path: Full path to .gpa file
+        output_svg_path: Full path to output SVG file
+        use_non_scaling_stroke: Keep line widths constant when scaling
+        copy_pictures: Copy external image files
+    
+    Returns:
+        dict: Result with success status and file info
+    
+    Note:
+        SVG export requires Visum GUI to be open and visible.
+        Use PNG/JPG for headless/background execution.
+    """
+    result = {
+        'gpa_file': os.path.basename(gpa_file_path),
+        'output_file': os.path.basename(output_svg_path),
+        'success': False,
+        'format': 'svg'
+    }
+    
+    try:
+        # Load GPA (Graphic Parameters)
+        print(f"📂 Loading GPA: {os.path.basename(gpa_file_path)}")
+        visum.Net.GraphicParameters.Open(gpa_file_path)
+        result['gpa_loaded'] = True
+        
+        # Get network bounds from Print Area
+        print(f"📐 Getting network bounds...")
+        printArea = visum.Net.PrintParameters.PrintArea
+        left = printArea.AttValue('LEFTMARGIN')
+        bottom = printArea.AttValue('BOTTOMMARGIN')
+        right = printArea.AttValue('RIGHTMARGIN')
+        top = printArea.AttValue('TOPMARGIN')
+        
+        result['bounds'] = {
+            'left': left,
+            'bottom': bottom,
+            'right': right,
+            'top': top
+        }
+        
+        print(f"   Bounds: ({left:.2f}, {bottom:.2f}) to ({right:.2f}, {top:.2f})")
+        
+        # Calculate aspect ratio
+        width_net = right - left
+        height_net = top - bottom
+        aspect_ratio = height_net / width_net if width_net > 0 else 1.0
+        result['aspect_ratio'] = round(aspect_ratio, 3)
+        
+        # Set the view window to the PrintArea bounds
+        print(f"🗺️  Setting view to PrintArea bounds...")
+        visum.Graphic.SetWindow(left, bottom, right, top)
+        
+        # Export SVG
+        print(f"🎨 Exporting to SVG (vector format)...")
+        visum.Graphic.WriteSVG(
+            output_svg_path,
+            UseNonScalingStroke=use_non_scaling_stroke,
+            CopyPictures=copy_pictures
+        )
+        
+        # Verify file was created
+        if os.path.exists(output_svg_path):
+            file_size_kb = os.path.getsize(output_svg_path) / 1024
+            result['success'] = True
+            result['size_kb'] = round(file_size_kb, 2)
+            result['size_mb'] = round(file_size_kb / 1024, 2)
+            result['format_type'] = 'SVG (vector)'
+            result['scalable'] = True
+            print(f"✅ Export successful: {file_size_kb:.2f} KB (vector format)")
+        else:
+            result['error'] = 'File not created'
+            print(f"❌ Export failed: File not created")
+        
+    except Exception as e:
+        result['error'] = str(e)
+        print(f"❌ Error: {e}")
+        if "SetWindow" in str(e) or "GUI" in str(e):
+            result['error'] += " (SVG requires Visum GUI to be visible)"
+    
+    return result
+
+
 def main():
     """Main function to export all .gpa files in project directory."""
     
@@ -268,11 +503,22 @@ def main():
         print(f"\n📂 Project: {project_name}")
         print(f"📁 Directory: {project_dir}")
         
-        # Show paper format configuration
-        if PAPER_FORMAT != 'custom':
-            print(f"\n📄 Paper format: {get_paper_info(PAPER_FORMAT, IMAGE_DPI)}")
+        # Show export format
+        print(f"\n🎨 Export format: {EXPORT_FORMAT.upper()}")
+        
+        # Show format-specific configuration
+        if EXPORT_FORMAT.lower() == 'svg':
+            print(f"📐 Vector format (scalable)")
+            print(f"   - Non-scaling stroke: {SVG_USE_NON_SCALING_STROKE}")
+            print(f"   - Copy pictures: {SVG_COPY_PICTURES}")
+            print(f"\n⚠️  SVG export requires Visum GUI to be open and visible!")
+            print(f"   If running headless, use PNG/JPG instead.")
         else:
-            print(f"\n📐 Custom size: {IMAGE_WIDTH_PIXELS}px width @ {IMAGE_DPI} DPI")
+            # Show paper format configuration for raster formats
+            if PAPER_FORMAT != 'custom':
+                print(f"📄 Paper format: {get_paper_info(PAPER_FORMAT, IMAGE_DPI)}")
+            else:
+                print(f"📐 Custom size: {IMAGE_WIDTH_PIXELS}px width @ {IMAGE_DPI} DPI")
         
         # Find all .gpa files
         gpa_files = [f for f in os.listdir(project_dir) if f.lower().endswith('.gpa')]
@@ -301,19 +547,29 @@ def main():
             output_filename = OUTPUT_PATTERN.format(
                 project_name=project_name,
                 gpa_name=gpa_name,
-                format=IMAGE_FORMAT
+                format=EXPORT_FORMAT
             )
             output_path = os.path.join(project_dir, output_filename)
             
-            # Export with paper format
-            result = export_gpa_to_image(
-                gpa_path,
-                output_path,
-                width=IMAGE_WIDTH_PIXELS if PAPER_FORMAT == 'custom' else None,
-                dpi=IMAGE_DPI,
-                quality=JPEG_QUALITY,
-                paper_format=PAPER_FORMAT
-            )
+            # Export based on format
+            if EXPORT_FORMAT.lower() == 'svg':
+                # Vector export
+                result = export_gpa_to_svg(
+                    gpa_path,
+                    output_path,
+                    use_non_scaling_stroke=SVG_USE_NON_SCALING_STROKE,
+                    copy_pictures=SVG_COPY_PICTURES
+                )
+            else:
+                # Raster export (PNG, JPG, BMP, TIF)
+                result = export_gpa_to_image(
+                    gpa_path,
+                    output_path,
+                    width=IMAGE_WIDTH_PIXELS if PAPER_FORMAT == 'custom' else None,
+                    dpi=IMAGE_DPI,
+                    quality=JPEG_QUALITY,
+                    paper_format=PAPER_FORMAT
+                )
             
             results.append(result)
         
@@ -327,9 +583,14 @@ def main():
         
         print(f"\n✅ Successful exports: {len(successful)}/{len(results)}")
         for r in successful:
-            dims = r.get('dimensions', {})
             print(f"   - {r['gpa_file']} → {r['output_file']}")
-            print(f"     {dims.get('width_px')}×{dims.get('height_px')}px @ {r.get('dpi')} DPI = {r['size_kb']} KB")
+            if r.get('format') == 'svg':
+                # SVG format
+                print(f"     Vector format (scalable) = {r['size_kb']} KB")
+            else:
+                # Raster format
+                dims = r.get('dimensions', {})
+                print(f"     {dims.get('width_px')}×{dims.get('height_px')}px @ {r.get('dpi')} DPI = {r['size_kb']} KB")
         
         if failed:
             print(f"\n❌ Failed exports: {len(failed)}")

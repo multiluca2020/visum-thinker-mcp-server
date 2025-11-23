@@ -951,10 +951,10 @@ if __name__ == "__main__":
           console.error(`⏰ Request ${requestId} timed out`);
           resolve({
             success: false,
-            error: "Request timeout (60s)"
+            error: "Request timeout (5min)"
           });
         }
-      }, 60000); // 1 minute timeout
+      }, 300000); // 5 minutes timeout for large operations
     });
   }
   

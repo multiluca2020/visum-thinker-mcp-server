@@ -283,7 +283,7 @@ export class ProjectServerManager {
       setTimeout(() => {
         client.end();
         reject(new Error('Timeout comando server'));
-      }, 30000);
+      }, 300000); // 5 minuti timeout per operazioni pesanti su reti grandi
     });
   }
 

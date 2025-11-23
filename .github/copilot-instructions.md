@@ -50,7 +50,21 @@ You can find more info and examples at https://modelcontextprotocol.io/llms-full
      * Explicit codes: `dsegset: "C_CORRETTA_AM,C_CORRETTA_IP1,..."`
    - See `WORKFLOW_PRT_ASSIGNMENT.md` for complete workflow
 
-5. **project_list_available_layouts**: 📂 List available Global Layout files
+5. **visum_check_assignment**: 🔍 Verify PrT assignment execution
+   - **NEW TOOL** - Check if PrT assignment has been successfully executed
+   - Verifies existence of `VolVehPrT(AP)` attribute on links
+   - Returns statistics: total volume, links with traffic, congestion info
+   - **Verified attributes (case-sensitive):**
+     * ✅ `VolVehPrT(AP)` - Vehicle volume (correct name)
+     * ✅ `VolPersPrT(AP)` - Person volume
+     * ✅ `VolCapRatioPrT(AP)` - Volume/Capacity ratio
+     * ✅ `V0PRT` - Free flow speed (base attribute)
+     * ❌ `VOLPRT(AP)` - DOES NOT EXIST (wrong name)
+   - **Use before export** to ensure assignment results are available
+   - Uses `GetMultiAttValues()` for efficient single-call retrieval
+   - See `VISUM_CHECK_ASSIGNMENT_GUIDE.md` for complete documentation
+
+6. **project_list_available_layouts**: 📂 List available Global Layout files
    - Shows all .lay files in project directory
    - Returns filename, size (MB), and full path
    - **ALWAYS use this before loading a layout** - Ask user which to load
@@ -76,22 +90,35 @@ You can find more info and examples at https://modelcontextprotocol.io/llms-full
    - See `TABLE_EXPORT_WORKFLOW.md` for complete guide
    - Standalone script: `export-all-tables-from-layout.py`
 
-8. **project_export_graphic_layout**: 🗺️ Export graphic layouts (.gpa) as PNG images
+8. **project_export_graphic_layout**: 🗺️ Export graphic layouts (.gpa) as PNG/SVG images
    - Load Global Graphic Parameters file and export network visualization
+   - **Format support:** PNG (raster), JPG (compressed), SVG (vector, scalable)
    - **Auto-extracts bounds** from PrintArea settings (no manual coordinates needed)
-   - **Paper format support:** A5, A4, A3 in landscape/portrait (e.g., A4_portrait)
-   - **Customizable resolution:** width (default 1920px), DPI (default 150), quality
+   - **Paper format support:** A5, A4, A3 in landscape/portrait (e.g., A4_portrait) - for raster formats
+   - **Customizable resolution:** width (default 1920px), DPI (default 150 for MCP, 600 for script), quality
    - **Auto-calculates height** from network aspect ratio
    - Returns file path, dimensions, and size
-   - **WORKFLOW:** User provides .gpa filename + paper format → Export as PNG
-   - **Performance:** 1920×2344 px @ 150 DPI in ~27 seconds (1.6 MB)
-   - **Paper sizes @ 150 DPI:**
+   - **WORKFLOW:** User provides .gpa filename + format + paper format → Export
+   - **Performance:** 
+     * PNG @ 150 DPI: 1920×2344 px in ~27 seconds (1.6 MB)
+     * PNG @ 600 DPI: A5 = 3496×4960 px in ~2-4 min (12 MB)
+     * PNG @ 1200 DPI: A5 = 6992×9921 px in ~8-15 min (45 MB)
+     * SVG: Vector format in ~5-10 seconds (200-500 KB)
+   - **DPI Presets for A5:**
+     * 96 DPI: 559×827px (screen/web)
+     * 150 DPI: 874×1240px (standard print) - MCP default
+     * 300 DPI: 1748×2480px (high quality print)
+     * 600 DPI: 3496×4960px (professional/large format) - Script default
+     * 1200 DPI: 6992×9921px (maximum detail, very large files)
+   - **Paper sizes @ 150 DPI (raster):**
      * A5 landscape: 874×1240px (148×210mm)
      * A4 landscape: 1240×1754px (210×297mm)
      * A4 portrait: 1754×1240px (297×210mm)
      * A3 landscape: 1754×2480px (297×420mm)
+   - **SVG advantages:** Scalable, editable (Illustrator/Inkscape), smaller file size
+   - **⚠️ SVG limitation:** Requires Visum GUI visible (not headless)
    - See `GRAPHIC_EXPORT_WORKFLOW.md` for complete guide
-   - Standalone script: `export-gpa-to-image.py`
+   - Standalone script: `export-gpa-to-image.py` (defaults: A5, 600 DPI)
 
 
 ## 🎨 Global Layouts Workflow
@@ -123,6 +150,38 @@ project_load_global_layout({
 - ❌ Don't use: `visum.Graphics.AssociateGlobalLayoutFile()` (visum.Graphics doesn't exist)
 
 See `GLOBAL_LAYOUTS_WORKFLOW.md` for complete guide!
+
+## 🎨 Legend Auto-Scaling (New Feature!)
+
+**Problem Solved:** When exporting .gpa files with different paper formats (A5, A4, A3) or DPI settings, the legend text size remained fixed, appearing too small on large formats or too large on small formats.
+
+**Solution:** Automatic legend text scaling based on paper format and DPI!
+
+**How it works:**
+- Reference baseline: A4 landscape @ 150 DPI (1240px width)
+- Scale factor calculated: `current_width / 1240`
+- All legend text elements scaled proportionally:
+  - Title text
+  - Element labels
+  - Attribute text
+  - Sub-element text
+  - Graphic scale text
+
+**Example:**
+- A5 @ 150 DPI: Scale factor = 0.7x (smaller text for smaller format)
+- A4 @ 150 DPI: Scale factor = 1.0x (baseline, no change)
+- A4 @ 600 DPI: Scale factor = 4.0x (4× larger text for high DPI)
+- A5 @ 600 DPI: Scale factor = 2.8x (proportional to A5 size)
+
+**Test it:**
+```bash
+# Run test script to compare legend scaling across formats
+python test-legend-scaling.py
+```
+
+**See:** `export-gpa-to-image.py` - function `scale_legend_text_sizes()`
+
+---
 
 ## 🤖 Interactive Workflow for AI Assistants
 

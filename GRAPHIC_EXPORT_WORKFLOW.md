@@ -10,39 +10,53 @@ Export network visualization from Global Graphic Parameters files (.gpa) to high
 
 ### 1. `project_export_graphic_layout`
 
-Export a graphic layout as PNG image with customizable resolution.
+Export a graphic layout as PNG (raster) or SVG (vector) with customizable resolution.
 
 **Parameters:**
 - `projectId` (required): Project identifier from `project_open`
 - `gpaFile` (required): Filename or full path to .gpa file
-- `outputFile` (optional): Custom output filename (default: `{gpaName}_export.png`)
-- `paperFormat` (optional): Paper format - A5, A5_portrait, A4, A4_portrait, A3, A3_portrait, custom (default)
-- `width` (optional): Image width in pixels (default: 1920, ignored if paperFormat specified)
-- `dpi` (optional): Resolution in DPI (default: 150)
-- `quality` (optional): JPEG quality 0-100 (default: 95, PNG ignores this)
+- `outputFile` (optional): Custom output filename (default: `{gpaName}_export.png` or `.svg`)
+- `format` (optional): Export format - png (default), jpg, svg
+- `paperFormat` (optional): Paper format - A5, A5_portrait, A4, A4_portrait, A3, A3_portrait, custom (default). Only for raster formats.
+- `width` (optional): Image width in pixels (default: 1920, raster only, ignored if paperFormat specified)
+- `dpi` (optional): Resolution in DPI (default: 150, raster only)
+- `quality` (optional): JPEG quality 0-100 (default: 95, only for .jpg)
+- `svgNonScalingStroke` (optional): Keep line widths constant when scaling (default: true, SVG only)
 
-**Example with paper format:**
+**Example with paper format (PNG):**
 ```json
 {
   "projectId": "S000009result_1278407893",
   "gpaFile": "Flussogramma_tpb.gpa",
+  "format": "png",
   "paperFormat": "A4_portrait",
   "dpi": 150
 }
 ```
 
-**Example with custom size:**
+**Example with custom size (PNG):**
 ```json
 {
   "projectId": "S000009result_1278407893",
   "gpaFile": "Flussogramma_tpb.gpa",
+  "format": "png",
   "paperFormat": "custom",
   "width": 2560,
   "dpi": 150
 }
 ```
 
-**Output:**
+**Example with SVG (vector):**
+```json
+{
+  "projectId": "S000009result_1278407893",
+  "gpaFile": "Flussogramma_tpb.gpa",
+  "format": "svg",
+  "svgNonScalingStroke": true
+}
+```
+
+**Output (PNG):**
 ```
 ✅ Layout Grafico Esportato
 
@@ -53,9 +67,10 @@ Export a graphic layout as PNG image with customizable resolution.
    - Right: 10.257651
    - Top: 46.525534
 
-🖼️ Immagine generata:
+🖼️ Immagine raster generata:
    - File: Flussogramma_tpb_export.png
    - Percorso: H:\go\reports\Input\Flussogramma_tpb_export.png
+   - Formato: PNG (raster)
    - 📄 Formato carta: A4_portrait (297×210mm)
    - Dimensioni: 1754 × 2142 px
    - Aspect ratio: 1.221
@@ -63,6 +78,31 @@ Export a graphic layout as PNG image with customizable resolution.
    - Dimensione file: 1684.36 KB (1.64 MB)
 
 💡 L'immagine è ottimizzata per stampa su formato A4_portrait a 150 DPI
+```
+
+**Output (SVG):**
+```
+✅ Layout Grafico Esportato
+
+🗺️ GPA caricato: Flussogramma_tpb.gpa
+📍 Coordinate rete:
+   - Left: 8.924330
+   - Bottom: 45.308337
+   - Right: 10.257651
+   - Top: 46.525534
+
+🎨 Immagine vettoriale generata:
+   - File: Flussogramma_tpb_export.svg
+   - Percorso: H:\go\reports\Input\Flussogramma_tpb_export.svg
+   - Formato: SVG (vettoriale, scalabile)
+   - Aspect ratio: 1.221
+   - Dimensione file: 324.18 KB (0.32 MB)
+
+✨ Vantaggi SVG:
+   - Scalabile senza perdita di qualità
+   - Modificabile in Illustrator/Inkscape
+   - Convertibile in PDF con strumenti esterni
+   - File più piccolo rispetto a PNG ad alta risoluzione
 ```
 
 ## Interactive Workflow
@@ -90,11 +130,19 @@ AI: "Trovati 4 file .gpa:
      3. Flussogramma_tpr.gpa
      4. Flussogramma_tpr_zoom.gpa
      
-     Quale vuoi esportare? In che formato? (A4, A5, A3, landscape/portrait)"
+     Quale vuoi esportare? In che formato? 
+     - PNG/JPG: per stampa, immagini raster (A4, A5, A3, landscape/portrait)
+     - SVG: vettoriale, scalabile, modificabile"
+     
 User: "Il primo in A4 portrait per stampa"
-AI: [calls project_export_graphic_layout with gpaFile="Flussogramma_tpb.gpa", paperFormat="A4_portrait", dpi=150]
+AI: [calls project_export_graphic_layout with format="png", gpaFile="Flussogramma_tpb.gpa", paperFormat="A4_portrait", dpi=150]
      "✅ Immagine esportata: Flussogramma_tpb_export.png (1.64 MB)
       📄 Formato A4 portrait (297×210mm) ottimizzato per stampa a 150 DPI"
+
+User: "Esporta anche in SVG per modificarlo"
+AI: [calls project_export_graphic_layout with format="svg", gpaFile="Flussogramma_tpb.gpa"]
+     "✅ Immagine vettoriale esportata: Flussogramma_tpb_export.svg (324 KB)
+      ✨ Scalabile senza perdita di qualità, modificabile in Illustrator/Inkscape"
 ```
 
 ## Technical Details
@@ -149,27 +197,85 @@ visum.Graphic.ExportNetworkImageFile(
 | Screen preview | custom (1280px) | 96 | 1280×1562 | ~800 KB | 15-20s |
 | Print A5 | A5 | 150 | 874×1240 | ~600 KB | 18-22s |
 | Print A4 | A4 | 150 | 1240×1754 | ~1.5 MB | 25-30s |
-| Print A4 portrait | A4_portrait | 150 | 1754×1240 | ~1.5 MB | 25-30s |
+| High quality A5 | A5 | 300 | 1748×2480 | ~3 MB | 45-60s |
 | High quality A4 | A4 | 300 | 2480×3508 | ~5 MB | 60-90s |
+| Professional A5 | A5 | 600 | 3496×4960 | ~12 MB | 2-4 min |
+| Professional A4 | A4 | 600 | 4960×7016 | ~20 MB | 4-8 min |
+| Maximum detail A5 | A5 | 1200 | 6992×9921 | ~45 MB | 8-15 min |
+| Maximum detail A4 | A4 | 1200 | 9921×14031 | ~90 MB | 15-25 min |
 | Poster A3 | A3 | 300 | 3508×4960 | ~15 MB | 3-5 min |
 
-### Paper Format Details
+### Paper Format Details - All DPI Options
 
-| Format | Dimensions (mm) | Landscape (px @ 150 DPI) | Portrait (px @ 150 DPI) |
-|--------|----------------|--------------------------|-------------------------|
-| A5 | 148 × 210 | 874 × 1240 | 1240 × 874 |
-| A4 | 210 × 297 | 1240 × 1754 | 1754 × 1240 |
-| A3 | 297 × 420 | 1754 × 2480 | 2480 × 1754 |
+| Format | Dimensions (mm) | 96 DPI | 150 DPI | 300 DPI | 600 DPI | 1200 DPI |
+|--------|-----------------|--------|---------|---------|---------|----------|
+| A5 landscape | 148 × 210 | 559×827 | 874×1240 | 1748×2480 | 3496×4960 | 6992×9921 |
+| A5 portrait | 210 × 148 | 827×559 | 1240×874 | 2480×1748 | 4960×3496 | 9921×6992 |
+| A4 landscape | 210 × 297 | 791×1119 | 1240×1754 | 2480×3508 | 4960×7016 | 9921×14031 |
+| A4 portrait | 297 × 210 | 1119×791 | 1754×1240 | 3508×2480 | 7016×4960 | 14031×9921 |
+| A3 landscape | 297 × 420 | 1119×1583 | 1754×2480 | 3508×4960 | 7016×9921 | 14031×19843 |
+| A3 portrait | 420 × 297 | 1583×1119 | 2480×1754 | 4960×3508 | 9921×7016 | 19843×14031 |
 
 **Note:** Height is automatically adjusted based on network aspect ratio. Listed dimensions are paper sizes only.
 
+### DPI Selection Guide
+
+**96 DPI (Screen/Web):**
+- Use: Website, email, screen presentations
+- Quality: Basic, visible pixels when zoomed
+- File size: Small (~500 KB - 2 MB)
+
+**150 DPI (Standard Print):**
+- Use: Office documents, standard printing
+- Quality: Good for most print needs
+- File size: Medium (~1-5 MB)
+
+**300 DPI (High Quality Print):**
+- Use: Professional brochures, publications
+- Quality: Excellent, recommended minimum for print
+- File size: Large (~3-15 MB)
+
+**600 DPI (Professional/Large Format):**
+- Use: Large posters, trade show graphics, detailed technical drawings
+- Quality: Ultra-high, suitable for close inspection
+- File size: Very large (~12-45 MB)
+
+**1200 DPI (Maximum Detail):**
+- Use: Photo-quality reproduction, archival prints, extreme enlargements
+- Quality: Maximum possible detail
+- File size: Extremely large (~45-150 MB)
+- Warning: Very long export times (10-25 minutes)
+
 ## File Format Support
 
-Currently supports **PNG** format only. The `quality` parameter is ignored for PNG (PNG uses lossless compression).
+### Supported Formats
 
-Future support planned:
-- SVG via `visum.Graphic.ExportSVG()`
-- PDF via `visum.Net.PrintEditor2D()`
+**Raster Formats (pixel-based):**
+- **PNG**: Lossless, high quality, larger file size (~1-5 MB)
+- **JPG**: Lossy compression, smaller file size, use `quality` parameter (0-100)
+
+**Vector Format (scalable):**
+- **SVG**: Scalable Vector Graphics, resolution-independent, editable
+  - File size: ~200-500 KB (much smaller than high-res PNG)
+  - Advantages: Scalable, editable in Illustrator/Inkscape, convertible to PDF
+  - Limitation: Requires Visum GUI to be visible (not headless)
+
+### Format Comparison
+
+| Feature | PNG/JPG | SVG |
+|---------|---------|-----|
+| Quality | DPI-dependent | Resolution-independent |
+| File Size | Large (1-5 MB) | Small (200-500 KB) |
+| Scalability | Pixelated when scaled | Perfect at any scale |
+| Editing | Not editable | Editable (vector paths) |
+| Headless support | ✅ Yes | ❌ No (requires GUI) |
+| Print ready | ✅ Yes (300 DPI) | ✅ Yes (infinite resolution) |
+| PDF conversion | Insert as image | Direct conversion available |
+
+### Future Support
+
+- **PDF direct export**: Limited by Visum API (requires manual dialog interaction)
+  - Workaround: Use PNG @ 300 DPI or convert SVG to PDF with external tools
 
 ## Troubleshooting
 
@@ -241,11 +347,41 @@ python export-gpa-to-image.py
 # Exports network_export.png using first .gpa file found
 ```
 
+## PDF Export Limitation
+
+**Why no direct PDF export?**
+
+Visum's `PrintNetEditor2D()` method can print to PDF, but it requires:
+- Windows print dialog interaction (manual file save location selection)
+- No programmatic way to specify output file path
+- Not suitable for automation
+
+**Workarounds:**
+
+1. **High-resolution PNG** (Current implementation):
+   ```json
+   {"paperFormat": "A4", "dpi": 300}
+   ```
+   - 300 DPI produces print-ready quality
+   - A4 @ 300 DPI = 2480×3508 pixels
+   - Can be inserted into PDF documents
+
+2. **SVG Export** (Future):
+   - Vector format (scalable without quality loss)
+   - Use `visum.Graphic.ExportSVG()` 
+   - Convert SVG→PDF with external tools (Inkscape, CairoSVG)
+
+3. **Print automation** (Complex):
+   - Use PyAutoGUI or AutoIt to automate print dialog
+   - Requires screen coordinates, fragile
+   - Not recommended for production
+
+**Recommended approach:** Use PNG @ 300 DPI for printing, which provides excellent quality and is the most reliable solution.
+
 ## Future Enhancements
 
 - [ ] Support custom bounds (not just PrintArea)
 - [ ] SVG export for vector graphics
-- [ ] PDF export for documents
 - [ ] Batch export all .gpa files
 - [ ] Layer control (show/hide specific layers)
 - [ ] Legend and scale bar options

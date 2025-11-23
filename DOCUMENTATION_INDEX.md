@@ -35,6 +35,7 @@ Guida completa alla navigazione della documentazione del server MCP per Visum.
 | **[VISUM_PROCEDURES_API.md](VISUM_PROCEDURES_API.md)** | API Visum completa, metodi verificati | Avanzato |
 | **[WORKFLOW_PRT_ASSIGNMENT.md](WORKFLOW_PRT_ASSIGNMENT.md)** | Workflow step-by-step con JSON | Intermedio |
 | **[LIST_PRT_SEGMENTS_GUIDE.md](LIST_PRT_SEGMENTS_GUIDE.md)** | Guida listing demand segments | Base |
+| **[VISUM_CHECK_ASSIGNMENT_GUIDE.md](VISUM_CHECK_ASSIGNMENT_GUIDE.md)** | Verifica esecuzione assegnazioni PrT | Base |
 
 ### 📝 Note di Sessione
 
@@ -143,6 +144,12 @@ Guida completa alla navigazione della documentazione del server MCP per Visum.
 - **Quick Start:** [QUICKSTART_PRT_WORKFLOW.md#passo-3](QUICKSTART_PRT_WORKFLOW.md)
 - **Input Formats:** [CLAUDE_WORKFLOW_GUIDE.md#visum_configure_dsegset](CLAUDE_WORKFLOW_GUIDE.md)
 - **Esempi:** [WORKFLOW_PRT_ASSIGNMENT.md#step-4](WORKFLOW_PRT_ASSIGNMENT.md)
+
+### 🔍 Verificare Assegnazione
+
+- **Guide Completa:** [VISUM_CHECK_ASSIGNMENT_GUIDE.md](VISUM_CHECK_ASSIGNMENT_GUIDE.md)
+- **Workflow:** [WORKFLOW_PRT_ASSIGNMENT.md#step-5](WORKFLOW_PRT_ASSIGNMENT.md)
+- **Attributi Verificati:** [VISUM_CHECK_ASSIGNMENT_GUIDE.md#verified-attributes](VISUM_CHECK_ASSIGNMENT_GUIDE.md)
 
 ### 🧪 Testing
 

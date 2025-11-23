@@ -209,6 +209,46 @@ C_CORRETTA_AM,C_CORRETTA_IP1,C_CORRETTA_IP2,C_CORRETTA_IP3,C_CORRETTA_PM,C_CORRE
 C_CORRETTA_AM,C_CORRETTA_IP1,C_CORRETTA_IP2,C_CORRETTA_IP3,C_CORRETTA_PM,C_CORRETTA_S,C_INIZIALE_AM,C_INIZIALE_IP1,C_INIZIALE_IP2,C_INIZIALE_IP3,C_INIZIALE_PM,C_INIZIALE_S,C_ITERAZIONE_AM,C_ITERAZIONE_IP1,C_ITERAZIONE_IP2,C_ITERAZIONE_IP3,C_ITERAZIONE_PM,C_ITERAZIONE_S,C_NESTED_AM,C_NESTED_IP1,C_NESTED_IP2,C_NESTED_IP3,C_NESTED_PM,C_NESTED_S
 ```
 
+### Step 5: Verifica Esecuzione Assegnazione (Nuovo!)
+
+**Dopo aver eseguito la procedura in Visum**, verifica che l'assegnazione sia stata completata con successo:
+
+```bash
+echo '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"visum_check_assignment","arguments":{"projectId":"100625_Versione_base_v0.3_sub_ok_priv_10176442"}}}' | node build/index.js
+```
+
+**Output se assegnazione completata:**
+```
+✅ Assegnazione PrT Trovata
+
+Periodo di analisi: AP
+Archi totali: 227,508
+Archi con traffico: 186,234 (81.8%)
+
+Statistiche Volume:
+• Volume totale: 1,234,567 veicoli
+• Volume massimo: 5,432
+• Volume medio: 853.94
+Archi congestionati (V/C > 0.9): 3,421
+
+⏱️ Tempo verifica: 2,340ms
+```
+
+**Output se assegnazione NON eseguita:**
+```
+⚠️ Assegnazione PrT Non Trovata
+
+Motivo: Attribute VolVehPrT(AP) not found - assignment not executed
+Archi nella rete: 227,508
+
+💡 L'assegnazione non è stata ancora eseguita.
+```
+
+**Verifica per periodo specifico (AM, PM, etc.):**
+```bash
+echo '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"visum_check_assignment","arguments":{"projectId":"100625_Versione_base_v0.3_sub_ok_priv_10176442","analysisPeriod":"AM"}}}' | node build/index.js
+```
+
 ## ✅ Checklist Completa
 
 - [ ] Progetto aperto (`project_open`)
@@ -217,7 +257,8 @@ C_CORRETTA_AM,C_CORRETTA_IP1,C_CORRETTA_IP2,C_CORRETTA_IP3,C_CORRETTA_PM,C_CORRE
 - [ ] Procedura creata (`visum_create_procedure`)
 - [ ] DSEGSET configurato (`visum_configure_dsegset`)
 - [ ] Parametri opzionali configurati (NUMITER, PRECISIONDEMAND)
-- [ ] Procedura verificata in Visum GUI
+- [ ] Procedura eseguita in Visum GUI
+- [ ] **Assegnazione verificata (`visum_check_assignment`)** ⭐ NEW!
 
 ## 🎓 Best Practices
 

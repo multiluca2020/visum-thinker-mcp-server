@@ -1288,25 +1288,29 @@ result
   }
 );
 
-// Export Graphic Layout to PNG - Load .gpa and export as image
+// Export Graphic Layout to PNG/SVG - Load .gpa and export as image
 server.tool(
   "project_export_graphic_layout",
-  "🗺️ Load a Graphic Parameter file (.gpa) and export the network view as PNG image. WORKFLOW: 1) List available .gpa files, 2) User selects layout, 3) Export as PNG with specified resolution. Supports paper formats (A5, A4, A3) in landscape or portrait orientation.",
+  "🗺️ Load a Graphic Parameter file (.gpa) and export the network view as PNG/SVG. WORKFLOW: 1) List available .gpa files, 2) User selects layout, 3) Export as PNG (raster) or SVG (vector). Supports paper formats (A5, A4, A3) in landscape or portrait orientation. SVG is vector format (scalable, editable) but requires Visum GUI visible.",
   {
     projectId: z.string().describe("Project identifier returned by project_open"),
     gpaFile: z.string().describe("Filename of .gpa file (e.g., 'Flussogramma_tpb.gpa') or full path"),
-    outputFile: z.string().optional().describe("Output PNG filename (default: {gpaName}_export.png)"),
-    paperFormat: z.enum(['A5', 'A5_portrait', 'A4', 'A4_portrait', 'A3', 'A3_portrait', 'custom']).optional().describe("Paper format for export. A4=210×297mm landscape (1240×1754px@150dpi), A4_portrait=297×210mm. Overrides width parameter. Default: custom (use width)"),
-    width: z.number().optional().describe("Image width in pixels (default: 1920). Ignored if paperFormat specified (except 'custom')"),
-    dpi: z.number().optional().describe("Resolution in DPI (default: 150). Higher DPI = larger file. 96=screen, 150=print, 300=high quality"),
-    quality: z.number().optional().describe("JPEG quality 0-100 (default: 95, only for .jpg)")
+    outputFile: z.string().optional().describe("Output filename (default: {gpaName}_export.png or .svg)"),
+    format: z.enum(['png', 'jpg', 'svg']).optional().describe("Export format: png (default, raster), jpg (raster, smaller), svg (vector, scalable, requires GUI). SVG is resolution-independent and editable in Illustrator/Inkscape."),
+    paperFormat: z.enum(['A5', 'A5_portrait', 'A4', 'A4_portrait', 'A3', 'A3_portrait', 'custom']).optional().describe("Paper format for export. A4=210×297mm landscape (1240×1754px@150dpi), A4_portrait=297×210mm. Overrides width parameter. Only for raster formats (png/jpg). Default: custom (use width)"),
+    width: z.number().optional().describe("Image width in pixels (default: 1920). For raster formats only. Ignored if paperFormat specified (except 'custom')"),
+    dpi: z.number().optional().describe("Resolution in DPI (default: 150). For raster formats only. Higher DPI = larger file. 96=screen, 150=print, 300=high quality"),
+    quality: z.number().optional().describe("JPEG quality 0-100 (default: 95, only for .jpg)"),
+    svgNonScalingStroke: z.boolean().optional().describe("For SVG only: keep line widths constant when scaling (default: true)")
   },
-  async ({ projectId, gpaFile, outputFile, paperFormat, width, dpi, quality }) => {
+  async ({ projectId, gpaFile, outputFile, format, paperFormat, width, dpi, quality, svgNonScalingStroke }) => {
     try {
+      const exportFormat = format || 'png';
       const imageWidth = width || 1920;
       const imageDpi = dpi || 150;
       const imageQuality = quality || 95;
       const usePaperFormat = paperFormat || 'custom';
+      const svgNonScaling = svgNonScalingStroke !== undefined ? svgNonScalingStroke : true;
 
       const pythonCode = `
 import os
@@ -1375,47 +1379,31 @@ try:
         aspect_ratio = height_net / width_net if width_net > 0 else 1.0
         result['aspect_ratio'] = round(aspect_ratio, 3)
         
-        # Determine image dimensions
-        paper_format = '${usePaperFormat}'
+        # Determine export format
+        export_format = '${exportFormat}'.lower()
+        result['format'] = export_format
         
-        if paper_format != 'custom':
-            # Use paper format
-            width_px, height_px = calculate_pixels_from_paper(paper_format, ${imageDpi})
-            if width_px is None:
-                result['error'] = f'Invalid paper format: {paper_format}'
-                result['status'] = 'INVALID_PAPER_FORMAT'
-            else:
-                result['paper_format'] = paper_format
-                paper_width_mm, paper_height_mm = PAPER_FORMATS[paper_format]
-                result['paper_size_mm'] = f'{paper_width_mm}×{paper_height_mm}mm'
-        else:
-            # Use custom width, calculate height from aspect ratio
-            width_px = ${imageWidth}
-            height_px = int(width_px * aspect_ratio)
-            result['paper_format'] = 'custom'
+        # Determine output filename
+        ${outputFile ? `output_file = r'${outputFile.replace(/\\/g, '\\\\')}'` : `
+        gpa_basename = os.path.splitext(os.path.basename(gpa_path))[0]
+        default_ext = 'svg' if export_format == 'svg' else 'png'
+        output_file = os.path.join(project_dir, f'{gpa_basename}_export.{default_ext}')`}
         
-        if result.get('status') != 'INVALID_PAPER_FORMAT':
-            result['width_px'] = width_px
-            result['height_px'] = height_px
+        if not os.path.isabs(output_file):
+            output_file = os.path.join(project_dir, output_file)
+        
+        if export_format == 'svg':
+            # SVG EXPORT (vector format)
+            result['format_type'] = 'vector'
             
-            # Determine output filename
-            ${outputFile ? `output_file = r'${outputFile.replace(/\\/g, '\\\\')}'` : `
-            gpa_basename = os.path.splitext(os.path.basename(gpa_path))[0]
-            output_file = os.path.join(project_dir, f'{gpa_basename}_export.png')`}
+            # Set the view window to PrintArea bounds
+            visum.Graphic.SetWindow(left, bottom, right, top)
             
-            if not os.path.isabs(output_file):
-                output_file = os.path.join(project_dir, output_file)
-            
-            # Export network image
-            visum.Graphic.ExportNetworkImageFile(
+            # Export SVG
+            visum.Graphic.WriteSVG(
                 output_file,
-                left,
-                bottom,
-                right,
-                top,
-                width_px,
-                ${imageDpi},
-                ${imageQuality}
+                UseNonScalingStroke=${svgNonScaling},
+                CopyPictures=False
             )
             
             # Verify export
@@ -1424,10 +1412,60 @@ try:
                 result['output_file'] = output_file
                 result['size_kb'] = round(os.path.getsize(output_file) / 1024, 2)
                 result['size_mb'] = round(os.path.getsize(output_file) / (1024 * 1024), 2)
-                result['dpi'] = ${imageDpi}
+                result['scalable'] = True
             else:
-                result['error'] = 'Image file was not created'
+                result['error'] = 'SVG file was not created'
                 result['status'] = 'EXPORT_FAILED'
+        
+        else:
+            # RASTER EXPORT (PNG/JPG)
+            result['format_type'] = 'raster'
+            
+            # Determine image dimensions
+            paper_format = '${usePaperFormat}'
+            
+            if paper_format != 'custom':
+                # Use paper format
+                width_px, height_px = calculate_pixels_from_paper(paper_format, ${imageDpi})
+                if width_px is None:
+                    result['error'] = f'Invalid paper format: {paper_format}'
+                    result['status'] = 'INVALID_PAPER_FORMAT'
+                else:
+                    result['paper_format'] = paper_format
+                    paper_width_mm, paper_height_mm = PAPER_FORMATS[paper_format]
+                    result['paper_size_mm'] = f'{paper_width_mm}×{paper_height_mm}mm'
+            else:
+                # Use custom width, calculate height from aspect ratio
+                width_px = ${imageWidth}
+                height_px = int(width_px * aspect_ratio)
+                result['paper_format'] = 'custom'
+            
+            if result.get('status') != 'INVALID_PAPER_FORMAT':
+                result['width_px'] = width_px
+                result['height_px'] = height_px
+                
+                # Export network image
+                visum.Graphic.ExportNetworkImageFile(
+                    output_file,
+                    left,
+                    bottom,
+                    right,
+                    top,
+                    width_px,
+                    ${imageDpi},
+                    ${imageQuality}
+                )
+                
+                # Verify export
+                if os.path.exists(output_file):
+                    result['success'] = True
+                    result['output_file'] = output_file
+                    result['size_kb'] = round(os.path.getsize(output_file) / 1024, 2)
+                    result['size_mb'] = round(os.path.getsize(output_file) / (1024 * 1024), 2)
+                    result['dpi'] = ${imageDpi}
+                else:
+                    result['error'] = 'Image file was not created'
+                    result['status'] = 'EXPORT_FAILED'
         
         result['status'] = result.get('status', 'SUCCESS')
         
@@ -1491,21 +1529,38 @@ result
       output += `   - Right: ${result.bounds?.right?.toFixed(6)}\n`;
       output += `   - Top: ${result.bounds?.top?.toFixed(6)}\n\n`;
       
-      output += `🖼️ **Immagine generata:**\n`;
-      output += `   - File: \`${path.basename(result.output_file)}\`\n`;
-      output += `   - Percorso: ${result.output_file}\n`;
-      
-      if (result.paper_format !== 'custom') {
-        output += `   - 📄 Formato carta: **${result.paper_format}** (${result.paper_size_mm})\n`;
-      }
-      
-      output += `   - Dimensioni: ${result.width_px} × ${result.height_px} px\n`;
-      output += `   - Aspect ratio: ${result.aspect_ratio}\n`;
-      output += `   - Risoluzione: ${result.dpi} DPI\n`;
-      output += `   - Dimensione file: ${result.size_kb} KB (${result.size_mb} MB)\n`;
-      
-      if (result.paper_format !== 'custom') {
-        output += `\n💡 L'immagine è ottimizzata per stampa su formato **${result.paper_format}** a ${result.dpi} DPI`;
+      if (result.format === 'svg') {
+        // SVG format
+        output += `🎨 **Immagine vettoriale generata:**\n`;
+        output += `   - File: \`${path.basename(result.output_file)}\`\n`;
+        output += `   - Percorso: ${result.output_file}\n`;
+        output += `   - Formato: **SVG** (vettoriale, scalabile)\n`;
+        output += `   - Aspect ratio: ${result.aspect_ratio}\n`;
+        output += `   - Dimensione file: ${result.size_kb} KB (${result.size_mb} MB)\n`;
+        output += `\n✨ **Vantaggi SVG:**\n`;
+        output += `   - Scalabile senza perdita di qualità\n`;
+        output += `   - Modificabile in Illustrator/Inkscape\n`;
+        output += `   - Convertibile in PDF con strumenti esterni\n`;
+        output += `   - File più piccolo rispetto a PNG ad alta risoluzione`;
+      } else {
+        // Raster format (PNG/JPG)
+        output += `🖼️ **Immagine raster generata:**\n`;
+        output += `   - File: \`${path.basename(result.output_file)}\`\n`;
+        output += `   - Percorso: ${result.output_file}\n`;
+        output += `   - Formato: **${result.format?.toUpperCase()}** (raster)\n`;
+        
+        if (result.paper_format !== 'custom') {
+          output += `   - 📄 Formato carta: **${result.paper_format}** (${result.paper_size_mm})\n`;
+        }
+        
+        output += `   - Dimensioni: ${result.width_px} × ${result.height_px} px\n`;
+        output += `   - Aspect ratio: ${result.aspect_ratio}\n`;
+        output += `   - Risoluzione: ${result.dpi} DPI\n`;
+        output += `   - Dimensione file: ${result.size_kb} KB (${result.size_mb} MB)\n`;
+        
+        if (result.paper_format !== 'custom') {
+          output += `\n💡 L'immagine è ottimizzata per stampa su formato **${result.paper_format}** a ${result.dpi} DPI`;
+        }
       }
       
       return {
@@ -3776,6 +3831,191 @@ except Exception as e:
               text: `❌ **Errore Configurazione DSEGSET**\n\n${result.result?.error || result.error}\n\n` +
                     (result.result?.traceback ? `**Traceback:**\n\`\`\`\n${result.result.traceback}\n\`\`\`\n\n` : '') +
                     `💡 Verifica che la procedura alla posizione ${procedurePosition} sia un PrT Assignment (tipo 101)`
+            }
+          ]
+        };
+      }
+      
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ **Errore:** ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
+// Check Assignment Tool - Verifica se un'assegnazione è stata eseguita
+server.tool(
+  "visum_check_assignment",
+  "🔍 Verify if a PrT assignment has been executed successfully. Checks for volume data on links. Returns total volume, number of links with traffic, and confirms assignment completion.",
+  {
+    projectId: z.string().describe("Project ID of the active Visum project"),
+    analysisPeriod: z.string().optional().default("AP").describe("Analysis period code (default: 'AP')")
+  },
+  async ({ projectId, analysisPeriod = "AP" }) => {
+    try {
+      const pythonCode = `
+try:
+    import sys
+    
+    # Check if network has links
+    links = visum.Net.Links
+    link_count = links.Count
+    
+    if link_count == 0:
+        result = {
+            "status": "no_data",
+            "exists": False,
+            "reason": "No links in network",
+            "link_count": 0
+        }
+    else:
+        # Try to get VolVehPrT attribute
+        attr_name = f"VolVehPrT(${analysisPeriod})"
+        
+        try:
+            # Use GetMultiAttValues to get all volumes at once
+            volumes_data = links.GetMultiAttValues(attr_name)
+            
+            # volumes_data is a tuple: (keys, values)
+            # keys = list of tuples (FromNode, ToNode)
+            # values = list of volume values
+            
+            if len(volumes_data) >= 2 and len(volumes_data[1]) > 0:
+                volumes = volumes_data[1]
+                
+                # Calculate statistics
+                total_volume = sum(volumes)
+                links_with_traffic = sum(1 for v in volumes if v > 0)
+                max_volume = max(volumes) if volumes else 0
+                avg_volume = total_volume / len(volumes) if len(volumes) > 0 else 0
+                
+                # Find congested links (V/C > 0.9)
+                try:
+                    vc_ratios = links.GetMultiAttValues(f"VolCapRatioPrT(${analysisPeriod})")
+                    if len(vc_ratios) >= 2:
+                        congested_links = sum(1 for vc in vc_ratios[1] if vc > 0.9)
+                    else:
+                        congested_links = None
+                except:
+                    congested_links = None
+                
+                result = {
+                    "status": "success",
+                    "exists": True,
+                    "analysis_period": "${analysisPeriod}",
+                    "total_links": len(volumes),
+                    "links_with_traffic": links_with_traffic,
+                    "total_volume": round(total_volume, 2),
+                    "max_volume": round(max_volume, 2),
+                    "avg_volume": round(avg_volume, 2),
+                    "congested_links": congested_links,
+                    "message": f"Assignment found with traffic on {links_with_traffic}/{len(volumes)} links"
+                }
+            else:
+                result = {
+                    "status": "no_data",
+                    "exists": False,
+                    "reason": "Attribute exists but no data returned",
+                    "link_count": link_count
+                }
+                
+        except Exception as attr_error:
+            # Attribute doesn't exist = no assignment executed
+            result = {
+                "status": "not_executed",
+                "exists": False,
+                "reason": f"Attribute {attr_name} not found - assignment not executed",
+                "link_count": link_count,
+                "error_detail": str(attr_error)
+            }
+    
+except Exception as e:
+    import traceback
+    result = {
+        "status": "error",
+        "exists": False,
+        "error": str(e),
+        "traceback": traceback.format_exc()
+    }
+`;
+
+      const result = await serverManager.executeCommand(projectId, pythonCode, "Check PrT Assignment");
+      
+      if (result.success && result.result) {
+        const res = result.result;
+        
+        if (res.status === 'success' && res.exists) {
+          // Assignment exists with data
+          const congestionInfo = res.congested_links !== null ? 
+            `\n**Archi congestionati (V/C > 0.9):** ${res.congested_links}` : '';
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: `✅ **Assegnazione PrT Trovata**\n\n` +
+                      `**Periodo di analisi:** ${res.analysis_period}\n` +
+                      `**Archi totali:** ${res.total_links}\n` +
+                      `**Archi con traffico:** ${res.links_with_traffic} (${(res.links_with_traffic / res.total_links * 100).toFixed(1)}%)\n\n` +
+                      `**Statistiche Volume:**\n` +
+                      `• Volume totale: ${res.total_volume.toLocaleString()} veicoli\n` +
+                      `• Volume massimo: ${res.max_volume.toLocaleString()}\n` +
+                      `• Volume medio: ${res.avg_volume.toFixed(2)}${congestionInfo}\n\n` +
+                      `✅ ${res.message}\n\n` +
+                      `⏱️ **Tempo verifica:** ${result.executionTimeMs}ms`
+              }
+            ]
+          };
+        } else if (res.status === 'not_executed') {
+          // Assignment not executed yet
+          return {
+            content: [
+              {
+                type: "text",
+                text: `⚠️ **Assegnazione PrT Non Trovata**\n\n` +
+                      `**Motivo:** ${res.reason}\n` +
+                      `**Archi nella rete:** ${res.link_count}\n\n` +
+                      `💡 **L'assegnazione non è stata ancora eseguita.**\n\n` +
+                      `**Per eseguire l'assegnazione:**\n` +
+                      `1. Crea procedura PrT con \`visum_create_procedure\`\n` +
+                      `2. Configura segments con \`visum_configure_dsegset\`\n` +
+                      `3. Esegui la procedura in Visum\n\n` +
+                      `⏱️ **Tempo verifica:** ${result.executionTimeMs}ms`
+              }
+            ]
+          };
+        } else {
+          // No data or other status
+          return {
+            content: [
+              {
+                type: "text",
+                text: `⚠️ **Stato Assegnazione PrT**\n\n` +
+                      `**Status:** ${res.status}\n` +
+                      `**Motivo:** ${res.reason || 'Non specificato'}\n` +
+                      `**Archi nella rete:** ${res.link_count || 'N/A'}\n\n` +
+                      `⏱️ **Tempo verifica:** ${result.executionTimeMs}ms`
+              }
+            ]
+          };
+        }
+      } else {
+        // Execution error
+        const errorInfo = result.result || {};
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Errore Verifica Assegnazione**\n\n` +
+                    `${errorInfo.error || result.error}\n\n` +
+                    (errorInfo.traceback ? `**Traceback:**\n\`\`\`\n${errorInfo.traceback}\n\`\`\`\n\n` : '') +
+                    `💡 Verifica che il progetto sia aperto e connesso.`
             }
           ]
         };
