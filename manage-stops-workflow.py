@@ -1,8 +1,54 @@
-# -*- coding: ascii -*-
+# -*- coding: utf-8 -*-
 """
 Sistema di gestione workflow per abilitazione/disabilitazione fermate
 Esegue task sequenziali su un set di linee con parametri configurabili
 """
+
+import sys
+import os
+from datetime import datetime
+
+# ============================================================================
+# CONFIGURAZIONE LOG
+# ============================================================================
+
+# Abilita log su file (utile quando eseguito da Procedure Sequence)
+ENABLE_FILE_LOG = True
+LOG_DIR = r"H:\go\trenord_2025\logs"
+LOG_FILE = None
+
+if ENABLE_FILE_LOG:
+    # Crea directory log se non esiste
+    if not os.path.exists(LOG_DIR):
+        os.makedirs(LOG_DIR)
+    
+    # Nome file log con timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    LOG_FILE = os.path.join(LOG_DIR, "workflow_%s.log" % timestamp)
+    
+    # Apri file log
+    log_file_handle = open(LOG_FILE, "w", encoding="utf-8")
+    
+    # Classe per scrivere sia su console che su file
+    class TeeOutput:
+        def __init__(self, *files):
+            self.files = files
+        def write(self, text):
+            for f in self.files:
+                f.write(text)
+                f.flush()
+        def flush(self):
+            for f in self.files:
+                f.flush()
+    
+    # Reindirizza stdout
+    original_stdout = sys.stdout
+    sys.stdout = TeeOutput(original_stdout, log_file_handle)
+    
+    print("=" * 80)
+    print("LOG ABILITATO: %s" % LOG_FILE)
+    print("=" * 80)
+    print()
 
 # ============================================================================
 # CONFIGURAZIONE GLOBALE
@@ -194,7 +240,7 @@ def abilita_fermata(tp, stops, stop_no, stop_time, pre_run_add=0, post_run_add=0
                 print("      TimeProfileItem trovato, aggiorno i tempi...")
                 new_tpi = existing_tpi
             else:
-                print("      ERRORE: Non riesco a trovare il TimeProfileItem!")
+                print("      ERRORE: Non trovo il TimeProfileItem!")
                 return False
         else:
             print("      ERRORE: %s" % error_msg)
@@ -341,17 +387,7 @@ def task_enable_all_disabled(lineroutes, params):
         
         print("  TimeProfiles trovati: %d" % len(tp_list))
         
-        # Usa il primo TimeProfile (o modifica qui per scegliere)
-        tp = tp_list[0]
-        tp_name = tp.AttValue("Name")
-        print("  Uso TimeProfile: %s" % tp_name)
-        
-        if len(tp_list) > 1:
-            print("  NOTA: Ci sono %d TimeProfiles, uso solo il primo!" % len(tp_list))
-            for i, t in enumerate(tp_list):
-                print("    [%d] %s" % (i, t.AttValue("Name")))
-        
-        # Ottieni sequenza fermate
+        # Ottieni sequenza fermate (comune a tutti i TimeProfiles)
         stops = get_lr_stop_sequence(target_lr.LineRouteItems)
         
         # Trova fermate disabilitate (escludendo prima e ultima)
@@ -369,40 +405,47 @@ def task_enable_all_disabled(lineroutes, params):
         for s in disabled_stops:
             print("    - Fermata %d (Index %d)" % (s['stop'], s['index']))
         
-        print("\n  Abilitazione in sequenza temporale...")
-        
-        # Abilita in sequenza (le fermate sono gia' ordinate per index)
-        enabled_count = 0
-        error_count = 0
-        
-        for disabled in disabled_stops:
-            print("\n  Processando fermata %d..." % disabled['stop'])
+        # PROCESSA TUTTI I TimeProfiles
+        for tp_idx, tp in enumerate(tp_list):
+            tp_name = tp.AttValue("Name")
+            print("\n  " + "~" * 70)
+            print("  TimeProfile [%d/%d]: %s" % (tp_idx + 1, len(tp_list), tp_name))
+            print("  " + "~" * 70)
             
-            # Rileggi sequenza aggiornata dopo ogni abilitazione
-            stops = get_lr_stop_sequence(target_lr.LineRouteItems)
+            print("\n  Abilitazione in sequenza temporale...")
             
-            # Debug: verifica stato attuale
-            current_state = None
-            for s in stops:
-                if s['stop'] == disabled['stop']:
-                    current_state = s['is_route']
-                    break
-            print("    Stato IsRoutePoint attuale: %s" % current_state)
+            # Abilita in sequenza (le fermate sono gia' ordinate per index)
+            enabled_count = 0
+            error_count = 0
             
-            success = abilita_fermata(tp, stops, disabled['stop'], 
-                                     stop_time, pre_run_add, post_run_add)
+            for disabled in disabled_stops:
+                print("\n    Processando fermata %d..." % disabled['stop'])
+                
+                # Rileggi sequenza aggiornata dopo ogni abilitazione
+                stops = get_lr_stop_sequence(target_lr.LineRouteItems)
+                
+                # Debug: verifica stato attuale
+                current_state = None
+                for s in stops:
+                    if s['stop'] == disabled['stop']:
+                        current_state = s['is_route']
+                        break
+                print("      Stato IsRoutePoint attuale: %s" % current_state)
+                
+                success = abilita_fermata(tp, stops, disabled['stop'], 
+                                         stop_time, pre_run_add, post_run_add)
+                
+                if success:
+                    enabled_count += 1
+                else:
+                    error_count += 1
             
-            if success:
-                enabled_count += 1
-            else:
-                error_count += 1
-        
-        print("\n  Risultato LineRoute %s:" % lr_name)
-        print("    Abilitate: %d" % enabled_count)
-        print("    Errori:    %d" % error_count)
-        
-        total_enabled += enabled_count
-        total_errors += error_count
+            print("\n  Risultato TimeProfile %s:" % tp_name)
+            print("    Abilitate: %d" % enabled_count)
+            print("    Errori:    %d" % error_count)
+            
+            total_enabled += enabled_count
+            total_errors += error_count
     
     # Riepilogo finale
     print("\n" + "=" * 80)
@@ -487,3 +530,12 @@ except Exception as e:
     print("\nERRORE WORKFLOW: %s" % str(e))
     import traceback
     traceback.print_exc()
+
+finally:
+    # Chiudi file log se aperto
+    if ENABLE_FILE_LOG and LOG_FILE:
+        print("\n" + "=" * 80)
+        print("LOG SALVATO: %s" % LOG_FILE)
+        print("=" * 80)
+        sys.stdout = original_stdout  # Ripristina stdout originale
+        log_file_handle.close()
