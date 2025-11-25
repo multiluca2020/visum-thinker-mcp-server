@@ -36,6 +36,9 @@ Guida completa alla navigazione della documentazione del server MCP per Visum.
 | **[WORKFLOW_PRT_ASSIGNMENT.md](WORKFLOW_PRT_ASSIGNMENT.md)** | Workflow step-by-step con JSON | Intermedio |
 | **[LIST_PRT_SEGMENTS_GUIDE.md](LIST_PRT_SEGMENTS_GUIDE.md)** | Guida listing demand segments | Base |
 | **[VISUM_CHECK_ASSIGNMENT_GUIDE.md](VISUM_CHECK_ASSIGNMENT_GUIDE.md)** | Verifica esecuzione assegnazioni PrT | Base |
+| **[EXPORT_TABLES_GUIDE.md](EXPORT_TABLES_GUIDE.md)** | Export tabelle da Global Layout a CSV | Intermedio |
+| **[STOP_CONFIGURATIONS_GUIDE.md](STOP_CONFIGURATIONS_GUIDE.md)** | Generazione configurazioni fermate | Avanzato |
+| **[TEST_SCRIPTS_README.md](TEST_SCRIPTS_README.md)** | Guida test scripts in Visum Console | Base |
 
 ### 📝 Note di Sessione
 
