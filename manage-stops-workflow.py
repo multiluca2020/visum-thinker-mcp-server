@@ -137,12 +137,68 @@ TASKS = [
          "name": "Test tutte le configurazioni fermate",
          "action": "test_all_configurations",
          "params": {
-             "lineroutes": ["R17_2022:R17_2"     # LineRoute R17_2 della linea R17_2022 (ID: 121097.0)
+             "lineroutes": ["R17_2022:R17_2", "R17_2022:R17_3",
+    "R17_2022:R17_4",
+    "R17_2022:R17_5",
+    "RE7_2022:RE_7",
+    "RE7_2022:RE_7_1",
+    "RE7_2022:RE_7_2",
+    "RE7_2022:RE_7_3"    # LineRoute R17_2 della linea R17_2022 (ID: 121097.0)
                              ],
              "layout_file": r"H:\go\trenord_2025\skim_layout.lay",
              "output_dir": r"H:\go\trenord_2025\config_tests",
-             "max_configs": 1,      # Limita per test rapido
-             "random_sample": True
+             "max_configs": None,#1,      # Limita per test rapido
+             "random_sample": False,
+             
+             # PARALLEL SLICING - Distribuisci configurazioni tra processi paralleli
+             # Esempio: 3 processi -> slice_total=3, slice_index=0/1/2 per ogni processo
+             "slice_index": 2,#None,   # Indice slice corrente (0-based): 0, 1, 2, ...
+             "slice_total": 3,#None,   # Numero totale slice: 2, 3, 4, ...
+             
+             # CONFIGURAZIONE DI PARTENZA - Stato iniziale prima di testare configurazioni
+             # None = tutte abilitate (default), oppure dict con configurazione specifica
+            # "initial_config":  {"enabled_stops": [270,419,91,311,301,369,418,46,149,327,371,372,203,204,328]}, # None,  # Esempio: {"enabled_stops": [328, 372, 327]} o "all_disabled"
+            # "initial_config":  {"enabled_stops": [329,328,204,203,372,371,327,149,46,418,369,301,270]}, # None,  # Esempio: {"enabled_stops": [328, 372, 327]} o "all_disabled"
+             "initial_config": {
+                "enabled_stops": [
+                    329,   # COMO LAGO (prima - sempre ON)
+                    328,   # COMO BORGHI
+                    204,   # COMO CAMERLATA
+                    372,   # PORTICHETTO-LUISAGO
+                    46,    # LOMAZZO
+                    301,   # SARONNO
+                    173,   # MILANO BOVISA POLITECNICO
+                    419,   # MILANO DOMODOSSOLA
+                    270    # MILANO CADORNA (ultima - sempre ON)
+                ]
+            },
+             # FERMATE FISSE (LOCKED) - Non partecipano alle permutazioni
+             # Formato: dict con StopNo come chiave, valore True=forzata ON, False=forzata OFF
+             # Esempio: {328: True, 372: False} = fermata 328 sempre ON, 372 sempre OFF
+            # "locked_stops": {
+            #        328: False, 204: False, 203: False, 372: False, 371: False,
+            #        327: False, 149: False, 46: False, 418: False, 369: False,
+            #        301: False, 370: False, 76: False, 18: False, 311: False,
+            #        115: False, 122: False, 91: False, 138: False, 118: False,
+            #        173: False, 419: False
+            #    }
+             "locked_stops": {
+                203: False,  # GRANDATE-BRECCIA - fissa OFF
+                371: False,  # FINO MORNASCO - fissa OFF
+                327: False,  # CADORAGO - fissa OFF
+                149: False,  # CASLINO AL PIANO - fissa OFF
+                418: False,  # ROVELLASCA-MANERA - fissa OFF
+                369: False,  # ROVELLO PORRO - fissa OFF
+                370: False,  # SARONNO SUD - fissa OFF
+                76: False,   # CARONNO PERTUSELLA - fissa OFF
+                18: False,   # CESATE - fissa OFF
+                311: False,  # GARBAGNATE MILANESE - fissa OFF
+                115: False,  # GARBAGNATE PARCO DELLE GROANE - fissa OFF
+                122: False,  # BOLLATE NORD - fissa OFF
+                91: False,   # BOLLATE CENTRO - fissa OFF
+                138: False,  # NOVATE MILANESE - fissa OFF
+                118: False   # MILANO QUARTO OGGIARO - fissa OFF
+            }
          }
      }
  ]
@@ -154,25 +210,31 @@ TASKS = [
 
 def verify_and_get_common_stops(lineroutes):
     """
-    Verifica che tutte le linee in TARGET_LINEROUTES abbiano le stesse fermate
-    nella stessa sequenza. Ritorna la lista comune di fermate se verificato.
+    Trova la LineRoute con più fermate (MASTER) e verifica che le altre
+    siano sottoinsieme del master. Gestisce il caso in cui alcune fermate
+    del master non sono presenti in tutte le linee.
+    
+    Strategia:
+    1. Trova LineRoute con maggior numero di fermate → MASTER
+    2. Verifica che fermate di altre linee siano sottoinsieme del MASTER
+    3. Ritorna lista fermate del MASTER + info su quali linee hanno quali fermate
     
     Parametri:
         lineroutes: Lista di "LineName:LineRouteName" strings
     
     Returns:
         dict con:
-            'valid': bool - True se tutte le linee hanno stesse fermate
-            'stops': list - Lista fermate comuni (se valid=True)
+            'valid': bool - True se verifica OK
+            'stops': list - Lista fermate del MASTER
+            'master_lr': str - Nome della LineRoute master
+            'stop_coverage': dict - {stop_no: [lista lineroutes che hanno quella fermata]}
             'errors': list - Lista errori (se valid=False)
     """
     print("\n" + "=" * 80)
-    print("VERIFICA CONSISTENZA FERMATE")
+    print("VERIFICA CONSISTENZA FERMATE - STRATEGIA MASTER")
     print("=" * 80)
     print()
     
-    reference_stops = None
-    reference_lr_name = None
     all_stops_data = []
     errors = []
     
@@ -244,18 +306,13 @@ def verify_and_get_common_stops(lineroutes):
         
         all_stops_data.append({
             'lr_spec': lr_spec,
-            'stops': stop_info
+            'stops': stop_info,
+            'stop_count': len(stop_info)
         })
-        
-        # Usa prima LineRoute come riferimento
-        if reference_stops is None:
-            reference_stops = stop_info
-            reference_lr_name = lr_spec
-            print("  -> Usato come riferimento")
     
     if errors:
         print("\n" + "=" * 80)
-        print("VERIFICA FALLITA - ERRORI TROVATI")
+        print("VERIFICA FALLITA - ERRORI RACCOLTA DATI")
         print("=" * 80)
         for err in errors:
             print("  - %s" % err)
@@ -265,82 +322,133 @@ def verify_and_get_common_stops(lineroutes):
             'errors': errors
         }
     
-    # Confronta tutte le LineRoutes con il riferimento
+    # STEP 1: Trova LineRoute MASTER (con più fermate)
     print("\n" + "-" * 80)
-    print("CONFRONTO CON RIFERIMENTO: %s" % reference_lr_name)
+    print("STEP 1: RICERCA LINEROUTE MASTER (con più fermate)")
+    print("-" * 80)
+    print()
+    
+    master_data = max(all_stops_data, key=lambda x: x['stop_count'])
+    master_lr_name = master_data['lr_spec']
+    master_stops = master_data['stops']
+    master_stop_set = set(s['no'] for s in master_stops)
+    
+    print("✓ MASTER: %s" % master_lr_name)
+    print("  Fermate: %d" % len(master_stops))
+    print()
+    
+    # STEP 2: Verifica che altre LineRoutes siano sottoinsieme del master
+    print("\n" + "-" * 80)
+    print("STEP 2: VERIFICA SOTTOINSIEME")
     print("-" * 80)
     
-    all_consistent = True
+    all_valid = True
+    stop_coverage = {}  # {stop_no: [lista lr_spec che hanno quella fermata]}
+    
+    # Inizializza coverage con tutte le fermate del master
+    for s in master_stops:
+        stop_coverage[s['no']] = [master_lr_name]
     
     for data in all_stops_data:
-        if data['lr_spec'] == reference_lr_name:
-            continue  # Skip riferimento
+        if data['lr_spec'] == master_lr_name:
+            continue  # Skip master
         
         print("\nConfronto %s:" % data['lr_spec'])
+        print("  Fermate: %d" % len(data['stops']))
         
-        # Verifica numero fermate
-        if len(data['stops']) != len(reference_stops):
-            msg = "%s ha %d fermate, riferimento ha %d" % (
-                data['lr_spec'], len(data['stops']), len(reference_stops))
+        current_stop_set = set(s['no'] for s in data['stops'])
+        
+        # Verifica che sia sottoinsieme del master
+        extra_stops = current_stop_set - master_stop_set
+        
+        if extra_stops:
+            # Ha fermate NON presenti nel master → ERRORE
+            msg = "%s: ha fermate NON presenti nel master" % data['lr_spec']
             print("  ERRORE: %s" % msg)
+            print("    Fermate extra (non nel master):")
+            for stop_no in sorted(extra_stops)[:5]:
+                curr_name = next((s['name'] for s in data['stops'] if s['no'] == stop_no), "?")
+                print("      - StopNo %d (%s)" % (stop_no, curr_name))
+            if len(extra_stops) > 5:
+                print("      ... (altre %d)" % (len(extra_stops) - 5))
             errors.append(msg)
-            all_consistent = False
-            continue
-        
-        # Verifica sequenza e nomi
-        mismatches = []
-        for i, (ref, curr) in enumerate(zip(reference_stops, data['stops'])):
-            if ref['no'] != curr['no']:
-                mismatches.append("Pos %d: StopNo %d vs %d" % (i, ref['no'], curr['no']))
-            elif ref['name'] != curr['name']:
-                mismatches.append("Pos %d: Nome '%s' vs '%s'" % (i, ref['name'], curr['name']))
-        
-        if mismatches:
-            msg = "%s: fermate diverse" % data['lr_spec']
-            print("  ERRORE: %s" % msg)
-            for mm in mismatches[:5]:
-                print("    - %s" % mm)
-            if len(mismatches) > 5:
-                print("    ... (altre %d differenze)" % (len(mismatches) - 5))
-            errors.append(msg)
-            all_consistent = False
+            all_valid = False
         else:
-            print("  OK: Sequenza identica")
+            # OK: è sottoinsieme
+            missing_from_current = master_stop_set - current_stop_set
+            
+            if missing_from_current:
+                print("  OK: Sottoinsieme del master (%d fermate in meno)" % len(missing_from_current))
+                print("    Fermate master NON presenti in questa linea:")
+                for stop_no in sorted(missing_from_current)[:3]:
+                    master_name = next((s['name'] for s in master_stops if s['no'] == stop_no), "?")
+                    print("      - StopNo %d (%s)" % (stop_no, master_name))
+                if len(missing_from_current) > 3:
+                    print("      ... (altre %d)" % (len(missing_from_current) - 3))
+            else:
+                print("  OK: Stesse fermate del master")
+            
+            # Aggiorna coverage
+            for s in data['stops']:
+                stop_coverage[s['no']].append(data['lr_spec'])
     
+    # STEP 3: Riepilogo finale
     print("\n" + "=" * 80)
-    if all_consistent:
-        print("VERIFICA COMPLETATA: TUTTE LE LINEE HANNO STESSE FERMATE")
+    if all_valid:
+        print("VERIFICA COMPLETATA: STRATEGIA MASTER OK")
         print("=" * 80)
-        print("\nFermate comuni: %d" % len(reference_stops))
-        for i, s in enumerate(reference_stops):
-            marker = "[FISSA]" if i == 0 or i == len(reference_stops) - 1 else "[VAR] "
-            print("  %s %d. %s (StopNo: %d)" % (marker, i + 1, s['name'], s['no']))
+        print()
+        print("✓ MASTER: %s" % master_lr_name)
+        print("  Fermate master: %d" % len(master_stops))
+        print()
+        print("Fermate master (sequenza):")
+        for i, s in enumerate(master_stops):
+            marker = "[FISSA]" if i == 0 or i == len(master_stops) - 1 else "[VAR] "
+            
+            # Mostra coverage (in quante linee è presente)
+            coverage_count = len(stop_coverage[s['no']])
+            total_lines = len(all_stops_data)
+            
+            if coverage_count == total_lines:
+                coverage_str = "presente in TUTTE le linee"
+            else:
+                coverage_str = "presente in %d/%d linee" % (coverage_count, total_lines)
+            
+            print("  %s %d. %s (StopNo: %d) - %s" % (marker, i + 1, s['name'], s['no'], coverage_str))
+        
+        print()
+        print("NOTA: Le configurazioni useranno la sequenza del MASTER.")
+        print("      Fermate non presenti in alcune linee saranno skippate per quelle linee.")
         print()
         
         return {
             'valid': True,
-            'stops': reference_stops,
+            'stops': master_stops,
+            'master_lr': master_lr_name,
+            'stop_coverage': stop_coverage,
             'errors': []
         }
     else:
-        print("VERIFICA FALLITA: FERMATE NON CONSISTENTI")
+        print("VERIFICA FALLITA: ALCUNE LINEE NON SONO SOTTOINSIEME DEL MASTER")
         print("=" * 80)
         for err in errors:
             print("  - %s" % err)
         return {
             'valid': False,
             'stops': [],
+            'stop_coverage': {},
             'errors': errors
         }
 
 
-def generate_stop_configurations(stops):
+def generate_stop_configurations(stops, locked_stops=None):
     """
     Genera tutte le possibili combinazioni di fermate abilitate/disabilitate.
     Prima e ultima fermata sono sempre abilitate.
     
     Parametri:
         stops: Lista di dict con 'no', 'name', 'index'
+        locked_stops: Dict {stop_no: bool} - True=forzata ON, False=forzata OFF, None=variabile
     
     Returns:
         list di configurazioni, ogni configurazione e' una lista di stop_no abilitati
@@ -356,20 +464,42 @@ def generate_stop_configurations(stops):
         print("ERRORE: Servono almeno 2 fermate (prima e ultima)")
         return []
     
-    # Fermate fisse (prima e ultima)
+    # Fermate fisse (prima e ultima + locked)
     first_stop = stops[0]['no']
     last_stop = stops[-1]['no']
     
-    # Fermate variabili (tutte le intermedie)
-    variable_stops = [s['no'] for s in stops[1:-1]]
+    locked_stops = locked_stops or {}
     
-    print("Fermate fisse (sempre abilitate):")
+    # Separa fermate in: fisse ON, fisse OFF, variabili
+    locked_on = []   # Fermate forzate ON (oltre prima e ultima)
+    locked_off = []  # Fermate forzate OFF
+    variable_stops = []  # Fermate che partecipano alle permutazioni
+    
+    for s in stops[1:-1]:  # Escludi prima e ultima
+        stop_no = s['no']
+        if stop_no in locked_stops:
+            if locked_stops[stop_no]:
+                locked_on.append(s)
+            else:
+                locked_off.append(s)
+        else:
+            variable_stops.append(s)
+    
+    print("Fermate fisse SEMPRE ON (prima/ultima + locked ON):")
     print("  - Prima: %d (%s)" % (first_stop, stops[0]['name']))
+    for s in locked_on:
+        print("  - Locked ON: %d (%s)" % (s['no'], s['name']))
     print("  - Ultima: %d (%s)" % (last_stop, stops[-1]['name']))
     print()
     
-    print("Fermate variabili: %d" % len(variable_stops))
-    for i, s in enumerate(stops[1:-1]):
+    if locked_off:
+        print("Fermate fisse SEMPRE OFF (locked OFF):")
+        for s in locked_off:
+            print("  - Locked OFF: %d (%s)" % (s['no'], s['name']))
+        print()
+    
+    print("Fermate VARIABILI (partecipano alle permutazioni): %d" % len(variable_stops))
+    for i, s in enumerate(variable_stops):
         print("  %d. %s (StopNo: %d)" % (i + 1, s['name'], s['no']))
     print()
     
@@ -395,11 +525,19 @@ def generate_stop_configurations(stops):
         # Costruisci lista fermate abilitate per questa configurazione
         enabled_stops = [first_stop]  # Prima sempre abilitata
         
+        # Aggiungi locked ON
+        for s in locked_on:
+            enabled_stops.append(s['no'])
+        
+        # Aggiungi variabili in base a combo
         for var_stop, is_enabled in zip(variable_stops, combo):
             if is_enabled:
-                enabled_stops.append(var_stop)
+                enabled_stops.append(var_stop['no'])
         
         enabled_stops.append(last_stop)  # Ultima sempre abilitata
+        
+        # Ordina per mantenere ordine sequenziale (opzionale ma più pulito)
+        enabled_stops.sort()
         
         configurations.append({
             'id': i + 1,
@@ -448,18 +586,20 @@ def generate_stop_configurations(stops):
     return configurations
 
 
-def apply_stop_configuration(lineroutes, enabled_stops, all_stops, stop_time=60, pre_run_add=30, post_run_add=30):
+def apply_stop_configuration(lineroutes, enabled_stops, all_stops, stop_time=60, pre_run_add=30, post_run_add=30, stop_coverage=None):
     """
     Applica una configurazione specifica di fermate abilitate/disabilitate.
     Processa fermate una per volta per garantire corretto aggiornamento tempi.
+    GESTISCE ECCEZIONE: Se una fermata non è presente in una LineRoute, viene skippata.
     
     Parametri:
         lineroutes: Lista "LineName:LineRouteName" 
         enabled_stops: Lista di StopNo che devono essere abilitati
-        all_stops: Lista completa di tutti gli stop (da verify_and_get_common_stops)
+        all_stops: Lista completa di tutti gli stop (da verify_and_get_common_stops - master)
         stop_time: Tempo sosta in secondi
         pre_run_add: Offset PreRunTime
         post_run_add: Offset PostRunTime
+        stop_coverage: Dict {stop_no: [lista lr_spec]} - quali linee hanno quali fermate (opzionale)
     
     Returns:
         dict con risultato applicazione
@@ -471,6 +611,7 @@ def apply_stop_configuration(lineroutes, enabled_stops, all_stops, stop_time=60,
     enabled_set = set(enabled_stops)
     total_enabled = 0
     total_disabled = 0
+    total_skipped = 0  # Fermate non presenti in questa linea
     
     # Per ogni LineRoute
     for lr_spec in lineroutes:
@@ -520,6 +661,15 @@ def apply_stop_configuration(lineroutes, enabled_stops, all_stops, stop_time=60,
                     continue  # Skip prima e ultima (sempre abilitate)
                 
                 stop_no = stop_info['no']
+                
+                # ECCEZIONE: Verifica se questa fermata è presente in questa LineRoute
+                if stop_coverage and stop_no in stop_coverage:
+                    if lr_spec not in stop_coverage[stop_no]:
+                        # Fermata NON presente in questa LineRoute → SKIP
+                        print("    ⊘ Fermata %d: non presente in questa linea (SKIP)" % stop_no)
+                        total_skipped += 1
+                        continue
+                
                 should_be_enabled = stop_no in enabled_set
                 
                 # Rileggi stato corrente
@@ -529,6 +679,12 @@ def apply_stop_configuration(lineroutes, enabled_stops, all_stops, stop_time=60,
                     if s['stop'] == stop_no:
                         current_state = s['is_route']
                         break
+                
+                # Se current_state è None, la fermata non esiste in questa linea
+                if current_state is None:
+                    print("    ⊘ Fermata %d: non trovata in questa linea (SKIP)" % stop_no)
+                    total_skipped += 1
+                    continue
                 
                 if should_be_enabled and not current_state:
                     # Deve essere abilitata ma non lo è
@@ -548,11 +704,13 @@ def apply_stop_configuration(lineroutes, enabled_stops, all_stops, stop_time=60,
     print("Configurazione applicata:")
     print("  Fermate abilitate:   %d" % total_enabled)
     print("  Fermate disabilitate: %d" % total_disabled)
+    print("  Fermate skippate:    %d" % total_skipped)
     print("=" * 80)
     
     return {
         'enabled': total_enabled,
-        'disabled': total_disabled
+        'disabled': total_disabled,
+        'skipped': total_skipped
     }
 
 
@@ -795,8 +953,61 @@ def export_layout_tables(layout_file, output_dir, project_name="export"):
                 # Build CSV
                 print("  Generazione CSV...")
                 lines = [';'.join(headers)]
-                for row_tuple in data:
-                    lines.append(';'.join(str(v) for v in row_tuple))
+                
+                # FILTRO SPECIALE per ODPAIR: usa odpair_list__r7.csv
+                if table_type == 'ODPAIR':
+                    print("  Applicando filtro ODPAIR da odpair_list__r7.csv...")
+                    
+                    # Carica coppie OD valide
+                    odpair_filter_file = r"h:\go\trenord_2025\odpair_list__r7.csv"
+                    valid_pairs = set()
+                    
+                    try:
+                        import csv
+                        with open(odpair_filter_file, 'r', encoding='utf-8') as f:
+                            reader = csv.DictReader(f)
+                            for row in reader:
+                                zona_o = int(row['Zona_o'])
+                                zona_d = int(row['Zona_d'])
+                                valid_pairs.add((zona_o, zona_d))
+                        
+                        print("  Coppie OD valide caricate: %d" % len(valid_pairs))
+                    except Exception as e:
+                        print("  WARNING: Impossibile caricare filtro ODPAIR: %s" % str(e))
+                        print("  Procedo SENZA filtro")
+                        valid_pairs = None
+                    
+                    # Trova indici colonne FROMZONENO e TOZONENO
+                    from_idx = None
+                    to_idx = None
+                    for i, h in enumerate(headers):
+                        if h.upper() == 'FROMZONENO':
+                            from_idx = i
+                        elif h.upper() == 'TOZONENO':
+                            to_idx = i
+                    
+                    if valid_pairs and from_idx is not None and to_idx is not None:
+                        # Applica filtro
+                        filtered_count = 0
+                        for row_tuple in data:
+                            # FROMZONENO e TOZONENO sono float, convertiamo in int
+                            from_zone = int(float(row_tuple[from_idx]))
+                            to_zone = int(float(row_tuple[to_idx]))
+                            
+                            if (from_zone, to_zone) in valid_pairs:
+                                lines.append(';'.join(str(v) for v in row_tuple))
+                                filtered_count += 1
+                        
+                        print("  Righe filtrate: %d/%d (%.1f%%)" % (filtered_count, len(data), 100.0 * filtered_count / len(data) if len(data) > 0 else 0))
+                    else:
+                        # Filtro non applicabile, scrivi tutto
+                        print("  WARNING: Colonne FROMZONENO/TOZONENO non trovate, scrivo tutti i dati")
+                        for row_tuple in data:
+                            lines.append(';'.join(str(v) for v in row_tuple))
+                else:
+                    # Altre tabelle: nessun filtro
+                    for row_tuple in data:
+                        lines.append(';'.join(str(v) for v in row_tuple))
                 
                 # Write file
                 safe_name = table_name.replace('/', '_').replace('\\', '_').replace(' ', '_')
@@ -808,14 +1019,17 @@ def export_layout_tables(layout_file, output_dir, project_name="export"):
                 
                 size_mb = os.path.getsize(output_file) / (1024 * 1024)
                 
-                print("  OK: %s (%.2f MB, %d righe)" % (output_file, size_mb, len(data)))
+                # Calcola righe effettive (esclude header)
+                actual_rows = len(lines) - 1
+                
+                print("  OK: %s (%.2f MB, %d righe)" % (output_file, size_mb, actual_rows))
                 
                 results.append({
                     'table': table_name,
                     'type': table_type,
                     'status': 'SUCCESS',
                     'file': output_file,
-                    'rows': len(data),
+                    'rows': actual_rows,
                     'cols': len(full_attrs),
                     'size_mb': round(size_mb, 2)
                 })
@@ -1166,6 +1380,42 @@ def task_test_all_configurations(params):
         post_run_add: Offset PostRunTime (default 30)
         max_configs: Limite massimo configurazioni da testare (default: tutte)
         random_sample: Se True, sample casuale se > max_configs
+        slice_index: Indice slice corrente per esecuzione parallela (0-based, default: None)
+        slice_total: Numero totale slice per esecuzione parallela (default: None)
+        initial_config: Configurazione di partenza (default: None = tutte abilitate)
+                       - None: tutte fermate abilitate
+                       - "all_disabled": solo prima e ultima
+                       - {"enabled_stops": [328, 372, ...]}: lista custom
+        locked_stops: Fermate fisse che NON partecipano alle permutazioni (default: None)
+                     - None: tutte fermate intermedie sono variabili
+                     - {stop_no: True/False}: True=sempre ON, False=sempre OFF
+                     - Esempio: {328: True, 372: False} = 328 sempre ON, 372 sempre OFF
+        
+    Configurazione Iniziale:
+        Lo stato di partenza PRIMA di testare le configurazioni:
+        - None (default): Tutte fermate abilitate
+        - "all_disabled": Solo prima e ultima abilitate
+        - {"enabled_stops": [stop_no1, stop_no2, ...]}: Lista custom di fermate ON
+        
+    Fermate Locked (Fisse):
+        Fermate che mantengono sempre lo stesso stato durante TUTTE le configurazioni:
+        - {328: True}: Fermata 328 sempre ON in tutte le config
+        - {372: False}: Fermata 372 sempre OFF in tutte le config
+        - {328: True, 372: False, 327: True}: Multiple locks
+        - Fermate locked NON partecipano alle permutazioni (2^n ridotto)
+        
+    Esecuzione Parallela:
+        Per distribuire il lavoro tra N processi paralleli:
+        - Processo 1: slice_index=0, slice_total=N
+        - Processo 2: slice_index=1, slice_total=N
+        - ...
+        - Processo N: slice_index=N-1, slice_total=N
+        
+        Esempio con 1024 config e 4 processi:
+        - Processo 0: configs 0-255   (256 configs)
+        - Processo 1: configs 256-511 (256 configs)
+        - Processo 2: configs 512-767 (256 configs)
+        - Processo 3: configs 768-1023 (256 configs)
     """
     print("\n" + "=" * 80)
     print("TASK: TEST TUTTE LE CONFIGURAZIONI FERMATE")
@@ -1179,6 +1429,10 @@ def task_test_all_configurations(params):
     post_run_add = params.get('post_run_add', 30)
     max_configs = params.get('max_configs', None)
     random_sample = params.get('random_sample', True)
+    slice_index = params.get('slice_index', None)
+    slice_total = params.get('slice_total', None)
+    initial_config = params.get('initial_config', None)
+    locked_stops = params.get('locked_stops', None)
     
     if not layout_file:
         print("\nERRORE: Parametro 'layout_file' mancante!")
@@ -1190,6 +1444,27 @@ def task_test_all_configurations(params):
     print("  Output dir:  %s" % output_dir)
     print("  Stop time:   %d sec" % stop_time)
     print("  Max configs: %s" % (max_configs if max_configs else "tutte"))
+    
+    if initial_config:
+        print("  INITIAL CONFIG:")
+        if isinstance(initial_config, dict) and 'enabled_stops' in initial_config:
+            print("    Custom: %s" % initial_config['enabled_stops'])
+        elif initial_config == "all_disabled":
+            print("    All disabled (solo prima e ultima)")
+        else:
+            print("    %s" % initial_config)
+    
+    if locked_stops:
+        print("  LOCKED STOPS:")
+        for stop_no, state in locked_stops.items():
+            print("    Stop %d: %s" % (stop_no, "ALWAYS ON" if state else "ALWAYS OFF"))
+    
+    if slice_index is not None and slice_total is not None:
+        print("  PARALLEL SLICING:")
+        print("    Slice index: %d" % slice_index)
+        print("    Slice total: %d" % slice_total)
+        print("    (Questo processo gestirà slice %d di %d)" % (slice_index + 1, slice_total))
+    
     print()
     
     # STEP 1: Verifica consistenza fermate
@@ -1207,74 +1482,154 @@ def task_test_all_configurations(params):
     
     print("\n✓ OK: Tutte le linee hanno %d fermate comuni" % len(result['stops']))
     
+    # Estrai stop_coverage per gestire fermate non presenti in tutte le linee
+    stop_coverage = result.get('stop_coverage', {})
+    
     # STEP 2: Genera configurazioni
     print("\n" + "-" * 80)
     print("STEP 2: GENERAZIONE CONFIGURAZIONI")
     print("-" * 80)
     
-    all_configs = generate_stop_configurations(result['stops'])
+    all_configs = generate_stop_configurations(result['stops'], locked_stops=locked_stops)
     
-    # Applica limite se necessario
-    if max_configs and len(all_configs) > max_configs:
-        print("\nConfigurazioni totali: %d" % len(all_configs))
+    # SLICING per esecuzione parallela
+    if slice_index is not None and slice_total is not None:
+        print("\n" + "=" * 80)
+        print("APPLICAZIONE PARALLEL SLICING")
+        print("=" * 80)
+        
+        if slice_index < 0 or slice_index >= slice_total:
+            print("\nERRORE: slice_index=%d fuori range (0-%d)" % (slice_index, slice_total - 1))
+            return {'success': False, 'error': 'Invalid slice_index'}
+        
+        total_configs = len(all_configs)
+        slice_size = total_configs // slice_total
+        remainder = total_configs % slice_total
+        
+        # Calcola start/end per questo slice
+        # Distribuisci il remainder tra i primi slice
+        if slice_index < remainder:
+            start = slice_index * (slice_size + 1)
+            end = start + slice_size + 1
+        else:
+            start = slice_index * slice_size + remainder
+            end = start + slice_size
+        
+        print("\nConfigurazione totali: %d" % total_configs)
+        print("Slice size base:       %d" % slice_size)
+        print("Remainder:             %d (distribuito nei primi %d slice)" % (remainder, remainder))
+        print()
+        print("Slice %d/%d:" % (slice_index + 1, slice_total))
+        print("  Start index: %d" % start)
+        print("  End index:   %d (escluso)" % end)
+        print("  Configs:     %d" % (end - start))
+        
+        # Applica slicing
+        all_configs_sliced = all_configs[start:end]
+        
+        print("\n✓ Slice selezionato: %d configurazioni (da %d a %d)" % (len(all_configs_sliced), start, end - 1))
+        
+        # Usa le configs sliced come base
+        configs_to_process = all_configs_sliced
+        
+    else:
+        # Nessuno slicing
+        configs_to_process = all_configs
+    
+    # Applica max_configs se specificato
+    if max_configs and len(configs_to_process) > max_configs:
+        print("\nConfigurazioni dopo slicing: %d" % len(configs_to_process))
         print("Limite richiesto: %d" % max_configs)
         
         if random_sample:
             import random
-            configs = random.sample(all_configs, max_configs)
+            configs = random.sample(configs_to_process, max_configs)
             print("✓ Sample casuale di %d configurazioni selezionato" % max_configs)
         else:
-            configs = all_configs[:max_configs]
+            configs = configs_to_process[:max_configs]
             print("✓ Prime %d configurazioni selezionate" % max_configs)
     else:
-        configs = all_configs
-        print("\n✓ Tutte le %d configurazioni saranno testate" % len(configs))
+        configs = configs_to_process
+        print("\n✓ Configurazioni da testare: %d" % len(configs))
     
     # Nome base per export (prima linea)
     base_name = lineroutes[0].replace(":", "_").replace(" ", "_")
     
-    # STEP 3: Imposta tutte fermate abilitate (baseline)
+    # STEP 3: Imposta configurazione iniziale
     print("\n" + "-" * 80)
-    print("STEP 3: RESET - TUTTE FERMATE ABILITATE (BASELINE)")
+    print("STEP 3: CONFIGURAZIONE INIZIALE")
     print("-" * 80)
     
-    # Config baseline: tutte abilitate (ultima configurazione)
-    baseline_config = all_configs[-1]
-    print("\nApplicando configurazione baseline...")
+    # Determina configurazione iniziale
+    if initial_config == "all_disabled":
+        # Solo prima e ultima abilitate
+        print("Config iniziale: TUTTE DISABILITATE (solo prima e ultima)")
+        init_enabled = [result['stops'][0]['no'], result['stops'][-1]['no']]
+    elif isinstance(initial_config, dict) and 'enabled_stops' in initial_config:
+        # Custom lista fermate
+        print("Config iniziale: CUSTOM")
+        init_enabled = initial_config['enabled_stops']
+    else:
+        # Default: tutte abilitate
+        print("Config iniziale: TUTTE ABILITATE (default)")
+        init_enabled = [s['no'] for s in result['stops']]
+    
+    print("\nFermate abilitate inizialmente: %d" % len(init_enabled))
+    print("StopNos: %s" % init_enabled)
+    print()
+    
+    print("Applicando configurazione iniziale...")
     apply_stop_configuration(
         lineroutes, 
-        baseline_config['enabled_stops'],
+        init_enabled,
         result['stops'],
-        stop_time, pre_run_add, post_run_add
+        stop_time, pre_run_add, post_run_add,
+        stop_coverage=stop_coverage
     )
     
-    # Esegui Procedure Sequence per baseline
-    print("\n" + "-" * 80)
-    print("STEP 4: ESECUZIONE PROCEDURE SEQUENCE (BASELINE)")
-    print("-" * 80)
-    
-    baseline_result = execute_procedure_sequence()
-    
-    if not baseline_result.get('success'):
-        print("\nERRORE: Procedure Sequence baseline fallita!")
-        return {'success': False, 'error': 'Baseline procedure failed'}
-    
-    # Export baseline
-    print("\n" + "-" * 80)
-    print("STEP 5: EXPORT BASELINE")
-    print("-" * 80)
-    
-    # Pattern baseline: tutti 1
-    pattern_str = '1' * len(result['stops'])
-    baseline_name = "%s_%s" % (base_name, pattern_str)
-    
-    baseline_export = export_layout_tables(
-        layout_file,
-        output_dir,
-        baseline_name
-    )
-    
-    print("\n✓ Baseline completata: %s" % baseline_name)
+    # STEP 4 e 5: Esecuzione e export configurazione iniziale
+    # SOLO per slice 0 (o se non c'è slicing)
+    if slice_index is None or slice_index == 0:
+        # Esegui Procedure Sequence per configurazione iniziale
+        print("\n" + "-" * 80)
+        print("STEP 4: ESECUZIONE PROCEDURE SEQUENCE (CONFIG INIZIALE)")
+        print("-" * 80)
+        
+        init_result = execute_procedure_sequence()
+        
+        if not init_result.get('success'):
+            print("\nERRORE: Procedure Sequence iniziale fallita!")
+            return {'success': False, 'error': 'Initial config procedure failed'}
+        
+        # Export configurazione iniziale
+        print("\n" + "-" * 80)
+        print("STEP 5: EXPORT CONFIGURAZIONE INIZIALE")
+        print("-" * 80)
+        
+        # Costruisci pattern string per config iniziale
+        init_enabled_set = set(init_enabled)
+        pattern_bits = []
+        for s in result['stops']:
+            pattern_bits.append('1' if s['no'] in init_enabled_set else '0')
+        pattern_str = ''.join(pattern_bits)
+        
+        init_name = "%s_INIT_%s" % (base_name, pattern_str)
+        
+        init_export = export_layout_tables(
+            layout_file,
+            output_dir,
+            init_name
+        )
+        
+        print("\n✓ Configurazione iniziale completata: %s" % init_name)
+    else:
+        # Slice > 0: salta esecuzione e export iniziale
+        print("\n" + "-" * 80)
+        print("STEP 4-5: SKIP (Slice %d > 0)" % slice_index)
+        print("-" * 80)
+        print("\n⊘ Configurazione iniziale applicata ma NON eseguita/esportata")
+        print("  (Solo slice 0 esegue ed esporta la config iniziale)")
+        print("\n✓ Pronto per testare configurazioni assegnate a questo slice")
     
     # STEP 6: Loop configurazioni
     print("\n\n" + "=" * 80)
@@ -1306,7 +1661,8 @@ def task_test_all_configurations(params):
             lineroutes,
             config['enabled_stops'],
             result['stops'],
-            stop_time, pre_run_add, post_run_add
+            stop_time, pre_run_add, post_run_add,
+            stop_coverage=stop_coverage
         )
         
         # B) Esegui Procedure Sequence
