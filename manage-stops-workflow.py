@@ -129,7 +129,7 @@ TASKS = [
     # },
 ]
 
-
+# task permutations test
 
 TASKS = [
      {
@@ -152,8 +152,8 @@ TASKS = [
              
              # PARALLEL SLICING - Distribuisci configurazioni tra processi paralleli
              # Esempio: 3 processi -> slice_total=3, slice_index=0/1/2 per ogni processo
-             "slice_index": 2,#None,   # Indice slice corrente (0-based): 0, 1, 2, ...
-             "slice_total": 3,#None,   # Numero totale slice: 2, 3, 4, ...
+             "slice_index": 1,#None,   # Indice slice corrente (0-based): 0, 1, 2, ...
+             "slice_total": 2,#None,   # Numero totale slice: 2, 3, 4, ...
              
              # CONFIGURAZIONE DI PARTENZA - Stato iniziale prima di testare configurazioni
              # None = tutte abilitate (default), oppure dict con configurazione specifica
@@ -203,7 +203,195 @@ TASKS = [
      }
  ]
 
+#task insertion AM
+TASKS = [
+{
+    "action": "test_all_configurations",
+    "params": {
+        "lineroutes": ["R17_2022:R17_2"],  # Modifica con le tue linee
+        "layout_file": r"H:\go\trenord_2025\skim_layout.lay",
+        "output_dir": r"H:\go\trenord_2025\config_tests",
+        "exploration_mode": "insertion",
+        "initial_config": {
+            "enabled_stops": [
+                329,   # COMO LAGO (1)
+                328,   # COMO BORGHI (1)
+                204,   # COMO CAMERLATA (1)
+                372,   # PORTICHETTO-LUISAGO (1)
+                46,    # LOMAZZO (1)
+                301,   # SARONNO (1)
+                173,   # MILANO BOVISA POLITECNICO (1)
+                419,   # MILANO DOMODOSSOLA (1)
+                270    # MILANO CADORNA (1)
+            ]
+        },
+        "locked_stops": {
+            # Fermate SEMPRE OFF (tutte quelle con 0 nel pattern tranne quelle da inserire)
+            203: False,  # GRANDATE-BRECCIA
+            371: False,  # FINO MORNASCO
+            327: False,  # CADORAGO
+            149: False,  # CASLINO AL PIANO
+            418: False,  # ROVELLASCA-MANERA
+            369: False   # ROVELLO PORRO
+            # Le seguenti NON sono in locked_stops perché verranno inserite una alla volta:
+            # 370: SARONNO SUD
+            # 76: CARONNO PERTUSELLA
+            # 18: CESATE
+            # 311: GARBAGNATE MILANESE
+            # 115: GARBAGNATE PARCO DELLE GROANE
+            # 122: BOLLATE NORD
+            # 91: BOLLATE CENTRO
+            # 138: NOVATE MILANESE
+            # 118: MILANO QUARTO OGGIARO
+        },
+        "max_configs": None,
+        "random_sample": False
+    }
+}
+]
+#task insertion IP
+TASKS = [
 
+{
+    "action": "test_all_configurations",
+    "params": {
+        "lineroutes": ["R17_2022:R17_2"],
+        "layout_file": r"H:\go\trenord_2025\skim_layout.lay",
+        "output_dir": r"H:\go\trenord_2025\config_tests",
+        "exploration_mode": "insertion",
+        "initial_config": {
+            "enabled_stops": [
+                329,   # COMO LAGO (1)
+                204,   # COMO CAMERLATA (1)
+                270    # MILANO CADORNA (1)
+            ]
+        },
+        "locked_stops": {
+            # Fermate SEMPRE OFF (tutte quelle con 0 tranne quelle da inserire)
+            328: False,  # COMO BORGHI
+            203: False,  # GRANDATE-BRECCIA
+            372: False,  # PORTICHETTO-LUISAGO
+            371: False,  # FINO MORNASCO
+            327: False,  # CADORAGO
+            149: False,  # CASLINO AL PIANO
+            46: False,   # LOMAZZO
+            418: False,  # ROVELLASCA-MANERA
+            369: False,  # ROVELLO PORRO
+            301: False,  # SARONNO
+            173: False,  # MILANO BOVISA POLITECNICO
+            419: False   # MILANO DOMODOSSOLA
+            # Le seguenti verranno inserite una alla volta:
+            # 370: SARONNO SUD
+            # 76: CARONNO PERTUSELLA
+            # 18: CESATE
+            # 311: GARBAGNATE MILANESE
+            # 115: GARBAGNATE PARCO DELLE GROANE
+            # 122: BOLLATE NORD
+            # 91: BOLLATE CENTRO
+            # 138: NOVATE MILANESE
+            # 118: MILANO QUARTO OGGIARO
+        },
+        "max_configs": None,
+        "random_sample": False
+    }
+}
+]
+
+
+#task insertion PM
+TASKS = [
+
+{
+    "action": "test_all_configurations",
+    "params": {
+        "lineroutes": ["R17_2022:R17_2"],
+        "layout_file": r"H:\go\trenord_2025\skim_layout.lay",
+        "output_dir": r"H:\go\trenord_2025\config_tests",
+        "exploration_mode": "insertion",
+        "initial_config": {
+            "enabled_stops": [
+                329,   # COMO LAGO (1)
+                328,   # COMO BORGHI (1)
+                204,   # COMO CAMERLATA (1)
+                301,   # SARONNO (1)
+                419,   # MILANO DOMODOSSOLA (1)
+                270    # MILANO CADORNA (1)
+            ]
+        },
+        "locked_stops": {
+            # Fermate SEMPRE OFF (tutte quelle con 0 tranne quelle da inserire)
+            203: False,  # GRANDATE-BRECCIA
+            372: False,  # PORTICHETTO-LUISAGO
+            371: False,  # FINO MORNASCO
+            327: False,  # CADORAGO
+            149: False,  # CASLINO AL PIANO
+            46: False,   # LOMAZZO
+            418: False,  # ROVELLASCA-MANERA
+            369: False,  # ROVELLO PORRO
+            173: False   # MILANO BOVISA POLITECNICO
+            # Le seguenti verranno inserite una alla volta:
+            # 370: SARONNO SUD
+            # 76: CARONNO PERTUSELLA
+            # 18: CESATE
+            # 311: GARBAGNATE MILANESE
+            # 115: GARBAGNATE PARCO DELLE GROANE
+            # 122: BOLLATE NORD
+            # 91: BOLLATE CENTRO
+            # 138: NOVATE MILANESE
+            # 118: MILANO QUARTO OGGIARO
+        },
+        "max_configs": None,
+        "random_sample": False
+    }
+}
+]
+
+#task insertion sera
+TASKS = [
+{
+    "action": "test_all_configurations",
+    "params": {
+        "lineroutes": ["R17_2022:R17_2"],
+        "layout_file": r"H:\go\trenord_2025\skim_layout.lay",
+        "output_dir": r"H:\go\trenord_2025\config_tests",
+        "exploration_mode": "insertion",
+        "initial_config": {
+            "enabled_stops": [
+                329,   # COMO LAGO (1)
+                204,   # COMO CAMERLATA (1)
+                419,   # MILANO DOMODOSSOLA (1)
+                270    # MILANO CADORNA (1)
+            ]
+        },
+        "locked_stops": {
+            # Fermate SEMPRE OFF (tutte quelle con 0 tranne quelle da inserire)
+            328: False,  # COMO BORGHI
+            203: False,  # GRANDATE-BRECCIA
+            372: False,  # PORTICHETTO-LUISAGO
+            371: False,  # FINO MORNASCO
+            327: False,  # CADORAGO
+            149: False,  # CASLINO AL PIANO
+            46: False,   # LOMAZZO
+            418: False,  # ROVELLASCA-MANERA
+            369: False,  # ROVELLO PORRO
+            301: False,  # SARONNO
+            173: False   # MILANO BOVISA POLITECNICO
+            # Le seguenti verranno inserite una alla volta:
+            # 370: SARONNO SUD
+            # 76: CARONNO PERTUSELLA
+            # 18: CESATE
+            # 311: GARBAGNATE MILANESE
+            # 115: GARBAGNATE PARCO DELLE GROANE
+            # 122: BOLLATE NORD
+            # 91: BOLLATE CENTRO
+            # 138: NOVATE MILANESE
+            # 118: MILANO QUARTO OGGIARO
+        },
+        "max_configs": None,
+        "random_sample": False
+    }
+}
+]
 # ============================================================================
 # FUNZIONI HELPER (da enable-stop-STEP1-WORKING.py)
 # ============================================================================
@@ -441,14 +629,18 @@ def verify_and_get_common_stops(lineroutes):
         }
 
 
-def generate_stop_configurations(stops, locked_stops=None):
+def generate_stop_configurations(stops, locked_stops=None, exploration_mode="permutations", initial_enabled_stops=None):
     """
-    Genera tutte le possibili combinazioni di fermate abilitate/disabilitate.
+    Genera configurazioni di fermate da testare.
     Prima e ultima fermata sono sempre abilitate.
     
     Parametri:
         stops: Lista di dict con 'no', 'name', 'index'
         locked_stops: Dict {stop_no: bool} - True=forzata ON, False=forzata OFF, None=variabile
+        exploration_mode: "permutations" o "insertion"
+            - "permutations": Genera tutte le 2^N combinazioni (default)
+            - "insertion": Parte da config base e aggiunge una fermata alla volta
+        initial_enabled_stops: Lista di stop_no per config base (usato in modalità "insertion")
     
     Returns:
         list di configurazioni, ogni configurazione e' una lista di stop_no abilitati
@@ -458,6 +650,7 @@ def generate_stop_configurations(stops, locked_stops=None):
     print("\n" + "=" * 80)
     print("GENERAZIONE CONFIGURAZIONI FERMATE")
     print("=" * 80)
+    print("Modalità: %s" % exploration_mode.upper())
     print()
     
     if len(stops) < 2:
@@ -503,48 +696,95 @@ def generate_stop_configurations(stops, locked_stops=None):
         print("  %d. %s (StopNo: %d)" % (i + 1, s['name'], s['no']))
     print()
     
-    # Calcola numero totale configurazioni: 2^n dove n = fermate variabili
-    num_configs = 2 ** len(variable_stops)
-    
-    print("Numero totale configurazioni: %d (2^%d)" % (num_configs, len(variable_stops)))
-    print()
-    
-    if num_configs > 10000:
-        print("ATTENZIONE: Numero molto elevato di configurazioni!")
-        print("Considerare limitare il numero di fermate variabili.")
-        print()
-    
-    # Genera tutte le combinazioni (True/False per ogni fermata variabile)
+    # Generazione configurazioni in base alla modalità
     configurations = []
     
-    print("Generazione in corso...")
+    if exploration_mode == "insertion":
+        # ========== MODALITÀ INSERTION ==========
+        print("MODALITÀ INSERTION: Aggiunge una fermata variabile alla volta")
+        print()
+        
+        # Identifica fermate non locked (disponibili per insertion)
+        if initial_enabled_stops is None:
+            print("ERRORE: initial_enabled_stops richiesto per modalità insertion")
+            return []
+        
+        initial_set = set(initial_enabled_stops)
+        
+        # Fermate disponibili = variabili NON presenti nella config iniziale
+        available_for_insertion = []
+        for s in variable_stops:
+            if s['no'] not in initial_set:
+                available_for_insertion.append(s)
+        
+        print("Config base (initial_enabled_stops): %d fermate" % len(initial_enabled_stops))
+        print("Fermate disponibili per insertion: %d" % len(available_for_insertion))
+        for i, s in enumerate(available_for_insertion):
+            print("  %d. %s (StopNo: %d)" % (i + 1, s['name'], s['no']))
+        print()
+        
+        num_configs = len(available_for_insertion)
+        print("Numero configurazioni da testare: %d (una per fermata)" % num_configs)
+        print()
+        
+        print("Generazione in corso...")
+        
+        # Genera una config per ogni fermata da inserire
+        for i, stop_to_insert in enumerate(available_for_insertion):
+            # Config base + questa fermata
+            enabled_stops = list(initial_enabled_stops)
+            enabled_stops.append(stop_to_insert['no'])
+            enabled_stops.sort()
+            
+            configurations.append({
+                'id': i + 1,
+                'enabled_stops': enabled_stops,
+                'enabled_count': len(enabled_stops),
+                'inserted_stop': stop_to_insert['no'],
+                'inserted_name': stop_to_insert['name']
+            })
     
-    for i, combo in enumerate(product([False, True], repeat=len(variable_stops))):
-        # combo e' una tupla di bool (False=disabilitata, True=abilitata)
+    else:
+        # ========== MODALITÀ PERMUTATIONS (default) ==========
+        num_configs = 2 ** len(variable_stops)
         
-        # Costruisci lista fermate abilitate per questa configurazione
-        enabled_stops = [first_stop]  # Prima sempre abilitata
+        print("MODALITÀ PERMUTATIONS: Genera tutte le combinazioni")
+        print("Numero totale configurazioni: %d (2^%d)" % (num_configs, len(variable_stops)))
+        print()
         
-        # Aggiungi locked ON
-        for s in locked_on:
-            enabled_stops.append(s['no'])
+        if num_configs > 10000:
+            print("ATTENZIONE: Numero molto elevato di configurazioni!")
+            print("Considerare limitare il numero di fermate variabili.")
+            print()
         
-        # Aggiungi variabili in base a combo
-        for var_stop, is_enabled in zip(variable_stops, combo):
-            if is_enabled:
-                enabled_stops.append(var_stop['no'])
+        print("Generazione in corso...")
         
-        enabled_stops.append(last_stop)  # Ultima sempre abilitata
-        
-        # Ordina per mantenere ordine sequenziale (opzionale ma più pulito)
-        enabled_stops.sort()
-        
-        configurations.append({
-            'id': i + 1,
-            'enabled_stops': enabled_stops,
-            'enabled_count': len(enabled_stops),
-            'pattern': combo  # Tupla di bool per debug
-        })
+        for i, combo in enumerate(product([False, True], repeat=len(variable_stops))):
+            # combo e' una tupla di bool (False=disabilitata, True=abilitata)
+            
+            # Costruisci lista fermate abilitate per questa configurazione
+            enabled_stops = [first_stop]  # Prima sempre abilitata
+            
+            # Aggiungi locked ON
+            for s in locked_on:
+                enabled_stops.append(s['no'])
+            
+            # Aggiungi variabili in base a combo
+            for var_stop, is_enabled in zip(variable_stops, combo):
+                if is_enabled:
+                    enabled_stops.append(var_stop['no'])
+            
+            enabled_stops.append(last_stop)  # Ultima sempre abilitata
+            
+            # Ordina per mantenere ordine sequenziale (opzionale ma più pulito)
+            enabled_stops.sort()
+            
+            configurations.append({
+                'id': i + 1,
+                'enabled_stops': enabled_stops,
+                'enabled_count': len(enabled_stops),
+                'pattern': combo  # Tupla di bool per debug
+            })
     
     print("Generazione completata: %d configurazioni" % len(configurations))
     print()
@@ -553,27 +793,43 @@ def generate_stop_configurations(stops, locked_stops=None):
     print("Esempi configurazioni:")
     print()
     
-    # Config 1: Tutte disabilitate (solo prima e ultima)
-    config_min = configurations[0]
-    print("Config %d (minimo - solo fermate fisse):" % config_min['id'])
-    print("  Fermate abilitate: %d" % config_min['enabled_count'])
-    print("  StopNos: %s" % config_min['enabled_stops'])
-    print()
-    
-    # Config ultima: Tutte abilitate
-    config_max = configurations[-1]
-    print("Config %d (massimo - tutte abilitate):" % config_max['id'])
-    print("  Fermate abilitate: %d" % config_max['enabled_count'])
-    print("  StopNos: %s" % config_max['enabled_stops'])
-    print()
-    
-    # Config intermedia
-    if len(configurations) > 2:
-        config_mid = configurations[len(configurations) // 2]
-        print("Config %d (intermedia):" % config_mid['id'])
-        print("  Fermate abilitate: %d" % config_mid['enabled_count'])
-        print("  StopNos: %s" % config_mid['enabled_stops'])
+    if exploration_mode == "insertion":
+        # Mostra prime 3 e ultime 3 configurazioni
+        for i, config in enumerate(configurations[:3]):
+            print("Config %d: Base + %s (StopNo: %d)" % (config['id'], config['inserted_name'], config['inserted_stop']))
+            print("  Fermate abilitate: %d" % config['enabled_count'])
+            print()
+        
+        if len(configurations) > 6:
+            print("  ... (%d configurazioni intermedie) ..." % (len(configurations) - 6))
+            print()
+            
+            for config in configurations[-3:]:
+                print("Config %d: Base + %s (StopNo: %d)" % (config['id'], config['inserted_name'], config['inserted_stop']))
+                print("  Fermate abilitate: %d" % config['enabled_count'])
+                print()
+    else:
+        # Modalità permutations: mostra min, max, intermedia
+        config_min = configurations[0]
+        print("Config %d (minimo - solo fermate fisse):" % config_min['id'])
+        print("  Fermate abilitate: %d" % config_min['enabled_count'])
+        print("  StopNos: %s" % config_min['enabled_stops'])
         print()
+        
+        # Config ultima: Tutte abilitate
+        config_max = configurations[-1]
+        print("Config %d (massimo - tutte abilitate):" % config_max['id'])
+        print("  Fermate abilitate: %d" % config_max['enabled_count'])
+        print("  StopNos: %s" % config_max['enabled_stops'])
+        print()
+        
+        # Config intermedia
+        if len(configurations) > 2:
+            config_mid = configurations[len(configurations) // 2]
+            print("Config %d (intermedia):" % config_mid['id'])
+            print("  Fermate abilitate: %d" % config_mid['enabled_count'])
+            print("  StopNos: %s" % config_mid['enabled_stops'])
+            print()
     
     # Statistiche
     print("Statistiche:")
@@ -1390,6 +1646,9 @@ def task_test_all_configurations(params):
                      - None: tutte fermate intermedie sono variabili
                      - {stop_no: True/False}: True=sempre ON, False=sempre OFF
                      - Esempio: {328: True, 372: False} = 328 sempre ON, 372 sempre OFF
+        exploration_mode: Modalità di esplorazione configurazioni (default: "permutations")
+                         - "permutations": Genera tutte le 2^N combinazioni
+                         - "insertion": Parte da config base e aggiunge una fermata alla volta
         
     Configurazione Iniziale:
         Lo stato di partenza PRIMA di testare le configurazioni:
@@ -1433,6 +1692,7 @@ def task_test_all_configurations(params):
     slice_total = params.get('slice_total', None)
     initial_config = params.get('initial_config', None)
     locked_stops = params.get('locked_stops', None)
+    exploration_mode = params.get('exploration_mode', "permutations")
     
     if not layout_file:
         print("\nERRORE: Parametro 'layout_file' mancante!")
@@ -1444,6 +1704,7 @@ def task_test_all_configurations(params):
     print("  Output dir:  %s" % output_dir)
     print("  Stop time:   %d sec" % stop_time)
     print("  Max configs: %s" % (max_configs if max_configs else "tutte"))
+    print("  Exploration: %s" % exploration_mode)
     
     if initial_config:
         print("  INITIAL CONFIG:")
@@ -1485,12 +1746,28 @@ def task_test_all_configurations(params):
     # Estrai stop_coverage per gestire fermate non presenti in tutte le linee
     stop_coverage = result.get('stop_coverage', {})
     
+    # Determina configurazione iniziale (serve per generate_stop_configurations in modalità insertion)
+    if initial_config == "all_disabled":
+        # Solo prima e ultima abilitate
+        init_enabled = [result['stops'][0]['no'], result['stops'][-1]['no']]
+    elif isinstance(initial_config, dict) and 'enabled_stops' in initial_config:
+        # Custom lista fermate
+        init_enabled = initial_config['enabled_stops']
+    else:
+        # Default: tutte abilitate
+        init_enabled = [s['no'] for s in result['stops']]
+    
     # STEP 2: Genera configurazioni
     print("\n" + "-" * 80)
     print("STEP 2: GENERAZIONE CONFIGURAZIONI")
     print("-" * 80)
     
-    all_configs = generate_stop_configurations(result['stops'], locked_stops=locked_stops)
+    all_configs = generate_stop_configurations(
+        result['stops'], 
+        locked_stops=locked_stops,
+        exploration_mode=exploration_mode,
+        initial_enabled_stops=init_enabled
+    )
     
     # SLICING per esecuzione parallela
     if slice_index is not None and slice_total is not None:
@@ -1560,19 +1837,18 @@ def task_test_all_configurations(params):
     print("STEP 3: CONFIGURAZIONE INIZIALE")
     print("-" * 80)
     
-    # Determina configurazione iniziale
+    # Mostra configurazione iniziale determinata
     if initial_config == "all_disabled":
-        # Solo prima e ultima abilitate
         print("Config iniziale: TUTTE DISABILITATE (solo prima e ultima)")
-        init_enabled = [result['stops'][0]['no'], result['stops'][-1]['no']]
     elif isinstance(initial_config, dict) and 'enabled_stops' in initial_config:
-        # Custom lista fermate
         print("Config iniziale: CUSTOM")
-        init_enabled = initial_config['enabled_stops']
     else:
-        # Default: tutte abilitate
         print("Config iniziale: TUTTE ABILITATE (default)")
-        init_enabled = [s['no'] for s in result['stops']]
+    
+    # NOTA: Per modalità "insertion", init_enabled viene usato come base
+    if exploration_mode == "insertion":
+        print("\nMODALITÀ INSERTION: init_enabled sarà usato come configurazione BASE")
+        print("Le configurazioni aggiungeranno UNA fermata alla volta a questa base")
     
     print("\nFermate abilitate inizialmente: %d" % len(init_enabled))
     print("StopNos: %s" % init_enabled)
