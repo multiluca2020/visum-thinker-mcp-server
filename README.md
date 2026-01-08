@@ -52,6 +52,10 @@ visum_configure_dsegset({
 
 **See [QUICKSTART_PRT_WORKFLOW.md](QUICKSTART_PRT_WORKFLOW.md) for the 3-step workflow!**
 
+<a href="https://glama.ai/mcp/servers/@multiluca2020/visum-thinker-mcp-server">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@multiluca2020/visum-thinker-mcp-server/badge" alt="Visum Thinker Server MCP server" />
+</a>
+
 ## Features
 
 ### 🚗 Visum Transportation Planning
