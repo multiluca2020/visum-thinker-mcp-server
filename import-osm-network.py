@@ -14,20 +14,53 @@ from pathlib import Path
 # Mapping di default per conversione LinkType
 # Utilizzato quando non viene fornito un mapping personalizzato
 # Mapping: LINKTYPE standard (dopo import OSM) → LINKTYPE active (nel territorio)
+
+# OLD MAPPING (commentato - 2026-01-12)
+# DEFAULT_LINKTYPE_MAPPING = {
+#     20: 50,   # Trunk 2 lanes
+#     21: 51,   # Trunk 1 lane
+#     29: 59,   # Trunk_link
+#     30: 60,   # Primary
+#     39: 69,   # Primary_link
+#     40: 70,   # Secondary 2 lanes
+#     41: 71,   # Secondary 1/>=3 lanes
+#     42: 78,   # Tertiary 1 lane
+#     43: 72,   # Tertiary 2 lanes (nuovo)
+#     44: 80,   # Unclassified (nuovo)
+#     49: 79,   # Secondary_link/Tertiary_link
+#     81: 81,   # Residential (mantiene)
+#     82: 82    # Living_street (mantiene)
+# }
+
+# NEW MAPPING (aggiornato - 2026-01-12)
 DEFAULT_LINKTYPE_MAPPING = {
-    20: 50,   # Trunk 2 lanes
-    21: 51,   # Trunk 1 lane
-    29: 59,   # Trunk_link
-    30: 60,   # Primary
-    39: 69,   # Primary_link
-    40: 70,   # Secondary 2 lanes
-    41: 71,   # Secondary 1/>=3 lanes
-    42: 78,   # Tertiary 1 lane
-    43: 72,   # Tertiary 2 lanes (nuovo)
-    44: 80,   # Unclassified (nuovo)
-    49: 79,   # Secondary_link/Tertiary_link
-    81: 81,   # Residential (mantiene)
-    82: 82    # Living_street (mantiene)
+    0: 0,     # Blocked Oneway
+    1: 1,     # Construction
+    7: 7,     # Ferrovia
+    8: 8,     # Metropolitana
+    9: 9,     # Tram
+    10: 10,   # Autostrade 4 corsie
+    11: 11,   # Autostrade 3 corsie
+    12: 12,   # Autostrade 2 corsie
+    13: 13,   # Autostrade 1 corsia
+    18: 18,   # Autostrade rampe 2 corsie
+    19: 19,   # Autostrade rampe 1 corsia
+    20: 50,   # Extraurbane principali 2 corsie → Urbane scorrimento 2 corsie
+    21: 51,   # Extraurbane principali 1 corsia → Urbane scorrimento 1 corsie
+    28: 58,   # Extraurbane principali rampe 2 corsie → Urbane scorrimento rampe 2 corsie
+    29: 59,   # Extraurbane principali rampe 1 corsia → Urbane scorrimento rampe 1 corsia
+    30: 60,   # Extraurbane secondarie 2 corsie → Urbane principali 2 corsie
+    31: 61,   # Extraurbane secondarie 1 corsia 1 tipo → Urbane principali 1 corsia
+    39: 69,   # Extraurbane secondarie intersezioni → Urbane principali intersezioni
+    40: 70,   # Extraurbane locali 2 corsie → Urbane interquartiere 2 corsie
+    41: 71,   # Extraurbane locali 1 corsia 1 tipo → Urbane interquartiere 1 corsia
+    42: 80,   # Extraurbane locali 1 corsia 2 tipo → Urbane locali 1 corsia Tipo 1
+    43: 80,   # Extraurbane locali 1 corsia 3 tipo → Urbane locali 1 corsia Tipo 2
+    44: 81,   # Extraurbane locali 1 corsia 4 tipo → Urbane locali 1 corsia Tipo 3
+    49: 79,   # Extraurbane locali intersezioni → Urbane interquartiere intersezioni
+    82: 82,   # Residential
+    83: 83,   # Living_street
+    94: 94    # ferry
 }
 
 
@@ -1031,7 +1064,7 @@ def import_osm_and_convert_linktypes(osm_file_path, config_folder,
         # Step 4: Applica defaults dai LinkTypes (opzionale)
         if apply_defaults:
             print("\n### STEP 4: APPLICA DEFAULTS DAI LINKTYPES ###")
-            defaults_result = apply_linktype_defaults(recalculate_length=True)
+            defaults_result = apply_linktype_defaults()
             result["defaults"] = defaults_result
             
             if defaults_result["status"] != "success":
