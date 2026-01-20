@@ -1575,14 +1575,49 @@ def import_zones_shapefile_with_geometry(shapefile_path, visum_instance=None):
             # ✓ METODO CORRETTO: visum.IO.ImportShapefile(filename, IImportShapeFilePara)
             print("🔧 Creazione parametri import...")
             
+            # Crea attributi utente POP ed EMP se non esistono
+            try:
+                try:
+                    visum.Net.Zones.GetMultiAttValues("POP")
+                except:
+                    visum.Net.Zones.AddUserDefinedAttribute("POP", "POP", "Popolazione", 2)
+                    print("✓ Creato attributo: POP")
+                
+                try:
+                    visum.Net.Zones.GetMultiAttValues("EMP")
+                except:
+                    visum.Net.Zones.AddUserDefinedAttribute("EMP", "EMP", "Addetti", 2)
+                    print("✓ Creato attributo: EMP")
+            except Exception as e:
+                print("⚠ Errore creazione attributi: {}".format(str(e)))
+            
             # Crea oggetto parametri per import shapefile
             import_para = visum.IO.CreateImportShapeFilePara()
             
             # Imposta tipo di oggetto: shapefileTypeZones = 3 (enum ShapeFileObjType)
             import_para.ObjectType = 3  # shapefileTypeZones
             
-            # Opzionale: mappa attributi (ID, POP, EMP)
-            # import_para.AddAttributeAllocation("ID", "NO")  # se necessario
+            # Mappa attributi shapefile → Visum
+            try:
+                # ID zona: campo "id" o "ID" → NO (zone number)
+                import_para.AddAttributeAllocation("id", "NO")
+            except:
+                try:
+                    import_para.AddAttributeAllocation("ID", "NO")
+                except:
+                    pass  # Se ID non esiste nel shapefile
+            
+            try:
+                # Popolazione: campo "POP" → POP
+                import_para.AddAttributeAllocation("POP", "POP")
+            except:
+                pass
+            
+            try:
+                # Addetti: campo "ADD" → EMP
+                import_para.AddAttributeAllocation("ADD", "EMP")
+            except:
+                pass
             
             print("📥 Import shapefile con geometrie complete...")
             visum.IO.ImportShapefile(str(shp_path), import_para)
@@ -1733,6 +1768,29 @@ def import_zones_from_geojson(geojson_file, zone_id_field="zone_id",
         print("IMPORT ZONE DA GEOJSON")
         print("=" * 70)
         print("File: {}".format(geojson_path.name))
+        
+        # Crea attributi utente POP ed EMP se non esistono
+        print("\n🔧 Verifica attributi zone...")
+        try:
+            # Verifica se POP esiste
+            try:
+                visum.Net.Zones.GetMultiAttValues("POP")
+                print("✓ Attributo POP già esistente")
+            except:
+                # Crea attributo POP: (ID, ShortName, LongName, VT, DecPlaces, Ignored, MinVal, MaxVal, DefVal)
+                visum.Net.Zones.AddUserDefinedAttribute("POP", "POP", "Popolazione", 2)  # VT=2 (Float/Double)
+                print("✓ Creato attributo utente: POP (Popolazione)")
+            
+            # Verifica se EMP esiste
+            try:
+                visum.Net.Zones.GetMultiAttValues("EMP")
+                print("✓ Attributo EMP già esistente")
+            except:
+                # Crea attributo EMP
+                visum.Net.Zones.AddUserDefinedAttribute("EMP", "EMP", "Addetti", 2)  # VT=2 (Float/Double)
+                print("✓ Creato attributo utente: EMP (Addetti)")
+        except Exception as e:
+            print("⚠ Errore creazione attributi: {}".format(str(e)))
         
         # OPZIONE 1: Cerca Shapefile corrispondente (generato dal subprocess)
         shp_file = geojson_path.with_suffix('.shp')
