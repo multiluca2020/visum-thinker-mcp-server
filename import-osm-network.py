@@ -9,6 +9,9 @@ import os
 import sys
 import win32com.client
 from pathlib import Path
+import subprocess
+import json
+import tempfile
 
 
 # Mapping di default per conversione LinkType
@@ -1121,6 +1124,1014 @@ def import_osm_and_convert_linktypes(osm_file_path, config_folder,
         
     except Exception as e:
         result["message"] = "Errore durante processo integrato: {}".format(str(e))
+        print("\nERRORE GENERALE: {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+# ============================================================================
+# AUTO-ZONING FUNCTIONS
+# ============================================================================
+# Le seguenti funzioni permettono di creare zonizzazione automatica
+# da griglia esagonale usando l'algoritmo auto-zoning in subprocess.
+# Possono essere usate in sequenza dopo import_osm_and_convert_linktypes()
+# ============================================================================
+
+
+def validate_hex_grid(file_path):
+    """
+    Valida che la griglia esagonale esista e abbia i campi necessari.
+    
+    Args:
+        file_path (str): Percorso al file griglia esagonale (.shp, .geojson)
+    
+    Returns:
+        dict: {"valid": bool, "message": str, "errors": list}
+    
+    Esempio:
+        >>> result = validate_hex_grid(r"H:\\data\\griglia_hex.shp")
+        >>> if result["valid"]:
+        >>>     print("Griglia valida!")
+    """
+    result = {
+        "valid": False,
+        "message": "",
+        "errors": []
+    }
+    
+    try:
+        grid_path = Path(file_path)
+        
+        # Verifica esistenza file
+        if not grid_path.exists():
+            result["errors"].append("File non trovato: {}".format(file_path))
+            result["message"] = "File non trovato"
+            return result
+        
+        # Verifica estensione
+        valid_extensions = [".shp", ".geojson", ".json"]
+        if grid_path.suffix.lower() not in valid_extensions:
+            result["errors"].append("Estensione non valida. Usare: .shp, .geojson")
+            result["message"] = "Estensione non supportata"
+            return result
+        
+        # Per shapefile, verifica file associati
+        if grid_path.suffix.lower() == ".shp":
+            required_files = [".shx", ".dbf"]
+            for ext in required_files:
+                companion_file = grid_path.with_suffix(ext)
+                if not companion_file.exists():
+                    result["errors"].append("File mancante: {}".format(companion_file.name))
+        
+        if result["errors"]:
+            result["message"] = "File associati mancanti"
+            return result
+        
+        # Tutto OK
+        result["valid"] = True
+        result["message"] = "Griglia valida"
+        print("✓ Griglia validata: {}".format(grid_path.name))
+        return result
+        
+    except Exception as e:
+        result["errors"].append("Errore validazione: {}".format(str(e)))
+        result["message"] = "Errore durante validazione"
+        return result
+
+
+def create_zoning_config(hex_grid_file, study_area_file, num_zones, 
+                        compact_zones, geographical_distance_weight=10,
+                        boundaries_file=None, verbose=True, boundaries_verbose=True,
+                        road=True, rail=False, water=False,
+                        road_network_type="secondary",
+                        road_fix_par=None, rail_fix_par=None, 
+                        water_fix_par=None, final_fix_par=None,
+                        fields=None, weights=None, output_dir=None, output_crs="EPSG:4326"):
+    """
+    Crea file config.json per run_premodel.py.
+    TUTTI I PARAMETRI sono configurabili con valori di default override-abili.
+    
+    Args:
+        hex_grid_file (str): Path griglia esagonale
+        study_area_file (str): Path area studio (None = auto)
+        num_zones (int): Numero zone desiderato
+        compact_zones (bool): True=k-means, False=agglomerativo
+        geographical_distance_weight (int): Peso distanza geografica (default: 10)
+        boundaries_file (str): Path limiti fisici custom (default: None = auto da OSM)
+        verbose (bool): Log dettagliato processo (default: True)
+        boundaries_verbose (bool): Log dettagliato creazione limiti (default: True)
+        road (bool): Usa strade per limiti (default: True)
+        rail (bool): Usa ferrovie per limiti (default: False - spesso assenti)
+        water (bool): Usa fiumi per limiti (default: False - spesso assenti)
+        road_network_type (str): Tipo rete stradale OSM (default: "secondary")
+                                Options: motorway, trunk, primary, secondary, tertiary, residential, all
+        road_fix_par (list): Percentili pulizia strade (default: [0.9, 0.5])
+        rail_fix_par (list): Percentili pulizia ferrovie (default: [0.9, 0.8])
+        water_fix_par (list): Percentili pulizia fiumi (default: [])
+        final_fix_par (list): Percentili pulizia finale (default: [0.3])
+        fields (list): Campi griglia per clustering (default: ["POP", "ADD"])
+        weights (list): Pesi per ciascun campo (default: [1.0, 1.0])
+    
+    Returns:
+        str: Path al file config.json temporaneo creato
+    
+    Esempio base:
+        >>> config_file = create_zoning_config(
+        ...     hex_grid_file=r"H:\\data\\hex.shp",
+        ...     study_area_file=None,
+        ...     num_zones=200,
+        ...     compact_zones=True
+        ... )
+    
+    Esempio avanzato (override defaults):
+        >>> config_file = create_zoning_config(
+        ...     hex_grid_file=r"H:\\data\\hex.shp",
+        ...     study_area_file=None,
+        ...     num_zones=150,
+        ...     compact_zones=False,
+        ...     geographical_distance_weight=50,
+        ...     road_network_type="primary",
+        ...     road_fix_par=[0.95, 0.7],
+        ...     rail=False,
+        ...     final_fix_par=[0.5],
+        ...     fields=["POP"],
+        ...     weights=[1.5]
+        ... )
+    """
+    
+    # Valori di default per parametri array (solo se None)
+    if road_fix_par is None:
+        road_fix_par = [0.9, 0.5]
+    if rail_fix_par is None:
+        rail_fix_par = [0.9, 0.8]
+    if water_fix_par is None:
+        water_fix_par = []
+    if final_fix_par is None:
+        final_fix_par = [0.3]
+    if fields is None:
+        fields = ["POP", "ADD"]
+    if weights is None:
+        weights = [1.0, 1.0]
+    
+    # Se study_area è None, usa la griglia stessa (come nel config.json originale)
+    if study_area_file is None:
+        study_area_file = hex_grid_file
+    
+    config = {
+        "verbose": verbose,
+        "create_zoning": True,
+        "create_zoning_settings": {
+            "study_area": study_area_file,
+            "hex_grid": hex_grid_file,
+            "boundaries_creation_settings": {
+                "verbose": boundaries_verbose,
+                "road": road,
+                "rail": rail,
+                "water": water,
+                "road_network_type": road_network_type,
+                "road_fix_par": road_fix_par,
+                "rail_fix_par": rail_fix_par,
+                "water_fix_par": water_fix_par,
+                "final_fix_par": final_fix_par
+            },
+            "boundaries": boundaries_file,
+            "compact_zones": compact_zones,
+            "akwardly_shaped_zones": not compact_zones,
+            "number_of_zones": num_zones,
+            "geographical_distance_weight": geographical_distance_weight,
+            "fields": fields,
+            "weights": weights,
+            "output_dir": output_dir,
+            "output_crs": output_crs
+        }
+    }
+    
+    # Crea file temporaneo
+    temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.json', 
+                                            delete=False, encoding='utf-8')
+    json.dump(config, temp_file, indent=4)
+    temp_file.close()
+    
+    print("✓ Config creato: {}".format(temp_file.name))
+    return temp_file.name
+
+
+def run_auto_zoning_subprocess(config_json_path, conda_env="zoning_env", 
+                               auto_zoning_path=None, output_dir=None, timeout=1800):
+    """
+    Lancia auto-zoning in subprocess usando conda environment.
+    Supporta sia nome environment che path assoluto.
+    
+    Args:
+        config_json_path (str): Path al file config.json
+        conda_env (str): Nome environment (es. "zoning_env") o path assoluto (es. "H:\\go\\.env")
+                        Default: "zoning_env"
+                        - Se contiene \\ / o : → path assoluto → usa --prefix
+                        - Altrimenti → nome → usa -n
+        auto_zoning_path (str): Path directory auto-zoning (contiene run_premodel.py)
+                               Default: None = cerca in posizioni comuni
+        timeout (int): Timeout in secondi (default: 1800 = 30 min)
+    
+    Returns:
+        dict: {"status": str, "message": str, "output_files": list}
+    
+    Esempio con nome:
+        >>> result = run_auto_zoning_subprocess(
+        ...     config_json_path=r"C:\\temp\\config.json",
+        ...     conda_env="zoning_env"
+        ... )
+    
+    Esempio con path custom:
+        >>> result = run_auto_zoning_subprocess(
+        ...     config_json_path=r"C:\\temp\\config.json",
+        ...     conda_env=r"H:\\go\\network_builder\\.env",
+        ...     auto_zoning_path=r"H:\\visum-thinker-mcp-server\\auto-zoning"
+        ... )
+    """
+    result = {
+        "status": "failed",
+        "message": "",
+        "output_files": []
+    }
+    
+    try:
+        # Trova lo script run_premodel.py
+        if auto_zoning_path:
+            # Path specificato dall'utente
+            script_path = Path(auto_zoning_path) / "run_premodel.py"
+        else:
+            # Cerca in posizioni comuni
+            possible_paths = [
+                Path(__file__).parent / "auto-zoning" / "run_premodel.py",  # Relativo allo script
+                Path("H:/visum-thinker-mcp-server/auto-zoning/run_premodel.py"),  # Path assoluto comune
+                Path("auto-zoning/run_premodel.py"),  # Directory corrente
+            ]
+            
+            script_path = None
+            for p in possible_paths:
+                if p.exists():
+                    script_path = p
+                    break
+            
+            if script_path is None:
+                result["message"] = "Script run_premodel.py non trovato. Specifica 'auto_zoning_path'. Cercato in: {}".format(
+                    [str(p) for p in possible_paths]
+                )
+                print("✗ {}".format(result["message"]))
+                return result
+        
+        if not script_path.exists():
+            result["message"] = "Script run_premodel.py non trovato: {}".format(script_path)
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        # Determina se conda_env è un path assoluto o un nome
+        is_path = ('\\' in conda_env or '/' in conda_env or ':' in conda_env)
+        
+        print("\n" + "=" * 70)
+        print("ESECUZIONE AUTO-ZONING IN SUBPROCESS")
+        print("=" * 70)
+        print("Script: {}".format(script_path))
+        print("Config: {}".format(config_json_path))
+        if is_path:
+            print("Conda env (path): {}".format(conda_env))
+        else:
+            print("Conda env (nome): {}".format(conda_env))
+        print("Timeout: {} secondi".format(timeout))
+        print("\nAvvio processo (attendere)...")
+        
+        # Cerca conda.exe
+        conda_exe = None
+        possible_conda = [
+            "conda",  # Nel PATH
+            r"H:\ProgramData\Miniconda3\Scripts\conda.exe",
+            r"C:\ProgramData\Anaconda3\Scripts\conda.exe",
+            r"C:\ProgramData\Miniconda3\Scripts\conda.exe",
+            r"C:\Users\{}\Anaconda3\Scripts\conda.exe".format(os.environ.get("USERNAME", "")),
+            r"C:\Users\{}\Miniconda3\Scripts\conda.exe".format(os.environ.get("USERNAME", "")),
+        ]
+        
+        for conda_path in possible_conda:
+            try:
+                subprocess.run([conda_path, "--version"], 
+                             capture_output=True, timeout=5, check=True)
+                conda_exe = conda_path
+                break
+            except:
+                continue
+        
+        if not conda_exe:
+            result["message"] = "Conda non trovato nel PATH"
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        print("Conda: {}".format(conda_exe))
+        
+        # Se è un path, usa -p (prefix), altrimenti -n (name)
+        if is_path:
+            # Path assoluto: usa -p (prefix path)
+            print("Environment path: {}".format(conda_env))
+            cmd = [conda_exe, "run", "-p", conda_env, "python", str(script_path), config_json_path]
+        else:
+            # Nome environment: usa -n (name)
+            print("Environment name: {}".format(conda_env))
+            cmd = [conda_exe, "run", "-n", conda_env, "python", str(script_path), config_json_path]
+        
+        # Crea file di log per stdout/stderr
+        log_file = tempfile.NamedTemporaryFile(mode='w', suffix='_autozoning.log', 
+                                              delete=False, encoding='utf-8')
+        log_path = log_file.name
+        log_file.close()
+        
+        print("Log file: {}".format(log_path))
+        print("Comando: {}".format(" ".join(cmd)))
+        result["log_file"] = log_path
+        
+        # Esegui subprocess
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            cwd=str(script_path.parent)
+        )
+        
+        # Attendi completamento
+        try:
+            stdout, stderr = process.communicate(timeout=timeout)
+            
+            # Salva output in log file
+            with open(log_path, 'w', encoding='utf-8') as f:
+                f.write("=" * 70 + "\n")
+                f.write("AUTO-ZONING SUBPROCESS LOG\n")
+                f.write("=" * 70 + "\n")
+                f.write("Comando: {}\n".format(" ".join(cmd)))
+                f.write("Working dir: {}\n".format(script_path.parent))
+                f.write("Exit code: {}\n".format(process.returncode))
+                f.write("=" * 70 + "\n\n")
+                
+                f.write("STDOUT:\n")
+                f.write("-" * 70 + "\n")
+                f.write(stdout if stdout else "(vuoto)\n")
+                f.write("\n")
+                
+                f.write("STDERR:\n")
+                f.write("-" * 70 + "\n")
+                f.write(stderr if stderr else "(vuoto)\n")
+            
+            print("\n--- Output subprocess ---")
+            if stdout:
+                print("STDOUT:")
+                print(stdout)
+            if stderr:
+                print("\nSTDERR:")
+                print(stderr)
+            print("--- Fine output ---\n")
+            print("Log completo salvato in: {}".format(log_path))
+            
+            if process.returncode == 0:
+                # Verifica file output - usa output_dir dal parametro o default
+                if output_dir:
+                    out_path = Path(output_dir)
+                else:
+                    out_path = script_path.parent / "output"
+                
+                output_files = []
+                
+                if out_path.exists():
+                    for file in out_path.glob("*.geojson"):
+                        output_files.append(str(file))
+                        print("✓ Output generato: {}".format(file.name))
+                
+                result["status"] = "success"
+                result["message"] = "Auto-zoning completato con successo"
+                result["output_files"] = output_files
+                
+                if not output_files:
+                    result["message"] += " (WARNING: nessun file output trovato in {})".format(out_path)
+                    print("⚠ Warning: nessun file .geojson trovato in {}".format(out_path))
+            else:
+                result["message"] = "Subprocess terminato con errore (code: {}). Vedi log: {}".format(
+                    process.returncode, log_path
+                )
+                print("✗ {}".format(result["message"]))
+                if stderr:
+                    print("\nErrore dettagliato:")
+                    print(stderr)
+        
+        except subprocess.TimeoutExpired:
+            process.kill()
+            result["message"] = "Timeout dopo {} secondi. Vedi log: {}".format(timeout, log_path)
+            print("✗ {}".format(result["message"]))
+        
+        return result
+        
+    except Exception as e:
+        result["message"] = "Errore subprocess: {}".format(str(e))
+        print("✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+def import_zones_shapefile_with_geometry(shapefile_path, visum_instance=None):
+    """
+    Importa zone da Shapefile in Visum usando visum.IO (CON geometrie complete)
+    
+    Args:
+        shapefile_path (str): Path al file .shp con zone
+        visum_instance: Istanza Visum (default: usa Visum da console)
+    
+    Returns:
+        dict: {"status": str, "zones_imported": int, "message": str}
+    """
+    result = {
+        "status": "failed",
+        "zones_imported": 0,
+        "message": ""
+    }
+    
+    try:
+        # Usa istanza Visum
+        if visum_instance is None:
+            visum = Visum
+        else:
+            visum = visum_instance
+        
+        shp_path = Path(shapefile_path)
+        if not shp_path.exists():
+            result["message"] = "File Shapefile non trovato: {}".format(shapefile_path)
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        print("\n" + "=" * 70)
+        print("IMPORT ZONE DA SHAPEFILE (CON GEOMETRIE)")
+        print("=" * 70)
+        print("File: {}".format(shp_path.name))
+        
+        # Usa visum.IO.ImportShapefile per importare shapefile con geometrie
+        try:
+            # ✓ METODO CORRETTO: visum.IO.ImportShapefile(filename, IImportShapeFilePara)
+            print("🔧 Creazione parametri import...")
+            
+            # Crea oggetto parametri per import shapefile
+            import_para = visum.IO.CreateImportShapeFilePara()
+            
+            # Imposta tipo di oggetto: shapefileTypeZones = 3 (enum ShapeFileObjType)
+            import_para.ObjectType = 3  # shapefileTypeZones
+            
+            # Opzionale: mappa attributi (ID, POP, EMP)
+            # import_para.AddAttributeAllocation("ID", "NO")  # se necessario
+            
+            print("📥 Import shapefile con geometrie complete...")
+            visum.IO.ImportShapefile(str(shp_path), import_para)
+            
+            result["status"] = "success"
+            result["zones_imported"] = visum.Net.Zones.Count
+            result["message"] = "Zone importate con geometrie da {}".format(shp_path.name)
+            print("✓ {}".format(result["message"]))
+            
+        except Exception as e:
+            result["message"] = "Errore import shapefile: {}. Usa import manuale: File > Import > Shapefile > {}".format(str(e), shp_path.name)
+            print("⚠ {}".format(result["message"]))
+            result["status"] = "manual_required"
+            import traceback
+            traceback.print_exc()
+        
+        print("=" * 70)
+        return result
+        
+    except Exception as e:
+        result["message"] = "Errore import shapefile: {}".format(str(e))
+        print("✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+def convert_geojson_to_shapefile(geojson_file, output_dir=None):
+    """
+    Converte GeoJSON in Shapefile usando geopandas (nel subprocess conda env)
+    
+    Args:
+        geojson_file (str): Path al file GeoJSON
+        output_dir (str): Directory output (default: stessa dir del geojson)
+    
+    Returns:
+        str: Path al file .shp creato
+    """
+    try:
+        geojson_path = Path(geojson_file)
+        if output_dir is None:
+            output_dir = geojson_path.parent
+        else:
+            output_dir = Path(output_dir)
+            output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Nome shapefile
+        shp_name = geojson_path.stem + ".shp"
+        shp_path = output_dir / shp_name
+        
+        print("\n📦 Conversione GeoJSON → Shapefile...")
+        print("   Input:  {}".format(geojson_path.name))
+        print("   Output: {}".format(shp_name))
+        
+        # Script Python per conversione (usa geopandas se disponibile)
+        conversion_script = """
+import geopandas as gpd
+from pathlib import Path
+
+geojson_file = r"{}"
+shp_file = r"{}"
+
+try:
+    gdf = gpd.read_file(geojson_file)
+    gdf.to_file(shp_file)
+    print("✓ Shapefile creato: {{}}".format(Path(shp_file).name))
+except Exception as e:
+    print("✗ Errore conversione: {{}}".format(str(e)))
+    raise
+""".format(str(geojson_path), str(shp_path))
+        
+        # Scrivi script temporaneo
+        import tempfile
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
+            f.write(conversion_script)
+            temp_script = f.name
+        
+        try:
+            # Esegui con geopandas (disponibile in ambiente principale Python)
+            import subprocess
+            result = subprocess.run(
+                ['python', temp_script],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode == 0:
+                print("✓ Conversione completata")
+                return str(shp_path)
+            else:
+                print("✗ Errore conversione:")
+                print(result.stderr)
+                return None
+        finally:
+            # Rimuovi script temporaneo
+            try:
+                os.unlink(temp_script)
+            except:
+                pass
+                
+    except Exception as e:
+        print("✗ Errore conversione GeoJSON: {}".format(str(e)))
+        return None
+
+
+def import_zones_from_geojson(geojson_file, zone_id_field="zone_id", 
+                              output_crs="EPSG:4326", visum_instance=None):
+    """
+    Importa zone da file GeoJSON in Visum.Net.Zones
+    
+    Args:
+        geojson_file (str): Path al file GeoJSON con zone
+        zone_id_field (str): Campo da usare come ID zona (default: "zone_id")
+        output_crs (str): Sistema coordinate per Visum (default: "EPSG:4326" = WGS84)
+        visum_instance: Istanza Visum (default: usa Visum da console)
+    
+    Returns:
+        dict: {"status": str, "zones_created": int, "message": str}
+    
+    Esempio:
+        >>> result = import_zones_from_geojson(
+        ...     geojson_file=r"H:\\output\\zoning_0.geojson"
+        ... )
+        >>> print("Zone create:", result["zones_created"])
+    """
+    result = {
+        "status": "failed",
+        "zones_created": 0,
+        "message": ""
+    }
+    
+    try:
+        # Usa istanza Visum
+        if visum_instance is None:
+            visum = Visum
+        else:
+            visum = visum_instance
+        
+        # Leggi GeoJSON
+        geojson_path = Path(geojson_file)
+        if not geojson_path.exists():
+            result["message"] = "File GeoJSON non trovato: {}".format(geojson_file)
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        print("\n" + "=" * 70)
+        print("IMPORT ZONE DA GEOJSON")
+        print("=" * 70)
+        print("File: {}".format(geojson_path.name))
+        
+        # OPZIONE 1: Cerca Shapefile corrispondente (generato dal subprocess)
+        shp_file = geojson_path.with_suffix('.shp')
+        
+        if shp_file.exists():
+            print("\n🗺️ File Shapefile trovato: {}".format(shp_file.name))
+            print("🔄 Tentativo import con geometrie complete...")
+            
+            shp_result = import_zones_shapefile_with_geometry(str(shp_file), visum)
+            if shp_result["status"] == "success":
+                # Import shapefile riuscito con geometrie!
+                result.update(shp_result)
+                result["zones_created"] = shp_result["zones_imported"]
+                result["shapefile"] = str(shp_file)
+                return result
+            elif shp_result["status"] == "manual_required":
+                # visum.IO non disponibile - salva path per import manuale
+                print("\n⚠ visum.IO non disponibile via API")
+                print("   Shapefile disponibile per import manuale GUI:")
+                print("   {}".format(str(shp_file)))
+                print("   Import: File > Import > Shapefile\n")
+                result["shapefile_for_manual_import"] = str(shp_file)
+            else:
+                print("⚠ Import shapefile fallito, uso import manuale attributi...")
+        else:
+            print("\n⚠ File Shapefile non trovato: {}".format(shp_file.name))
+            print("   Il subprocess dovrebbe generare sia .geojson che .shp")
+            print("   Uso import manuale (solo centroidi + attributi)...")
+        
+        # OPZIONE 2: Tentativo import GeoJSON diretto con visum.IO
+        print("\n🔄 Tentativo import GeoJSON con visum.IO.ImportGeoJSON()...")
+        try:
+            # ✓ METODO CORRETTO: visum.IO.ImportGeoJSON(filename, IImportGeoJSONPara)
+            import_para = visum.IO.CreateImportGeoJSONPara()
+            import_para.ObjectType = 3  # shapefileTypeZones (enum ShapeFileObjType)
+            
+            print("📥 Import GeoJSON con geometrie complete...")
+            visum.IO.ImportGeoJSON(str(geojson_path), import_para)
+            
+            result["status"] = "success"
+            result["zones_created"] = visum.Net.Zones.Count
+            result["message"] = "Zone importate con geometrie da {}".format(geojson_path.name)
+            print("✓ {}".format(result["message"]))
+            print("=" * 70)
+            return result
+            
+        except Exception as e:
+            print("⚠ Import GeoJSON fallito: {}".format(str(e)))
+            print("   Fallback su import manuale (centroidi + attributi)...")
+        
+        # OPZIONE 3: Import manuale (solo centroidi e attributi)
+        print("\n📝 Import manuale zone (centroidi + attributi)...")
+        
+        # Leggi GeoJSON direttamente (già convertito a {} dal subprocess)
+        import json
+        with open(geojson_path, 'r', encoding='utf-8') as f:
+            geojson_data = json.load(f)
+        
+        features = geojson_data.get("features", [])
+        if not features:
+            result["message"] = "Nessuna feature trovata nel GeoJSON"
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        print("Feature trovate: {}".format(len(features)))
+        print("CRS: {} (convertito dal subprocess)".format(output_crs))
+        print("\nImportazione zone...")
+        
+        zones_created = 0
+        errors = []
+        
+        for i, feature in enumerate(features):
+            try:
+                properties = feature.get("properties", {})
+                geometry = feature.get("geometry", {})
+                
+                # Determina zone_id
+                if zone_id_field in properties:
+                    zone_id = int(properties[zone_id_field])
+                else:
+                    zone_id = i + 1  # Usa indice progressivo
+                
+                # Verifica se zona esiste già
+                try:
+                    existing_zone = visum.Net.Zones.ItemByKey(zone_id)
+                    print("  Zona {} già esistente, aggiorno...".format(zone_id))
+                    zone = existing_zone
+                except:
+                    # Crea nuova zona
+                    zone = visum.Net.AddZone(zone_id)
+                    zones_created += 1
+                
+                # Imposta geometria (centroide del poligono)
+                if geometry and geometry.get("type") == "Polygon":
+                    try:
+                        coordinates = geometry.get("coordinates", [[]])[0]  # Primo anello del poligono
+                        if coordinates and len(coordinates) > 0:
+                            # Calcola centroide (media delle coordinate)
+                            lons = [coord[0] for coord in coordinates]
+                            lats = [coord[1] for coord in coordinates]
+                            centroid_lon = sum(lons) / len(lons)
+                            centroid_lat = sum(lats) / len(lats)
+                            
+                            # Imposta coordinate centroide zona
+                            zone.SetAttValue("XCoord", centroid_lon)
+                            zone.SetAttValue("YCoord", centroid_lat)
+                            
+                            # NOTA: Le superfici (poligoni) delle zone non sono supportate via COM API
+                            # Per visualizzare i poligoni in Visum, importare il file GeoJSON 
+                            # manualmente: File > Open > Net File > Formato GIS
+                    except Exception as e:
+                        if len(errors) <= 5:
+                            print("  ⚠ Errore geometria zona {}: {}".format(zone_id, str(e)))
+                
+                # Imposta attributi se disponibili
+                if "POP" in properties:
+                    try:
+                        zone.SetAttValue("POP", float(properties["POP"]))
+                    except:
+                        pass
+                
+                if "ADD" in properties or "Addetti" in properties:
+                    try:
+                        add_value = properties.get("ADD", properties.get("Addetti", 0))
+                        zone.SetAttValue("EMP", float(add_value))
+                    except:
+                        pass
+                
+                # Mostra progress ogni 50 zone
+                if (i + 1) % 50 == 0:
+                    print("  Importate {} zone...".format(i + 1))
+                
+            except Exception as e:
+                error_msg = "Errore zona {}: {}".format(i + 1, str(e))
+                errors.append(error_msg)
+                if len(errors) <= 5:  # Mostra solo primi 5 errori
+                    print("  ⚠ {}".format(error_msg))
+        
+        result["status"] = "success"
+        result["zones_created"] = zones_created
+        result["message"] = "Importate {} zone da {}".format(zones_created, geojson_path.name)
+        
+        if errors:
+            result["message"] += " ({} errori)".format(len(errors))
+            result["errors"] = errors
+        
+        print("\n✓ {}".format(result["message"]))
+        print("=" * 70)
+        
+        return result
+        
+    except Exception as e:
+        result["message"] = "Errore import zone: {}".format(str(e))
+        print("✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+def create_zones_from_hex_grid(hex_grid_file, num_zones=200, 
+                               compact_zones=True, study_area_file=None,
+                               geographical_distance_weight=10, output_crs="EPSG:4326",
+                               boundaries_file=None, verbose=True, boundaries_verbose=True,
+                               road=True, rail=False, water=False,
+                               road_network_type="secondary",
+                               road_fix_par=None, rail_fix_par=None,
+                               water_fix_par=None, final_fix_par=None,
+                               fields=None, weights=None, output_dir=None,
+                               conda_env="zoning_env", auto_zoning_path=None, timeout=1800,
+                               save_project_as=None, visum_instance=None):
+    """
+    PROCESSO COMPLETO: Crea zonizzazione automatica da griglia esagonale.
+    TUTTI I PARAMETRI sono configurabili con valori di default override-abili.
+    
+    Esegue in sequenza:
+    1. Valida griglia esagonale
+    2. Crea config.json per auto-zoning
+    3. Lancia auto-zoning in subprocess conda
+    4. Importa zone generate in Visum
+    5. Salva progetto (opzionale)
+    
+    Args:
+        hex_grid_file (str): Path griglia esagonale (.shp, .geojson)
+                            Deve contenere campi: id, POP, ADD, Landuse
+        num_zones (int): Numero zone desiderato (default: 200)
+        compact_zones (bool): True=zone compatte (k-means), False=forme variate (default: True)
+        study_area_file (str): Path limiti area studio (default: None = auto)
+        geographical_distance_weight (int): Peso distanza geografica 1-100 (default: 10)
+        boundaries_file (str): Path limiti fisici custom (default: None = auto da OSM)
+        verbose (bool): Log dettagliato processo (default: True)
+        boundaries_verbose (bool): Log dettagliato creazione limiti (default: True)
+        road (bool): Usa strade OSM per limiti (default: True)
+        rail (bool): Usa ferrovie OSM per limiti (default: False - spesso assenti)
+        water (bool): Usa fiumi OSM per limiti (default: False - spesso assenti)
+        road_network_type (str): Tipo rete stradale OSM (default: "secondary")
+                                motorway|trunk|primary|secondary|tertiary|residential|all
+        road_fix_par (list): Percentili pulizia strade (default: [0.9, 0.5])
+        rail_fix_par (list): Percentili pulizia ferrovie (default: [0.9, 0.8])
+        water_fix_par (list): Percentili pulizia fiumi (default: [])
+        final_fix_par (list): Percentili pulizia finale (default: [0.3])
+        conda_env (str): Nome environment (es. "zoning_env") o path assoluto 
+                        (es. r"H:\\go\\network_builder\\.env")
+                        Default: "zoning_env"
+        auto_zoning_path (str): Path directory auto-zoning (contiene run_premodel.py)
+                               Default: None = cerca automaticamente
+                               Es: r"H:\\visum-thinker-mcp-server\\auto-zoning"
+        timeout (int): Timeout subprocess in secondi (default: 1800)
+        save_project_as (str): Path salvataggio progetto (opzionale)
+        visum_instance: Istanza Visum (default: usa Visum da console)
+    
+    Returns:
+        dict: Risultato completo con info zonizzazione
+    
+    Esempio base:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        >>> 
+        >>> result = create_zones_from_hex_grid(
+        ...     hex_grid_file=r"H:\\data\\Terni_prezoning_hex.shp",
+        ...     num_zones=200,
+        ...     compact_zones=True,
+        ...     save_project_as=r"H:\\projects\\complete.ver"
+        ... )
+    
+    Esempio con environment custom (path):
+        >>> result = create_zones_from_hex_grid( env!
+        ...     auto_zoning_path=r"H:\\visum-thinker-mcp-server\\auto-zoning",  # Path script
+        ...     hex_grid_file=r"H:\\data\\hex.shp",
+        ...     num_zones=200,
+        ...     conda_env=r"H:\\go\\network_builder\\.env",  # Path assoluto!
+        ...     save_project_as=r"H:\\projects\\zones.ver"
+        ... )
+    
+    Esempio avanzato (override parametri):
+        >>> result = create_zones_from_hex_grid(
+        ...     hex_grid_file=r"H:\\data\\hex.shp",
+        ...     num_zones=150,
+        ...     compact_zones=False,                    # Zone forme variate
+        ...     geographical_distance_weight=50,        # Più compatte
+        ...     road_network_type="primary",            # Solo strade primarie
+        ...     rail=False,                             # Ignora ferrovie
+        ...     road_fix_par=[0.95, 0.7],              # Pulizia aggressiva
+        ...     final_fix_par=[0.5],                   # Pulizia finale custom
+        ...     verbose=False,                          # Meno output
+        ...     conda_env="my_custom_env",              # Environment custom
+        ...     timeout=3600,                           # 1 ora timeout
+        ...     save_project_as=r"H:\\projects\\zones_custom.ver"
+        ... )
+    """
+    
+    result = {
+        "status": "failed",
+        "message": "",
+        "validation": {},
+        "subprocess": {},
+        "import": {},
+        "zones_created": 0
+    }
+    
+    try:
+        print("\n" + "=" * 70)
+        print("PROCESSO AUTO-ZONING COMPLETO")
+        print("=" * 70)
+        
+        # Usa istanza Visum
+        if visum_instance is None:
+            visum = Visum
+        else:
+            visum = visum_instance
+        
+        # STEP 1: Validazione griglia
+        print("\n### STEP 1: VALIDAZIONE GRIGLIA ESAGONALE ###")
+        validation_result = validate_hex_grid(hex_grid_file)
+        result["validation"] = validation_result
+        
+        if not validation_result["valid"]:
+            result["message"] = "Validazione fallita: {}".format(validation_result["message"])
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        # STEP 2: Crea config
+        print("\n### STEP 2: CREAZIONE CONFIGURAZIONE ###")
+        config_file = create_zoning_config(
+            hex_grid_file=hex_grid_file,
+            study_area_file=study_area_file,
+            num_zones=num_zones,
+            compact_zones=compact_zones,
+            geographical_distance_weight=geographical_distance_weight,
+            boundaries_file=boundaries_file,
+            verbose=verbose,
+            boundaries_verbose=boundaries_verbose,
+            road=road,
+            rail=rail,
+            water=water,
+            road_network_type=road_network_type,
+            road_fix_par=road_fix_par,
+            rail_fix_par=rail_fix_par,
+            water_fix_par=water_fix_par,
+            final_fix_par=final_fix_par,
+            fields=fields,
+            weights=weights,
+            output_dir=output_dir,
+            output_crs=output_crs
+        )
+        result["config_file"] = config_file
+        
+        # STEP 3: Esegui auto-zoning
+        print("\n### STEP 3: ESECUZIONE AUTO-ZONING ###")
+        subprocess_result = run_auto_zoning_subprocess(
+            config_json_path=config_file,
+            auto_zoning_path=auto_zoning_path,
+            conda_env=conda_env,
+            output_dir=output_dir,
+            timeout=timeout
+        )
+        result["subprocess"] = subprocess_result
+        
+        if subprocess_result["status"] != "success":
+            result["message"] = "Auto-zoning fallito: {}".format(subprocess_result["message"])
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        # STEP 4: Import zone in Visum
+        print("\n### STEP 4: IMPORT ZONE IN VISUM ###")
+        
+        output_files = subprocess_result.get("output_files", [])
+        if not output_files:
+            result["message"] = "Nessun file output generato da auto-zoning"
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        # Importa il primo file zoning (zoning_0.geojson, escludendo boundaries)
+        zoning_files = [f for f in output_files if "zoning_" in f and f.endswith(".geojson") and "boundaries" not in f]
+        
+        if not zoning_files:
+            result["message"] = "Nessun file zoning_*.geojson trovato"
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        # Usa il primo file zoning
+        zoning_file = zoning_files[0]
+        print("Importo zone da: {}".format(Path(zoning_file).name))
+        
+        import_result = import_zones_from_geojson(
+            geojson_file=zoning_file,
+            output_crs=output_crs,
+            visum_instance=visum
+        )
+        result["import"] = import_result
+        
+        if import_result["status"] != "success":
+            result["message"] = "Import zone fallito: {}".format(import_result["message"])
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        result["zones_created"] = import_result["zones_created"]
+        
+        # STEP 5: Salvataggio progetto
+        if save_project_as:
+            print("\n### STEP 5: SALVATAGGIO PROGETTO ###")
+            try:
+                save_path = Path(save_project_as)
+                save_path.parent.mkdir(parents=True, exist_ok=True)
+                
+                visum.SaveVersion(str(save_path))
+                print("✓ Progetto salvato: {}".format(save_project_as))
+                result["project_file"] = str(save_path)
+            except Exception as e:
+                print("✗ Errore salvataggio: {}".format(str(e)))
+                result["save_error"] = str(e)
+        
+        # Cleanup config temporaneo
+        try:
+            os.unlink(config_file)
+            print("\n✓ File temporaneo rimosso")
+        except:
+            pass
+        
+        # Riepilogo finale
+        result["status"] = "success"
+        result["message"] = "Auto-zoning completato: {} zone create".format(result["zones_created"])
+        
+        print("\n" + "=" * 70)
+        print("PROCESSO COMPLETATO CON SUCCESSO")
+        print("=" * 70)
+        print("\nRiepilogo:")
+        print("  - Griglia input: {}".format(Path(hex_grid_file).name))
+        print("  - Zone create: {}".format(result["zones_created"]))
+        print("  - Tipo clustering: {}".format("Compatto (k-means)" if compact_zones else "Agglomerativo"))
+        print("  - File output: {}".format(len(output_files)))
+        
+        if save_project_as:
+            print("\nProgetto salvato: {}".format(save_project_as))
+        
+        print("=" * 70)
+        
+        return result
+        
+    except Exception as e:
+        result["message"] = "Errore processo auto-zoning: {}".format(str(e))
         print("\nERRORE GENERALE: {}".format(result["message"]))
         import traceback
         traceback.print_exc()
