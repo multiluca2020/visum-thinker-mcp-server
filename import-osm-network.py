@@ -1950,6 +1950,624 @@ def import_zones_from_geojson(geojson_file, zone_id_field="zone_id",
         return result
 
 
+def tag_nodes_with_zone(visum_instance=None):
+    """
+    Tagga ogni nodo con il numero della zona in cui si trova.
+    
+    Usa AddVal2 per memorizzare ZoneNo. Se nodo non è in nessuna zona, AddVal2=0.
+    Questo permette poi di forzare connectors solo verso nodi interni alla zona.
+    
+    METODO:
+    Per ogni nodo, verifica se le coordinate (X, Y) cadono dentro il poligono
+    della zona usando la geometria delle zone.
+    
+    Args:
+        visum_instance: Istanza Visum (default: usa Visum da console)
+    
+    Returns:
+        dict: {
+            "status": str,
+            "nodes_tagged": int,
+            "nodes_in_zones": int,
+            "nodes_outside": int,
+            "zones_with_nodes": int
+        }
+    
+    Esempio:
+        >>> # Tagga tutti i nodi con la zona di appartenenza
+        >>> result = tag_nodes_with_zone()
+        >>> print(f"Nodi taggati: {result['nodes_in_zones']}")
+        >>> print(f"Nodi fuori zone: {result['nodes_outside']}")
+    """
+    result = {
+        "status": "failed",
+        "nodes_tagged": 0,
+        "nodes_in_zones": 0,
+        "nodes_outside": 0,
+        "zones_with_nodes": 0
+    }
+    
+    try:
+        if visum_instance is None:
+            visum = Visum
+        else:
+            visum = visum_instance
+        
+        print("\n" + "=" * 70)
+        print("TAGGING NODI CON ZONA DI APPARTENENZA")
+        print("=" * 70)
+        
+        # Reset AddVal2 su tutti i nodi
+        print("Reset AddVal2 su tutti i nodi...")
+        visum.Net.Nodes.SetAllAttValues("AddVal2", 0)
+        
+        # Ottieni coordinate nodi
+        print("\nCaricamento coordinate nodi...")
+        node_nos = visum.Net.Nodes.GetMultiAttValues("No")
+        node_xs = visum.Net.Nodes.GetMultiAttValues("XCoord")
+        node_ys = visum.Net.Nodes.GetMultiAttValues("YCoord")
+        
+        total_nodes = len(node_nos)
+        print(f"Nodi totali: {total_nodes}")
+        
+        # Ottieni zone con coordinate
+        print("Caricamento zone...")
+        zone_nos = visum.Net.Zones.GetMultiAttValues("No")
+        zone_xs = visum.Net.Zones.GetMultiAttValues("XCoord")
+        zone_ys = visum.Net.Zones.GetMultiAttValues("YCoord")
+        
+        # Per ogni zona, calcola coordinate
+        zones_data = {}
+        for i in range(len(zone_nos)):
+            zone_no = int(zone_nos[i][1])
+            zones_data[zone_no] = {
+                'x': float(zone_xs[i][1]),
+                'y': float(zone_ys[i][1])
+            }
+        
+        total_zones = len(zones_data)
+        print(f"Zone totali: {total_zones}")
+        
+        # Crea mappatura node_no -> index per accesso veloce
+        print("\nCreazione mappatura nodi...")
+        node_no_to_index = {}
+        for i, row in enumerate(node_nos):
+            node_no = int(row[1])
+            node_no_to_index[node_no] = i
+        
+        # Array diretto per SetAttValue veloce
+        all_nodes = visum.Net.Nodes.GetAll
+        
+        # Per ogni nodo, trova la zona più vicina
+        print("\nAssegnazione nodi a zone...")
+        zones_with_nodes = set()
+        nodes_in_zones = 0
+        max_zone_radius = 5000  # metri
+        
+        for i in range(total_nodes):
+            node_no = int(node_nos[i][1])
+            node_x = float(node_xs[i][1])
+            node_y = float(node_ys[i][1])
+            
+            # Trova zona più vicina al nodo
+            min_distance = float('inf')
+            closest_zone = None
+            
+            for zone_no, zone_coords in zones_data.items():
+                dx = node_x - zone_coords['x']
+                dy = node_y - zone_coords['y']
+                dist = (dx**2 + dy**2)**0.5
+                
+                if dist < min_distance:
+                    min_distance = dist
+                    closest_zone = zone_no
+            
+            # Se la zona più vicina è entro raggio, assegna
+            if closest_zone and min_distance <= max_zone_radius:
+                try:
+                    idx = node_no_to_index[node_no]
+                    all_nodes[idx].SetAttValue("AddVal2", closest_zone)
+                    nodes_in_zones += 1
+                    zones_with_nodes.add(closest_zone)
+                except:
+                    pass
+            
+            # Progress ogni 500 nodi
+            if (i + 1) % 500 == 0:
+                print(f"  Processati {i+1}/{total_nodes} nodi...")
+        
+        nodes_outside = total_nodes - nodes_in_zones
+        
+        result["status"] = "success"
+        result["nodes_tagged"] = total_nodes
+        result["nodes_in_zones"] = nodes_in_zones
+        result["nodes_outside"] = nodes_outside
+        result["zones_with_nodes"] = len(zones_with_nodes)
+        
+        print("\n" + "=" * 70)
+        print("✓ TAGGING COMPLETATO")
+        print("=" * 70)
+        print(f"Nodi totali processati: {total_nodes}")
+        print(f"Nodi assegnati a zone: {nodes_in_zones}")
+        print(f"Nodi fuori zone: {nodes_outside}")
+        print(f"Zone con almeno 1 nodo: {len(zones_with_nodes)}")
+        
+        return result
+        
+    except Exception as e:
+        result["message"] = f"Errore tagging nodi: {e}"
+        print("\n✗ " + result["message"])
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+# ============================================================================
+# 【6.5】 ZONE CONNECTORS CREATION
+# ============================================================================
+
+def activate_nodes_by_linktype(linktype_list=None, exclude_linktype_list=None, visum_instance=None):
+    """
+    Attiva nodi connessi a link di specifici tipi (per usare in connectors).
+    
+    Filtra i nodi che sono connessi ad almeno un link con TypeNo nella lista.
+    Imposta AddVal1=1 su questi nodi per uso successivo in create_zone_connectors.
+    Opzionalmente esclude nodi connessi a link types specifici.
+    
+    Args:
+        linktype_list (list): Lista di TypeNo da includere. Se None, include TUTTI i nodi (default: None)
+        exclude_linktype_list (list): Lista di TypeNo da escludere (es. [80, 81] per rimuovere residenziali)
+        visum_instance: Istanza Visum (default: usa Visum da console)
+    
+    Returns:
+        dict: {"status": str, "nodes_activated": int, "nodes_excluded": int, "linktypes": list, "excluded_linktypes": list}
+    
+    Esempi:
+        >>> # Attiva solo nodi su strade urbane principali
+        >>> result = activate_nodes_by_linktype([50, 60, 70])
+        
+        >>> # Attiva TUTTI i nodi MA escludi residenziali/vicoli
+        >>> result = activate_nodes_by_linktype(exclude_linktype_list=[80, 81])
+        
+        >>> # Attiva strade principali MA escludi nodi su strade residenziali
+        >>> result = activate_nodes_by_linktype([50, 60, 70], exclude_linktype_list=[80, 81])
+        >>> print(f"Nodi attivati: {result['nodes_activated']}, esclusi: {result['nodes_excluded']}")
+    """
+    result = {
+        "status": "failed",
+        "nodes_activated": 0,
+        "nodes_excluded": 0,
+        "linktypes": linktype_list,
+        "excluded_linktypes": exclude_linktype_list or []
+    }
+    
+    try:
+        if visum_instance is None:
+            visum = Visum
+        else:
+            visum = visum_instance
+        
+        print("\n" + "=" * 70)
+        print("ATTIVAZIONE NODI PER TIPO LINK")
+        print("=" * 70)
+        if linktype_list:
+            print("Tipi link da includere: {}".format(linktype_list))
+        else:
+            print("Tipi link da includere: TUTTI")
+        if exclude_linktype_list:
+            print("Tipi link da escludere: {}".format(exclude_linktype_list))
+        
+        # Reset AddVal1 su tutti i nodi (Active non esiste sui nodi!)
+        visum.Net.Nodes.SetAllAttValues("AddVal1", 0)
+        
+        # Ottieni tutti gli attributi link in batch (VELOCE!)
+        print("\nCaricamento attributi link...")
+        link_typenums = visum.Net.Links.GetMultiAttValues("TypeNo")
+        link_fromnodes = visum.Net.Links.GetMultiAttValues("FromNodeNo")
+        link_tonodes = visum.Net.Links.GetMultiAttValues("ToNodeNo")
+        
+        total_links = len(link_typenums)
+        print("Link totali: {}".format(total_links))
+        
+        # Set di nodi da attivare e da escludere
+        nodes_to_activate = set()
+        nodes_to_exclude = set()
+        
+        # Filtra in Python (VELOCE - no chiamate COM!)
+        print("Filtro link per tipo...")
+        
+        # Se linktype_list è None, include TUTTI i nodi
+        if linktype_list is None:
+            print("Includo TUTTI i nodi...")
+            for i in range(total_links):
+                from_node = int(link_fromnodes[i][1])
+                to_node = int(link_tonodes[i][1])
+                nodes_to_activate.add(from_node)
+                nodes_to_activate.add(to_node)
+        else:
+            # Include solo nodi su link types specificati
+            for i in range(total_links):
+                link_typeno = int(link_typenums[i][1])  # [index, value]
+                
+                if link_typeno in linktype_list:
+                    from_node = int(link_fromnodes[i][1])
+                    to_node = int(link_tonodes[i][1])
+                    nodes_to_activate.add(from_node)
+                    nodes_to_activate.add(to_node)
+        
+        # Se specificato, trova nodi da escludere
+        if exclude_linktype_list:
+            print("Filtro nodi da escludere...")
+            for i in range(total_links):
+                link_typeno = int(link_typenums[i][1])
+                
+                if link_typeno in exclude_linktype_list:
+                    from_node = int(link_fromnodes[i][1])
+                    to_node = int(link_tonodes[i][1])
+                    nodes_to_exclude.add(from_node)
+                    nodes_to_exclude.add(to_node)
+            
+            # Rimuovi nodi esclusi da quelli da attivare
+            nodes_to_activate -= nodes_to_exclude
+            result["nodes_excluded"] = len(nodes_to_exclude)
+            print("Nodi esclusi: {}".format(len(nodes_to_exclude)))
+        
+        print("Nodi finali da attivare: {}".format(len(nodes_to_activate)))
+        
+        # Attiva i nodi trovati in batch (VELOCE - usa array diretto)
+        print("Attivazione nodi...")
+        
+        # Ottieni array nodi e crea mappatura node_no -> index
+        node_nos_data = visum.Net.Nodes.GetMultiAttValues("No")
+        node_no_to_index = {}
+        for i, row in enumerate(node_nos_data):
+            node_no = int(row[1])
+            node_no_to_index[node_no] = i
+        
+        # Accesso diretto all'array (evita ItemByKey!)
+        all_nodes = visum.Net.Nodes.GetAll
+        
+        activated_count = 0
+        for node_no in nodes_to_activate:
+            if node_no in node_no_to_index:
+                try:
+                    idx = node_no_to_index[node_no]
+                    all_nodes[idx].SetAttValue("AddVal1", 1)
+                    activated_count += 1
+                except:
+                    pass
+        
+        result["nodes_activated"] = activated_count
+        result["status"] = "success"
+        
+        print("\n✓ Attivati {} nodi (AddVal1=1)".format(result["nodes_activated"]))
+        return result
+        
+    except Exception as e:
+        result["message"] = "Errore attivazione nodi: {}".format(str(e))
+        print("\n✗ " + result["message"])
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
+                          node_filter_active=False, bidirectional=True,
+                          mode="add_all", distribute_by_quadrant=False,
+                          visum_instance=None):
+    """
+    Crea connectors automatici tra zone e nodi della rete Visum.
+    
+    PREREQUISITI:
+    - Zone devono esistere (visum.Net.Zones.Count > 0)
+    - Nodi devono esistere (visum.Net.Nodes.Count > 0)
+    - Se node_filter_active=True, chiamare prima activate_nodes_by_linktype()
+      (usa AddVal1=1 per marcare i nodi)
+    
+    METODO:
+    Itera su ogni zona, trova i nodi più vicini entro max_distance,
+    e crea connectors usando visum.Net.AddConnector(zone_no, node_no).
+    
+    Args:
+        max_distance (float): Distanza massima zona-nodo in metri (default: 1000)
+        max_connectors_per_zone (int): Max connectors per zona (default: 5)
+        node_filter_active (bool): Se True, usa solo nodi con AddVal1=1 (default: False)
+        bidirectional (bool): Crea connectors bidirezionali (default: True)
+        mode (str): Modalità creazione (default: "add_all")
+            - "replace": Cancella TUTTI i connectors esistenti e ricrea da zero
+            - "add_missing": Aggiungi connectors SOLO a zone senza connectors
+            - "add_all": Aggiungi connectors a TUTTE le zone (default)
+        distribute_by_quadrant (bool): Distribuisci connectors per quadrante (0-90°, 90-180°, 180-270°, 270-360°) (default: False)
+        visum_instance: Istanza Visum (default: usa Visum da console)
+    
+    Returns:
+        dict: {
+            "status": str,
+            "connectors_created": int,
+            "connectors_deleted": int,  # solo se mode="replace"
+            "zones_processed": int,
+            "zones_skipped": int,  # solo se mode="add_missing"
+            "avg_per_zone": float,
+            "message": str
+        }
+    
+    Esempio base:
+        >>> result = create_zone_connectors(
+        ...     max_distance=500,
+        ...     max_connectors_per_zone=3
+        ... )
+        >>> print(f"Connectors creati: {result['connectors_created']}")
+    
+    Esempio con filtro nodi:
+        >>> # 1. Attiva solo nodi su strade principali
+        >>> activate_nodes_by_linktype([50, 60, 70])
+        >>> 
+        >>> # 2. Crea connectors solo a nodi attivi
+        >>> result = create_zone_connectors(
+        ...     max_distance=500,
+        ...     max_connectors_per_zone=3,
+        ...     node_filter_active=True
+        ... )
+    
+    Esempio replace (cancella tutto):
+        >>> # Cancella tutti i connectors e ricrea da zero
+        >>> result = create_zone_connectors(mode="replace")
+        >>> print(f"Cancellati: {result['connectors_deleted']}, creati: {result['connectors_created']}")
+    
+    Esempio add_missing (solo zone senza connectors):
+        >>> # Aggiungi connectors solo a zone non ancora connesse
+        >>> result = create_zone_connectors(mode="add_missing")
+        >>> print(f"Zone processate: {result['zones_processed']}, saltate: {result['zones_skipped']}")
+    
+    Esempio distribuzione per quadrante:
+        >>> # Distribuisci connectors coprendo tutti i quadranti (N, E, S, W)
+        >>> result = create_zone_connectors(
+        ...     max_distance=1000,
+        ...     max_connectors_per_zone=4,  # 1 per quadrante
+        ...     distribute_by_quadrant=True
+        ... )
+        >>> print(f"Connectors distribuiti geograficamente: {result['connectors_created']}")
+    """
+    result = {
+        "status": "failed",
+        "connectors_created": 0,
+        "connectors_deleted": 0,
+        "zones_processed": 0,
+        "zones_skipped": 0,
+        "avg_per_zone": 0.0,
+        "message": ""
+    }
+    
+    try:
+        print("Distribuzione geografica: {}".format("SI (quadranti)" if distribute_by_quadrant else "NO (distanza)"))
+        if visum_instance is None:
+            visum = Visum
+        else:
+            visum = visum_instance
+        
+        print("\n" + "=" * 70)
+        print("CREAZIONE CONNECTORS ZONE-NODI")
+        print("=" * 70)
+        print("Modalita': {}".format(mode))
+        
+        # MODE: REPLACE - Cancella tutti i connectors esistenti
+        if mode == "replace":
+            existing_count = visum.Net.Connectors.Count
+            print("\nCancellazione connectors esistenti...")
+            print("Connectors da cancellare: {}".format(existing_count))
+            
+            if existing_count > 0:
+                visum.Net.Connectors.RemoveAll()
+                result["connectors_deleted"] = existing_count
+                print("✓ Cancellati {} connectors".format(existing_count))
+        
+        # Verifica zone
+        zones_count = visum.Net.Zones.Count
+        if zones_count == 0:
+            result["message"] = "Nessuna zona presente nel progetto"
+            print("✗ " + result["message"])
+            return result
+        
+        # Verifica nodi
+        nodes_count = visum.Net.Nodes.Count
+        if nodes_count == 0:
+            result["message"] = "Nessun nodo presente nel progetto"
+            print("✗ " + result["message"])
+            return result
+        
+        print("Zone: {}".format(zones_count))
+        print("Nodi: {}".format(nodes_count))
+        print("Distanza max: {}m".format(max_distance))
+        print("Max connectors/zona: {}".format(max_connectors_per_zone))
+        print("Filtro nodi attivi: {}".format(node_filter_active))
+        
+        # Ottieni coordinate nodi
+        print("\nCaricamento coordinate nodi...")
+        
+        # GetMultiAttValues richiede UNA stringa per volta
+        node_nos = visum.Net.Nodes.GetMultiAttValues("No")
+        node_xs = visum.Net.Nodes.GetMultiAttValues("XCoord")
+        node_ys = visum.Net.Nodes.GetMultiAttValues("YCoord")
+        
+        if node_filter_active:
+            node_addvals = visum.Net.Nodes.GetMultiAttValues("AddVal1")
+        
+        # Crea dizionario coordinate nodi
+        nodes_coords = {}
+        for i in range(len(node_nos)):
+            node_no = int(node_nos[i][1])  # [index, value]
+            x_coord = float(node_xs[i][1])
+            y_coord = float(node_ys[i][1])
+            
+            # Se filtro attivo, verifica AddVal1=1
+            if node_filter_active:
+                addval = int(node_addvals[i][1])
+                if addval == 1:
+                    nodes_coords[node_no] = {'x': x_coord, 'y': y_coord}
+            else:
+                nodes_coords[node_no] = {'x': x_coord, 'y': y_coord}
+        
+        print("Nodi disponibili: {}".format(len(nodes_coords)))
+        
+        # Ottieni coordinate zone
+        print("\nCaricamento coordinate zone...")
+        zone_nos = visum.Net.Zones.GetMultiAttValues("No")
+        zone_xs = visum.Net.Zones.GetMultiAttValues("XCoord")
+        zone_ys = visum.Net.Zones.GetMultiAttValues("YCoord")
+        
+        zones_coords = {}
+        for i in range(len(zone_nos)):
+            zone_no = int(zone_nos[i][1])  # [index, value]
+            zones_coords[zone_no] = {
+                'x': float(zone_xs[i][1]),
+                'y': float(zone_ys[i][1])
+            }
+        
+        print("Zone con coordinate: {}".format(len(zones_coords)))
+        
+        # MODE: ADD_MISSING - Filtra zone già connesse
+        zones_to_process = set(zones_coords.keys())
+        
+        if mode == "add_missing":
+            print("\nFiltro zone già connesse...")
+            # Ottieni zone che hanno già connectors
+            if visum.Net.Connectors.Count > 0:
+                connected_zones_data = visum.Net.Connectors.GetMultiAttValues("ZoneNo")
+                connected_zones = set()
+                for row in connected_zones_data:
+                    zone_no = int(row[1])
+                    connected_zones.add(zone_no)
+                
+                zones_to_skip = zones_to_process & connected_zones
+                zones_to_process -= connected_zones
+                
+                result["zones_skipped"] = len(zones_to_skip)
+                print("Zone già connesse (saltate): {}".format(len(zones_to_skip)))
+                print("Zone da processare: {}".format(len(zones_to_process)))
+            else:
+                print("Nessun connector esistente, processo tutte le zone")
+        
+        # Itera sulle zone
+        print("\nCreazione connectors...")
+        connectors_created = 0
+        zones_processed = 0
+        
+        for zone_no, zone_coords in zones_coords.items():
+            # Skip zone se mode="add_missing" e zona già connessa
+            if mode == "add_missing" and zone_no not in zones_to_process:
+                continue
+            
+            zone_x = zone_coords['x']
+            zone_y = zone_coords['y']
+            
+            # Calcola distanze e angoli a tutti i nodi
+            distances = []
+            for node_key, coords in nodes_coords.items():
+                dx = coords['x'] - zone_x
+                dy = coords['y'] - zone_y
+                dist = (dx**2 + dy**2)**0.5
+                
+                if dist <= max_distance:
+                    # Calcola angolo in gradi (0-360, 0=Est, 90=Nord, 180=Ovest, 270=Sud)
+                    import math
+                    angle = math.degrees(math.atan2(dy, dx))
+                    if angle < 0:
+                        angle += 360
+                    
+                    distances.append((dist, angle, node_key))
+            
+            # Seleziona nodi in base alla strategia
+            closest_nodes = []
+            
+            if distribute_by_quadrant and len(distances) > 0:
+                # DISTRIBUZIONE PER QUADRANTE (0-90, 90-180, 180-270, 270-360)
+                quadrants = {
+                    0: [],   # 0-90°   (Nord-Est)
+                    1: [],   # 90-180° (Nord-Ovest)
+                    2: [],   # 180-270° (Sud-Ovest)
+                    3: []    # 270-360° (Sud-Est)
+                }
+                
+                # Raggruppa nodi per quadrante
+                for dist, angle, node_key in distances:
+                    quadrant = int(angle // 90)
+                    if quadrant == 4:  # 360° -> quadrante 0
+                        quadrant = 0
+                    quadrants[quadrant].append((dist, angle, node_key))
+                
+                # Prendi il più vicino da ogni quadrante
+                connectors_per_quadrant = max(1, max_connectors_per_zone // 4)
+                
+                for q in range(4):
+                    if quadrants[q]:
+                        # Ordina per distanza e prendi i primi N
+                        quadrants[q].sort()
+                        for item in quadrants[q][:connectors_per_quadrant]:
+                            closest_nodes.append((item[0], item[2]))  # (dist, node_key)
+            else:
+                # SELEZIONE PER DISTANZA (come prima)
+                distances_simple = [(dist, node_key) for dist, angle, node_key in distances]
+                distances_simple.sort()
+                closest_nodes = distances_simple[:max_connectors_per_zone]
+            
+            # Crea connectors
+            connectors_for_zone = 0
+            for dist, node_key in closest_nodes:
+                try:
+                    connector = visum.Net.AddConnector(zone_no, node_key)
+                    connectors_created += 1
+                    connectors_for_zone += 1
+                    
+                    # Imposta direzione se bidirezionale (opzionale - può fallire)
+                    if bidirectional:
+                        try:
+                            connector.SetAttValue("Direction", 0)  # 0 = bidirezionale
+                        except:
+                            pass  # Direction non editabile, usa default
+                    
+                except Exception as e:
+                    # Connector già esistente o altro errore
+                    if connectors_created == 0 and zones_processed == 0:
+                        print(f"  DEBUG - Errore creazione connector zona {zone_no} -> nodo {node_key}: {e}")
+                    pass
+            
+            zones_processed += 1
+            
+            # Progress ogni 10 zone (più frequente per vedere se funziona)
+            if zones_processed % 10 == 0:
+                print("  Processate {} zone, {} connectors creati".format(
+                    zones_processed, connectors_created))
+        
+        # Risultato finale
+        avg_per_zone = connectors_created / zones_processed if zones_processed > 0 else 0
+        
+        result["status"] = "success"
+        result["connectors_created"] = connectors_created
+        result["zones_processed"] = zones_processed
+        result["avg_per_zone"] = avg_per_zone
+        result["message"] = "Connectors creati con successo"
+        
+        print("\n" + "=" * 70)
+        print("✓ CONNECTORS CREATI CON SUCCESSO")
+        print("=" * 70)
+        print("Connectors totali: {}".format(connectors_created))
+        print("Zone processate: {}".format(zones_processed))
+        print("Media per zona: {:.1f}".format(avg_per_zone))
+        
+        return result
+        
+    except Exception as e:
+        result["message"] = "Errore creazione connectors: {}".format(str(e))
+        print("\n✗ " + result["message"])
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+# ============================================================================
+# 【7】 ZONE GENERATION FROM HEX GRID (WITH AUTO-ZONING TOOL)
+# ============================================================================
+
 def create_zones_from_hex_grid(hex_grid_file, num_zones=200, 
                                compact_zones=True, study_area_file=None,
                                geographical_distance_weight=10, output_crs="EPSG:4326",
