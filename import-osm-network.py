@@ -2106,6 +2106,38 @@ def tag_nodes_with_zone(visum_instance=None):
 # 【6.5】 ZONE CONNECTORS CREATION
 # ============================================================================
 
+def haversine_distance(lon1, lat1, lon2, lat2):
+    """
+    Calcola distanza in METRI tra due punti geografici (WGS84 lon/lat).
+    
+    Usa formula di Haversine per calcolare la distanza sulla superficie terrestre.
+    
+    Args:
+        lon1, lat1: Coordinate del primo punto (gradi decimali)
+        lon2, lat2: Coordinate del secondo punto (gradi decimali)
+    
+    Returns:
+        float: Distanza in METRI
+    """
+    import math
+    
+    # Raggio della Terra in metri
+    R = 6371000.0
+    
+    # Converti gradi in radianti
+    lat1_rad = math.radians(lat1)
+    lat2_rad = math.radians(lat2)
+    delta_lat = math.radians(lat2 - lat1)
+    delta_lon = math.radians(lon2 - lon1)
+    
+    # Formula di Haversine
+    a = math.sin(delta_lat/2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    
+    distance_m = R * c
+    return distance_m
+
+
 def activate_nodes_by_linktype(linktype_list=None, exclude_linktype_list=None, visum_instance=None):
     """
     Attiva nodi connessi a link di specifici tipi (per usare in connectors).
@@ -2380,6 +2412,7 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
         print("Distanza max: {}m".format(max_distance))
         print("Max connectors/zona: {}".format(max_connectors_per_zone))
         print("Filtro nodi attivi: {}".format(node_filter_active))
+        print("Distribuzione per quadrante: {}".format(distribute_by_quadrant))
         
         # Ottieni coordinate nodi
         print("\nCaricamento coordinate nodi...")
@@ -2425,6 +2458,11 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
         
         print("Zone con coordinate: {}".format(len(zones_coords)))
         
+        # IMPORTANTE: Coordinate geografiche WGS84 (lon/lat in gradi)
+        # Usa formula di Haversine per calcolare distanze in METRI
+        print("Sistema coordinate: WGS84 (lon/lat) - Distanze calcolate con Haversine")
+        print("Distanza massima: {} metri".format(max_distance))
+        
         # MODE: ADD_MISSING - Filtra zone già connesse
         zones_to_process = set(zones_coords.keys())
         
@@ -2451,6 +2489,8 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
         print("\nCreazione connectors...")
         connectors_created = 0
         zones_processed = 0
+        zones_connected = set()
+        zones_not_connected = []
         
         for zone_no, zone_coords in zones_coords.items():
             # Skip zone se mode="add_missing" e zona già connessa
@@ -2463,18 +2503,23 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
             # Calcola distanze e angoli a tutti i nodi
             distances = []
             for node_key, coords in nodes_coords.items():
-                dx = coords['x'] - zone_x
-                dy = coords['y'] - zone_y
-                dist = (dx**2 + dy**2)**0.5
+                # Calcola distanza geografica con Haversine (in METRI)
+                # Coordinate: x=longitude, y=latitude
+                dist_m = haversine_distance(
+                    zone_coords['x'], zone_coords['y'],
+                    coords['x'], coords['y']
+                )
                 
-                if dist <= max_distance:
-                    # Calcola angolo in gradi (0-360, 0=Est, 90=Nord, 180=Ovest, 270=Sud)
+                if dist_m <= max_distance:
+                    # Calcola angolo approssimativo (OK per piccole distanze)
+                    dx = coords['x'] - zone_coords['x']
+                    dy = coords['y'] - zone_coords['y']
                     import math
                     angle = math.degrees(math.atan2(dy, dx))
                     if angle < 0:
                         angle += 360
                     
-                    distances.append((dist, angle, node_key))
+                    distances.append((dist_m, angle, node_key))
             
             # Seleziona nodi in base alla strategia
             closest_nodes = []
@@ -2531,6 +2576,12 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
                         print(f"  DEBUG - Errore creazione connector zona {zone_no} -> nodo {node_key}: {e}")
                     pass
             
+            # Traccia zone con almeno un connettore
+            if connectors_for_zone > 0:
+                zones_connected.add(zone_no)
+            else:
+                zones_not_connected.append(zone_no)
+            
             zones_processed += 1
             
             # Progress ogni 10 zone (più frequente per vedere se funziona)
@@ -2544,6 +2595,9 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
         result["status"] = "success"
         result["connectors_created"] = connectors_created
         result["zones_processed"] = zones_processed
+        result["zones_connected"] = len(zones_connected)
+        result["zones_not_connected"] = len(zones_not_connected)
+        result["zones_not_connected_list"] = sorted(zones_not_connected)
         result["avg_per_zone"] = avg_per_zone
         result["message"] = "Connectors creati con successo"
         
@@ -2553,6 +2607,26 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
         print("Connectors totali: {}".format(connectors_created))
         print("Zone processate: {}".format(zones_processed))
         print("Media per zona: {:.1f}".format(avg_per_zone))
+        print("")
+        print("Zone connesse: {} / {}".format(len(zones_connected), zones_processed))
+        print("Zone NON connesse: {}".format(len(zones_not_connected)))
+        
+        if zones_not_connected:
+            print("\n⚠ ATTENZIONE: Le seguenti {} zone NON hanno connettori:".format(len(zones_not_connected)))
+            zones_not_connected.sort()
+            # Mostra prime 20 zone, poi riassumi
+            if len(zones_not_connected) <= 20:
+                print("   Zone: {}".format(", ".join(map(str, zones_not_connected))))
+            else:
+                print("   Prime 20: {}".format(", ".join(map(str, zones_not_connected[:20]))))
+                print("   ... e altre {} zone".format(len(zones_not_connected) - 20))
+            print("\nSuggerimenti:")
+            print("  - Aumenta max_distance (attuale: {} m)".format(max_distance))
+            print("  - Verifica che ci siano nodi disponibili vicino a queste zone")
+            if node_filter_active:
+                print("  - Disattiva node_filter_active per includere più nodi")
+        else:
+            print("\n✓ Tutte le zone sono state connesse con successo!")
         
         return result
         
