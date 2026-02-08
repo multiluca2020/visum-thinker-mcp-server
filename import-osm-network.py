@@ -1645,6 +1645,262 @@ def import_zones_shapefile_with_geometry(shapefile_path, visum_instance=None):
         return result
 
 
+def calculate_weighted_centroids_subprocess(geojson_file, istat_shapefile, 
+                                            weight_fields=None, weight_values=None,
+                                            min_weight_threshold=0.1, conda_env=None):
+    """
+    Calcola centroidi ponderati usando subprocess con geopandas.
+    
+    Args:
+        geojson_file (str): Path al file GeoJSON con zone
+        istat_shapefile (str): Path allo shapefile ISTAT con sezioni censuarie
+        weight_fields (list): Lista campi peso (es. ["POP", "ADD"])
+        weight_values (list): Lista pesi (es. [0.5, 0.5]) - deve sommare a 1.0
+        min_weight_threshold (float): Peso minimo per includere sezione
+        conda_env (str): Path al conda environment (es. r"H:\go\.env")
+    
+    Returns:
+        dict: {zone_id: (lon, lat)} con centroidi ponderati, o {} se errore
+    """
+    try:
+        import tempfile
+        import json
+        import subprocess
+        
+        # Default: singolo campo POP
+        if weight_fields is None:
+            weight_fields = ["POP"]
+            weight_values = [1.0]
+        elif weight_values is None:
+            weight_values = [1.0 / len(weight_fields)] * len(weight_fields)
+        
+        # File JSON temporaneo per i risultati
+        with tempfile.NamedTemporaryFile(mode='w', suffix='_centroids.json', 
+                                         delete=False, encoding='utf-8') as f:
+            temp_output = f.name
+        
+        # Script Python per calcolo centroidi ponderati
+        calc_script = """
+import geopandas as gpd
+import json
+from pathlib import Path
+
+geojson_file = r"{geojson}"
+istat_file = r"{istat}"
+weight_fields = {fields}
+weight_values = {values}
+min_threshold = {threshold}
+output_file = r"{output}"
+
+try:
+    # Carica dati
+    zones_gdf = gpd.read_file(geojson_file)
+    istat_gdf = gpd.read_file(istat_file)
+    
+    # Determina campo zone_id
+    if 'zone_id' in zones_gdf.columns:
+        zones_gdf['zone_id'] = zones_gdf['zone_id']
+    elif 'id' in zones_gdf.columns:
+        zones_gdf['zone_id'] = zones_gdf['id']
+    else:
+        zones_gdf['zone_id'] = range(1, len(zones_gdf) + 1)
+    
+    # Verifica campi peso
+    missing_fields = [f for f in weight_fields if f not in istat_gdf.columns]
+    if missing_fields:
+        print(f"Campi {{missing_fields}} non trovati in ISTAT shapefile")
+        print(f"Colonne disponibili: {{list(istat_gdf.columns)}}")
+        with open(output_file, 'w') as f:
+            json.dump({{}}, f)
+        exit(0)
+    
+    # Assicura stesso CRS
+    if zones_gdf.crs != istat_gdf.crs:
+        istat_gdf = istat_gdf.to_crs(zones_gdf.crs)
+    
+    centroids = {{}}
+    
+    for idx, zone in zones_gdf.iterrows():
+        zone_geom = zone.geometry
+        zone_id = int(zone['zone_id'])
+        
+        # Trova sezioni che intersecano
+        intersecting = istat_gdf[istat_gdf.intersects(zone_geom)].copy()
+        
+        if len(intersecting) == 0:
+            continue
+        
+        # Calcola peso proporzionale area
+        intersecting['intersection'] = intersecting.geometry.intersection(zone_geom)
+        intersecting['intersection_area'] = intersecting['intersection'].area
+        intersecting['area_ratio'] = intersecting['intersection_area'] / zone_geom.area
+        
+        # Peso combinato: calcola per ogni campo e somma
+        intersecting['weight'] = 0.0
+        for field, w in zip(weight_fields, weight_values):
+            intersecting['weight'] += intersecting[field] * w * intersecting['area_ratio']
+        
+        # Filtra peso minimo
+        intersecting = intersecting[intersecting['weight'] >= min_threshold]
+        
+        if len(intersecting) == 0 or intersecting['weight'].sum() == 0:
+            continue
+        
+        # Calcola centroide ponderato usando le INTERSEZIONI (non le geometrie intere!)
+        intersecting['intersection_centroid'] = intersecting['intersection'].centroid
+        intersecting['lon'] = intersecting['intersection_centroid'].x
+        intersecting['lat'] = intersecting['intersection_centroid'].y
+        
+        total_weight = intersecting['weight'].sum()
+        weighted_lon = (intersecting['lon'] * intersecting['weight']).sum() / total_weight
+        weighted_lat = (intersecting['lat'] * intersecting['weight']).sum() / total_weight
+        
+        centroids[str(zone_id)] = [float(weighted_lon), float(weighted_lat)]
+    
+    # Salva risultati
+    with open(output_file, 'w') as f:
+        json.dump(centroids, f)
+    
+    print(f"Calcolati {{len(centroids)}} centroidi ponderati")
+
+except Exception as e:
+    print(f"Errore: {{e}}")
+    import traceback
+    traceback.print_exc()
+    with open(output_file, 'w') as f:
+        json.dump({{}}, f)
+""".format(
+            geojson=geojson_file,
+            istat=istat_shapefile,
+            fields=weight_fields,
+            values=weight_values,
+            threshold=min_weight_threshold,
+            output=temp_output
+        )
+        
+        # Scrivi script temporaneo
+        with tempfile.NamedTemporaryFile(mode='w', suffix='_calc_centroids.py', 
+                                         delete=False, encoding='utf-8') as f:
+            f.write(calc_script)
+            temp_script = f.name
+        
+        try:
+            # Determina comando Python da usare
+            if conda_env:
+                # Usa Python del conda environment
+                if '\\' in conda_env or '/' in conda_env or ':' in conda_env:
+                    # Path assoluto - usa conda run -p (come auto-zoning)
+                    # Trova conda.exe
+                    conda_exe = None
+                    for conda_path in [
+                        r"H:\ProgramData\Miniconda3\Scripts\conda.exe",
+                        r"C:\ProgramData\Miniconda3\Scripts\conda.exe",
+                        r"C:\Users\{}\Miniconda3\Scripts\conda.exe".format(os.environ.get('USERNAME', '')),
+                        r"C:\Users\{}\Anaconda3\Scripts\conda.exe".format(os.environ.get('USERNAME', ''))
+                    ]:
+                        if os.path.exists(conda_path):
+                            conda_exe = conda_path
+                            break
+                    
+                    if conda_exe:
+                        python_cmd = [conda_exe, 'run', '-p', conda_env, 'python', temp_script]
+                        print("   Uso conda run -p {} python".format(conda_env))
+                    else:
+                        # Fallback: prova direttamente python.exe
+                        python_path = os.path.join(conda_env, 'python.exe')
+                        if os.path.exists(python_path):
+                            python_cmd = [python_path, temp_script]
+                            print("   ⚠ Conda non trovato, uso direttamente:", python_path)
+                        else:
+                            python_cmd = ['python', temp_script]
+                            print("   ⚠ Uso Python di sistema (conda e env non trovati)")
+                else:
+                    # Nome environment - usa conda run -n
+                    python_cmd = ['conda', 'run', '-n', conda_env, 'python', temp_script]
+                    print("   Uso conda run -n", conda_env)
+            else:
+                # Python di sistema
+                python_cmd = ['python', temp_script]
+                print("   Uso Python di sistema")
+            
+            # Esegui subprocess
+            print("   Esecuzione subprocess per calcolo centroidi...")
+            result = subprocess.run(
+                python_cmd,
+                capture_output=True,
+                text=True,
+                timeout=120
+            )
+            
+            # Mostra output/errori
+            if result.stdout:
+                print("   Output subprocess:", result.stdout[:200])
+            if result.stderr:
+                print("   ⚠ Stderr subprocess:", result.stderr[:500])
+            if result.returncode != 0:
+                print("   ✗ Subprocess fallito con exit code:", result.returncode)
+                print("   Script path:", temp_script)
+                print("   Output file:", temp_output)
+                return {}
+            
+            # Verifica che il file output esista
+            if not os.path.exists(temp_output):
+                print("   ✗ File output non creato:", temp_output)
+                return {}
+            
+            # Verifica che il file non sia vuoto
+            file_size = os.path.getsize(temp_output)
+            if file_size == 0:
+                print("   ✗ File output vuoto (0 bytes)")
+                return {}
+            
+            # Leggi risultati
+            with open(temp_output, 'r') as f:
+                content = f.read()
+                if not content.strip():
+                    print("   ✗ File output vuoto (solo whitespace)")
+                    return {}
+                centroids_data = json.loads(content)
+            
+            # Converti chiavi in int
+            centroids = {int(k): tuple(v) for k, v in centroids_data.items()}
+            
+            return centroids
+            
+        except subprocess.TimeoutExpired:
+            print("   ✗ Timeout subprocess (>120s)")
+            return {}
+        except json.JSONDecodeError as e:
+            print("   ✗ Errore parsing JSON:", str(e))
+            print("   File path:", temp_output)
+            if os.path.exists(temp_output):
+                with open(temp_output, 'r') as f:
+                    content = f.read()
+                    print("   Contenuto file (primi 500 char):", content[:500])
+            return {}
+        except Exception as e:
+            print("   ✗ Errore generico:", str(e))
+            import traceback
+            traceback.print_exc()
+            return {}
+        finally:
+            # Cleanup (ma salva script in caso di errore per debug)
+            if os.path.exists(temp_output):
+                try:
+                    os.unlink(temp_output)
+                except:
+                    pass
+            # Lascia temp_script per debug se c'è stato un errore
+            # try:
+            #     os.unlink(temp_script)
+            # except:
+            #     pass
+                
+    except Exception as e:
+        print("✗ Errore calcolo centroidi ponderati: {}".format(str(e)))
+        return {}
+
+
 def convert_geojson_to_shapefile(geojson_file, output_dir=None):
     """
     Converte GeoJSON in Shapefile usando geopandas (nel subprocess conda env)
@@ -1724,8 +1980,17 @@ except Exception as e:
         return None
 
 
+
+
 def import_zones_from_geojson(geojson_file, zone_id_field="zone_id", 
-                              output_crs="EPSG:4326", visum_instance=None):
+                              output_crs="EPSG:4326", 
+                              centroid_method="geometric",
+                              istat_shapefile=None,
+                              weight_field="POP",
+                              weight_fields=None,
+                              weight_values=None,
+                              conda_env=None,
+                              visum_instance=None):
     """
     Importa zone da file GeoJSON in Visum.Net.Zones
     
@@ -1733,16 +1998,32 @@ def import_zones_from_geojson(geojson_file, zone_id_field="zone_id",
         geojson_file (str): Path al file GeoJSON con zone
         zone_id_field (str): Campo da usare come ID zona (default: "zone_id")
         output_crs (str): Sistema coordinate per Visum (default: "EPSG:4326" = WGS84)
+        centroid_method (str): Metodo calcolo centroide:
+            - "geometric": Media coordinate poligono (default)
+            - "weighted": Ponderato su dati ISTAT (richiede istat_shapefile)
+        istat_shapefile (str): Path shapefile ISTAT sezioni censuarie (per centroid_method="weighted")
+        weight_field (str): Campo peso singolo per centroidi ponderati: "POP" o "ADD" (default: "POP")
+        weight_fields (list): Lista campi peso (es. ["POP", "ADD"]) - sovrascrive weight_field
+        weight_values (list): Lista pesi per campi (es. [0.5, 0.5]) - deve sommare a 1.0
+        conda_env (str): Path al conda environment per subprocess geopandas
         visum_instance: Istanza Visum (default: usa Visum da console)
     
     Returns:
         dict: {"status": str, "zones_created": int, "message": str}
     
     Esempio:
+        >>> # Centroide geometrico (default)
         >>> result = import_zones_from_geojson(
         ...     geojson_file=r"H:\\output\\zoning_0.geojson"
         ... )
-        >>> print("Zone create:", result["zones_created"])
+        >>> 
+        >>> # Centroide ponderato su popolazione
+        >>> result = import_zones_from_geojson(
+        ...     geojson_file=r"H:\\output\\zoning_0.geojson",
+        ...     centroid_method="weighted",
+        ...     istat_shapefile=r"H:\\data\\Terni_prezoning_istat.shp",
+        ...     weight_field="POP"
+        ... )
     """
     result = {
         "status": "failed",
@@ -1799,11 +2080,98 @@ def import_zones_from_geojson(geojson_file, zone_id_field="zone_id",
             print("\n🗺️ File Shapefile trovato: {}".format(shp_file.name))
             print("🔄 Tentativo import con geometrie complete...")
             
+            # IMPORTANTE: Cancella zone esistenti per evitare duplicati
+            if visum.Net.Zones.Count > 0:
+                print("⚠ Cancello {} zone esistenti per evitare duplicati".format(visum.Net.Zones.Count))
+                visum.Net.Zones.RemoveAll()
+            
             shp_result = import_zones_shapefile_with_geometry(str(shp_file), visum)
             if shp_result["status"] == "success":
+                # Import shapefile riuscito - ma potrebbero servire centroidi ponderati
+                zones_imported = shp_result["zones_imported"]
+                
+                # Se richiesti centroidi ponderati, ricalcola e aggiorna coordinate
+                if centroid_method == "weighted" and istat_shapefile:
+                    print("\n📊 Calcolo centroidi ponderati da dati ISTAT...")
+                    print("   Shapefile ISTAT: {}".format(istat_shapefile))
+                    print("   🐍 DEBUG conda_env ricevuto: {}".format(repr(conda_env)))
+                    
+                    # Usa weight_fields se fornito, altrimenti weight_field
+                    if weight_fields is not None:
+                        print("   Campi peso: {} con pesi {}".format(weight_fields, weight_values))
+                        weighted_centroids = calculate_weighted_centroids_subprocess(
+                            str(geojson_path), 
+                            istat_shapefile,
+                            weight_fields=weight_fields,
+                            weight_values=weight_values,
+                            conda_env=conda_env
+                        )
+                    else:
+                        print("   Campo peso: {}".format(weight_field))
+                        weighted_centroids = calculate_weighted_centroids_subprocess(
+                            str(geojson_path), 
+                            istat_shapefile,
+                            weight_fields=[weight_field],
+                            weight_values=[1.0], 
+                            conda_env=conda_env
+                        )
+                # Se richiesti centroidi ponderati, ricalcola e aggiorna coordinate
+                if centroid_method == "weighted" and istat_shapefile:
+                    print("\n📊 Calcolo centroidi ponderati da dati ISTAT...")
+                    print("   Shapefile ISTAT: {}".format(istat_shapefile))
+                    
+                    # Usa weight_fields se fornito, altrimenti weight_field
+                    if weight_fields is not None:
+                        print("   Campi peso: {} con pesi {}".format(weight_fields, weight_values))
+                        weighted_centroids = calculate_weighted_centroids_subprocess(
+                            str(geojson_path), 
+                            istat_shapefile,
+                            weight_fields=weight_fields,
+                            weight_values=weight_values,
+                            conda_env=conda_env
+                        )
+                    else:
+                        print("   Campo peso: {}".format(weight_field))
+                        weighted_centroids = calculate_weighted_centroids_subprocess(
+                            str(geojson_path), 
+                            istat_shapefile,
+                            weight_fields=[weight_field],
+                            weight_values=[1.0],
+                            conda_env=conda_env
+                        )
+                    
+                    if weighted_centroids:
+                        print("✓ {} centroidi ponderati calcolati".format(len(weighted_centroids)))
+                        print("\n🔄 Aggiornamento coordinate zone con centroidi ponderati...")
+                        
+                        # Debug: mostra primi IDs
+                        centroid_ids = list(weighted_centroids.keys())[:5]
+                        print("   🐛 DEBUG - Primi zone_id nei centroidi: {}".format(centroid_ids))
+                        
+                        zone_nos = []
+                        for zone in visum.Net.Zones.GetAll:
+                            zone_nos.append(str(zone.AttValue("No")))
+                            if len(zone_nos) >= 5:
+                                break
+                        print("   🐛 DEBUG - Primi zone No in Visum: {}".format(zone_nos))
+                        
+                        updated_count = 0
+                        for zone in visum.Net.Zones.GetAll:
+                            zone_no = int(zone.AttValue("No"))  # Converti a int per matching
+                            
+                            if zone_no in weighted_centroids:
+                                lon, lat = weighted_centroids[zone_no]
+                                zone.SetAttValue("XCoord", lon)
+                                zone.SetAttValue("YCoord", lat)
+                                updated_count += 1
+                        
+                        print("✓ Aggiornate {} zone con centroidi ponderati".format(updated_count))
+                    else:
+                        print("⚠ Nessun centroide ponderato calcolato, uso centroidi geometrici")
+                
                 # Import shapefile riuscito con geometrie!
                 result.update(shp_result)
-                result["zones_created"] = shp_result["zones_imported"]
+                result["zones_created"] = zones_imported
                 result["shapefile"] = str(shp_file)
                 return result
             elif shp_result["status"] == "manual_required":
@@ -1830,8 +2198,53 @@ def import_zones_from_geojson(geojson_file, zone_id_field="zone_id",
             print("📥 Import GeoJSON con geometrie complete...")
             visum.IO.ImportGeoJSON(str(geojson_path), import_para)
             
+            zones_imported = visum.Net.Zones.Count
+            
+            # Se richiesti centroidi ponderati, ricalcola e aggiorna coordinate
+            if centroid_method == "weighted" and istat_shapefile:
+                print("\n📊 Calcolo centroidi ponderati da dati ISTAT...")
+                print("   Shapefile ISTAT: {}".format(istat_shapefile))
+                
+                # Usa weight_fields se fornito, altrimenti weight_field
+                if weight_fields is not None:
+                    print("   Campi peso: {} con pesi {}".format(weight_fields, weight_values))
+                    weighted_centroids = calculate_weighted_centroids_subprocess(
+                        str(geojson_path), 
+                        istat_shapefile,
+                        weight_fields=weight_fields,
+                        weight_values=weight_values,
+                        conda_env=conda_env
+                    )
+                else:
+                    print("   Campo peso: {}".format(weight_field))
+                    weighted_centroids = calculate_weighted_centroids_subprocess(
+                        str(geojson_path), 
+                        istat_shapefile,
+                        weight_fields=[weight_field],
+                        weight_values=[1.0],
+                        conda_env=conda_env
+                    )
+                
+                if weighted_centroids:
+                    print("✓ {} centroidi ponderati calcolati".format(len(weighted_centroids)))
+                    print("\n🔄 Aggiornamento coordinate zone con centroidi ponderati...")
+                    
+                    updated_count = 0
+                    for zone in visum.Net.Zones.GetAll:
+                        zone_no = int(zone.AttValue("No"))  # Converti a int per matching
+                        
+                        if zone_no in weighted_centroids:
+                            lon, lat = weighted_centroids[zone_no]
+                            zone.SetAttValue("XCoord", lon)
+                            zone.SetAttValue("YCoord", lat)
+                            updated_count += 1
+                    
+                    print("✓ Aggiornate {} zone con centroidi ponderati".format(updated_count))
+                else:
+                    print("⚠ Nessun centroide ponderato calcolato, uso centroidi geometrici")
+            
             result["status"] = "success"
-            result["zones_created"] = visum.Net.Zones.Count
+            result["zones_created"] = zones_imported
             result["message"] = "Zone importate con geometrie da {}".format(geojson_path.name)
             print("✓ {}".format(result["message"]))
             print("=" * 70)
@@ -1857,6 +2270,38 @@ def import_zones_from_geojson(geojson_file, zone_id_field="zone_id",
         
         print("Feature trovate: {}".format(len(features)))
         print("CRS: {} (convertito dal subprocess)".format(output_crs))
+        
+        # Calcola centroidi ponderati se richiesto
+        weighted_centroids = {}
+        if centroid_method == "weighted" and istat_shapefile:
+            print("\n📊 Calcolo centroidi ponderati da dati ISTAT...")
+            print("   Shapefile ISTAT: {}".format(istat_shapefile))
+            
+            # Usa weight_fields se fornito, altrimenti weight_field
+            if weight_fields is not None:
+                print("   Campi peso: {} con pesi {}".format(weight_fields, weight_values))
+                weighted_centroids = calculate_weighted_centroids_subprocess(
+                    str(geojson_path), 
+                    istat_shapefile,
+                    weight_fields=weight_fields,
+                    weight_values=weight_values,
+                    conda_env=conda_env
+                )
+            else:
+                print("   Campo peso: {}".format(weight_field))
+                weighted_centroids = calculate_weighted_centroids_subprocess(
+                    str(geojson_path), 
+                    istat_shapefile,
+                    weight_fields=[weight_field],
+                    weight_values=[1.0],
+                    conda_env=conda_env
+                )
+            
+            if weighted_centroids:
+                print("✓ {} centroidi ponderati calcolati".format(len(weighted_centroids)))
+            else:
+                print("⚠ Nessun centroide ponderato calcolato, uso centroidi geometrici")
+        
         print("\nImportazione zone...")
         
         zones_created = 0
@@ -1888,15 +2333,25 @@ def import_zones_from_geojson(geojson_file, zone_id_field="zone_id",
                     try:
                         coordinates = geometry.get("coordinates", [[]])[0]  # Primo anello del poligono
                         if coordinates and len(coordinates) > 0:
-                            # Calcola centroide (media delle coordinate)
-                            lons = [coord[0] for coord in coordinates]
-                            lats = [coord[1] for coord in coordinates]
-                            centroid_lon = sum(lons) / len(lons)
-                            centroid_lat = sum(lats) / len(lats)
+                            # Usa centroide ponderato se disponibile, altrimenti geometrico
+                            if zone_id in weighted_centroids:
+                                centroid_lon, centroid_lat = weighted_centroids[zone_id]
+                                centroid_source = "ponderato ({})".format(weight_field)
+                            else:
+                                # Calcola centroide geometrico (media delle coordinate)
+                                lons = [coord[0] for coord in coordinates]
+                                lats = [coord[1] for coord in coordinates]
+                                centroid_lon = sum(lons) / len(lons)
+                                centroid_lat = sum(lats) / len(lats)
+                                centroid_source = "geometrico"
                             
                             # Imposta coordinate centroide zona
                             zone.SetAttValue("XCoord", centroid_lon)
                             zone.SetAttValue("YCoord", centroid_lat)
+                            
+                            if i < 3:  # Debug prime 3 zone
+                                print("  Zona {} - centroide {}: ({:.6f}, {:.6f})".format(
+                                    zone_id, centroid_source, centroid_lon, centroid_lat))
                             
                             # NOTA: Le superfici (poligoni) delle zone non sono supportate via COM API
                             # Per visualizzare i poligoni in Visum, importare il file GeoJSON 
@@ -2651,7 +3106,8 @@ def create_zones_from_hex_grid(hex_grid_file, num_zones=200,
                                road_fix_par=None, rail_fix_par=None,
                                water_fix_par=None, final_fix_par=None,
                                fields=None, weights=None, output_dir=None,
-                               conda_env="zoning_env", auto_zoning_path=None, timeout=1800,
+                               conda_env=None, auto_zoning_path=None, timeout=1800,
+                               centroid_method="geometric", istat_shapefile=None, weight_field="POP",
                                save_project_as=None, visum_instance=None):
     """
     PROCESSO COMPLETO: Crea zonizzazione automatica da griglia esagonale.
@@ -2690,8 +3146,17 @@ def create_zones_from_hex_grid(hex_grid_file, num_zones=200,
                                Default: None = cerca automaticamente
                                Es: r"H:\\visum-thinker-mcp-server\\auto-zoning"
         timeout (int): Timeout subprocess in secondi (default: 1800)
+        centroid_method (str): Metodo calcolo centroide (default: "geometric")
+                              - "geometric": Media coordinate poligono
+                              - "weighted": Ponderato su dati ISTAT (richiede istat_shapefile)
+        istat_shapefile (str): Path shapefile ISTAT sezioni censuarie (opzionale)
+        weight_field (str): Campo peso singolo per centroidi (default: "POP")
+                           Ignorato se fields/weights sono specificati per clustering
         save_project_as (str): Path salvataggio progetto (opzionale)
         visum_instance: Istanza Visum (default: usa Visum da console)
+    
+    NOTA: Se fields e weights sono usati per clustering, saranno usati anche per
+          centroidi ponderati. Altrimenti usa weight_field.
     
     Returns:
         dict: Risultato completo con info zonizzazione
@@ -2703,11 +3168,22 @@ def create_zones_from_hex_grid(hex_grid_file, num_zones=200,
         ...     hex_grid_file=r"H:\\data\\Terni_prezoning_hex.shp",
         ...     num_zones=200,
         ...     compact_zones=True,
-        ...     save_project_as=r"H:\\projects\\complete.ver"
+        ...     auto_zoning_path=r"H:\\visum-thinker-mcp-server\\auto-zoning",  # Path script
+        ...     hex_grid_file=r"H:\\data\\hex.shp",
+        ...     num_zones=200,
+        ...     conda_env=r"H:\\go\\network_builder\\.env",  # Path assoluto!
+        ...     save_project_as=r"H:\\projects\\zones.ver"
         ... )
     
-    Esempio con environment custom (path):
-        >>> result = create_zones_from_hex_grid( env!
+    Esempio con centroidi ponderati:
+        >>> result = create_zones_from_hex_grid(
+        ...     hex_grid_file=r"H:\\data\\hex_with_pop.shp",
+        ...     num_zones=100,
+        ...     centroid_method="weighted",
+        ...     istat_shapefile=r"H:\\data\\Terni_prezoning_istat.shp",
+        ...     weight_field="POP",
+        ...     conda_env=r"H:\\go\\network_builder\\.env",
+        ...     auto_zoning_path=r"H:\\visum-thinker-mcp-server\\auto-zoning
         ...     auto_zoning_path=r"H:\\visum-thinker-mcp-server\\auto-zoning",  # Path script
         ...     hex_grid_file=r"H:\\data\\hex.shp",
         ...     num_zones=200,
@@ -2825,11 +3301,22 @@ def create_zones_from_hex_grid(hex_grid_file, num_zones=200,
         zoning_file = zoning_files[0]
         print("Importo zone da: {}".format(Path(zoning_file).name))
         
-        import_result = import_zones_from_geojson(
-            geojson_file=zoning_file,
-            output_crs=output_crs,
-            visum_instance=visum
-        )
+        # Se fields/weights sono usati per clustering, usali anche per centroidi ponderati
+        import_kwargs = {
+            "geojson_file": zoning_file,
+            "output_crs": output_crs,
+            "centroid_method": centroid_method,
+            "conda_env": conda_env,
+            "istat_shapefile": istat_shapefile,
+            "visum_instance": visum
+        }
+        
+        if fields is not None and weights is not None:
+            # Usa ponderazione multi-campo
+            import_kwargs["weight_fields"] = fields
+            import_kwargs["weight_values"] = weights
+        
+        import_result = import_zones_from_geojson(**import_kwargs)
         result["import"] = import_result
         
         if import_result["status"] != "success":
