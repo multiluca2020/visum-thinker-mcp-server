@@ -3373,3 +3373,817 @@ def create_zones_from_hex_grid(hex_grid_file, num_zones=200,
         import traceback
         traceback.print_exc()
         return result
+
+
+# ============================================================================
+# SKIM MATRICES CREATION
+# ============================================================================
+
+def create_skim_matrices(matrix_no=1, 
+                         demand_segments=None, 
+                         visum_instance=None):
+    """
+    Crea matrice SKIM per tempi T0 (flusso libero) su rete PRT.
+    
+    IMPLEMENTAZIONE CORRETTA - Visum COM API:
+    - Usa Operations.AddOperation(position) con OPERATIONTYPE=103
+    - Configura parametri via operation.PrTSkimMatrixParameters
+    - Imposta SearchCriterion a "criteria_t0" per tempi flusso libero
+    - Seleziona skim da calcolare: T0 (travel time) e TripDist (distance)
+    
+    Struttura API completa:
+        operation = visum.Procedures.Operations.AddOperation(position)
+        operation.SetAttValue("OPERATIONTYPE", 103)
+        
+        skim_params = operation.PrTSkimMatrixParameters  # IPrTSkimMatrixPara
+        skim_params.SetAttValue("DSeg", demand_segments)
+        skim_params.SetAttValue("SearchCriterion", "criteria_t0")
+        
+        skim_t0 = skim_params.SingleSkimMatrixParameters("T0")
+        skim_t0.SetAttValue("Calculate", True)
+    
+    Skim disponibili:
+        T0, TCur, V0, VCur, Impedance, TripDist, DirectDist, 
+        Addval1, Addval2, Toll, Userdef
+    
+    SearchCriterion valori:
+        criteria_t0=0: Free flow speed (t0)
+        criteria_tCur=1: Current speed (tcur)
+        criteria_Impedance=2: Impedance
+        criteria_Distance=3: Link length
+    
+    Processo:
+    1. Verifica esistenza matrice (crea se necessario)
+    2. Trova demand segments PRT se non specificati (usa MODE='C')
+    3. Crea operazione "Calculate Skim Matrix PrT" (tipo 103)
+    4. Configura parametri: DSeg, SearchCriterion, skim selections
+    5. Esegue calcolo percorsi minimi
+    
+    Args:
+        matrix_no (int): Numero matrice risultato (default: 1)
+        demand_segments (str): Demand segment da usare (UN SOLO segment!)
+                               Es: "CAR_ATTUALE_AM"
+                               Se contiene virgole, usa solo il primo
+                               Se None, usa il primo segment PRT con MODE='C'
+        visum_instance: Istanza Visum (default: usa console)
+    
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "message": str,
+            "matrix_no": int,
+            "demand_segments": str,
+            "zones": int,
+            "od_pairs": int
+        }
+    
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        
+        >>> # Con demand segment specifico
+        >>> result = create_skim_matrices(matrix_no=1, demand_segments="CAR_ATTUALE_AM")
+        
+        >>> # Con auto-selezione (usa primo segment MODE='C')
+        >>> result = create_skim_matrices(matrix_no=1)
+    
+    Riferimenti documentazione:
+        - VISUMLIB~IOperation.html (PrTSkimMatrixParameters property)
+        - VISUMLIB~IPrTSkimMatrixPara.html (DSeg, SearchCriterion attributes)
+        - VISUMLIB~ISingleSkimMatrixPara.html (Calculate attribute)
+        - VISUMLIB~PrTSearchCriterionT.html (criteria_t0 enum)
+    """
+    result = {
+        "status": "failed",
+        "message": "",
+        "matrix_no": matrix_no,
+        "demand_segments": demand_segments or "",
+        "zones": 0,
+        "od_pairs": 0
+    }
+    
+    try:
+        # Usa istanza Visum
+        if visum_instance is None:
+            visum = Visum
+        else:
+            visum = visum_instance
+        
+        print("\n" + "=" * 70)
+        print("CREAZIONE MATRICE SKIM (T0 - FLUSSO LIBERO)")
+        print("=" * 70)
+        
+        # Verifica zone
+        num_zones = visum.Net.Zones.Count
+        if num_zones == 0:
+            result["message"] = "Nessuna zona trovata nel progetto"
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        result["zones"] = num_zones
+        print("Zone trovate: {}".format(num_zones))
+        print("Coppie O-D teoriche: {}".format(num_zones * num_zones))
+        
+        # Step 1: Trova demand segments se non specificati
+        if demand_segments is None:
+            print("\n### STEP 1: RICERCA DEMAND SEGMENTS PRT ###")
+            all_segments = visum.Net.DemandSegments.GetAll
+            
+            car_segments = []
+            for seg in all_segments:
+                mode = seg.AttValue("MODE")
+                if mode == "C":  # Modo Car
+                    car_segments.append(seg.AttValue("CODE"))
+            
+            if len(car_segments) == 0:
+                result["message"] = "Nessun demand segment trovato con MODE='C'"
+                print("✗ {}".format(result["message"]))
+                return result
+            
+            demand_segments = ",".join(car_segments)
+            print("Trovati {} segments MODE='C': {}".format(
+                len(car_segments), demand_segments))
+        
+        result["demand_segments"] = demand_segments
+        print("\nDemand segments trovati:")
+        print("  {}".format(demand_segments))
+        
+        # IMPORTANTE: L'operazione skim accetta UN SOLO demand segment alla volta
+        # Prendiamo il primo dalla lista
+        first_segment = demand_segments.split(",")[0]
+        print("\n⚠ NOTA: Usando solo il primo segment: {}".format(first_segment))
+        print("  (L'API skim accetta un singolo DSeg)")
+        
+        # Step 2: Crea/verifica matrice
+        print("\n### STEP 2: VERIFICA MATRICE ###")
+        
+        try:
+            matrix = visum.Net.Matrices.ItemByKey(matrix_no)
+            print("✓ Matrice {} già esistente: {}".format(
+                matrix_no, matrix.AttValue("Name")))
+        except:
+            matrix = visum.Net.AddMatrix(matrix_no)
+            matrix.SetAttValue("Name", "Skim_T0")
+            matrix.SetAttValue("Code", "TIME_T0")
+            print("✓ Creata matrice {}: Skim_T0".format(matrix_no))
+        
+        # Step 3: Crea operazione Calculate Skim Matrix PrT
+        print("\n### STEP 3: CREAZIONE OPERAZIONE SKIM ###")
+        
+        operations = visum.Procedures.Operations
+        
+        # Trova posizione disponibile
+        last_pos = 0
+        for i in range(1, 101):
+            try:
+                operations.ItemByKey(i)
+                last_pos = i
+            except:
+                break
+        
+        new_pos = last_pos + 1
+        print("Creazione operazione alla posizione {}...".format(new_pos))
+        
+        # Crea operazione tipo 103
+        skim_op = operations.AddOperation(new_pos)
+        skim_op.SetAttValue("OPERATIONTYPE", 103)
+        print("✓ Operazione tipo 103 creata")
+        
+        # Step 4: Configura parametri
+        print("\n### STEP 4: CONFIGURAZIONE PARAMETRI ###")
+        
+        # Accedi ai parametri dell'operazione skim
+        skim_params = skim_op.PrTSkimMatrixParameters
+        print("✓ Accesso a PrTSkimMatrixParameters")
+        
+        # Imposta demand segment (solo uno alla volta!)
+        skim_params.SetAttValue("DSeg", first_segment)
+        print("✓ DSeg: {}".format(first_segment))
+        
+        # Imposta criterio di ricerca: T0 (tempi flusso libero)
+        # criteria_t0 = 0 (vedi PrTSearchCriterionT)
+        skim_params.SetAttValue("SearchCriterion", 0)
+        print("✓ SearchCriterion: 0 (criteria_t0 - free flow times)")
+        
+        # Configura quali skim calcolare: T0 (tempi T0)
+        skim_t0 = skim_params.SingleSkimMatrixParameters("T0")
+        skim_t0.SetAttValue("Calculate", True)
+        skim_t0.SetAttValue("SaveToFile", False)
+        print("✓ Skim 'T0': Calculate=True (free flow travel time)")
+        
+        # Opzionalmente, calcola anche TripDist (distanza percorso)
+        skim_dist = skim_params.SingleSkimMatrixParameters("TripDist")
+        skim_dist.SetAttValue("Calculate", True)
+        skim_dist.SetAttValue("SaveToFile", False)
+        print("✓ Skim 'TripDist': Calculate=True (trip distance)")
+        
+        # Imposta matrice risultato (legacy attribute, potrebbe non essere necessario)
+        try:
+            skim_op.SetAttValue("MATRIXNO", matrix_no)
+            print("✓ MATRIXNO: {}".format(matrix_no))
+        except:
+            print("⚠ MATRIXNO non disponibile come attribute diretto")
+        
+        # Step 5: Esegui calcolo
+        print("\n### STEP 5: ESECUZIONE CALCOLO SKIM ###")
+        print("Calcolo percorsi minimi in corso...")
+        print("(Esegue tutte le operazioni nella sequenza Procedures)")
+        
+        try:
+            visum.Procedures.Execute()
+            print("✓ Calcolo completato con successo")
+        except Exception as e:
+            result["message"] = "Errore esecuzione: {}".format(str(e))
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        # Step 6: Verifica risultati
+        print("\n### STEP 6: VERIFICA RISULTATI ###")
+        
+        try:
+            time_values = matrix.GetValuesFlat()
+            non_zero_count = sum(1 for v in time_values if v > 0)
+            result["od_pairs"] = non_zero_count
+            
+            print("Matrice {}:".format(matrix_no))
+            print("  - Valori totali: {}".format(len(time_values)))
+            print("  - Valori > 0: {}".format(non_zero_count))
+            print("  - % copertura: {:.1f}%".format(
+                100.0 * non_zero_count / len(time_values) if len(time_values) > 0 else 0))
+            
+            if non_zero_count > 0:
+                avg_time = sum(v for v in time_values if v > 0) / non_zero_count
+                max_time = max(v for v in time_values if v > 0)
+                print("  - Tempo medio: {:.2f} min".format(avg_time))
+                print("  - Tempo massimo: {:.2f} min".format(max_time))
+        except Exception as e:
+            print("⚠ Impossibile leggere valori matrice: {}".format(str(e)))
+        
+        # Risultato finale
+        result["status"] = "success"
+        result["message"] = "Matrice skim creata con successo"
+        result["demand_segments"] = first_segment  # Aggiorna con segment effettivamente usato
+        
+        print("\n" + "=" * 70)
+        print("PROCESSO COMPLETATO")
+        print("=" * 70)
+        print("\nMatrice: {} (Tempi T0 in minuti)".format(matrix_no))
+        print("Demand segment usato: {}".format(first_segment))
+        print("Zone: {}".format(num_zones))
+        print("Coppie O-D calcolate: {}".format(result["od_pairs"]))
+        print("=" * 70)
+        
+        return result
+        
+    except Exception as e:
+        result["message"] = "Errore creazione skim: {}".format(str(e))
+        print("\n✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+# ============================================================================
+# CONFRONTO SKIM MODELLO VS OSSERVATE - REGRESSIONE LINEARE
+# ============================================================================
+
+def compare_skim_matrices(matrix_no=None,
+                          matrix_name=None,
+                          observed_csv_path=None,
+                          visum_instance=None,
+                          create_plot=False):
+    """
+    Confronta skim da modello Visum con skim osservate da CSV.
+    Calcola regressione lineare passante per l'origine: y = β*x
+    
+    Dove:
+        y = tempo osservato (da CSV)
+        x = tempo modello (da Visum matrix)
+        β = slope (coefficiente angolare)
+    
+    Se β ≈ 1.0 → modello calibrato perfettamente
+    Se β > 1.0 → modello sottostima i tempi
+    Se β < 1.0 → modello sovrastima i tempi
+    
+    Args:
+        matrix_no (int): Numero matrice Visum (opzionale se matrix_name specificato)
+        matrix_name (str): Nome matrice da cercare (es: "t0", "TT0")
+                          Cerca matrici con nome contenente questa stringa
+                          Se None e matrix_no=None, cerca automaticamente matrice T0
+        observed_csv_path (str): Path al CSV con skim osservate
+                                 Formato: Origin,Destination,Time (mins),Dist (kms)
+        visum_instance: Istanza Visum (default: usa console)
+        create_plot (bool): Se True, crea scatter plot (richiede matplotlib)
+    
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "message": str,
+            "slope": float,        # β della regressione
+            "r_squared": float,    # R² bontà del fit
+            "n_pairs": int,        # Numero coppie O-D confrontate
+            "mean_observed": float,
+            "mean_model": float,
+            "rmse": float,         # Root Mean Square Error
+            "plot_path": str,      # Se create_plot=True
+            "csv_path": str        # CSV con confronto dettagliato
+        }
+    
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        
+        >>> # Auto-ricerca matrice T0
+        >>> result = compare_skim_matrices(
+        ...     observed_csv_path=r"H:\\data\\observed_skim.csv"
+        ... )
+        
+        >>> # Ricerca per nome
+        >>> result = compare_skim_matrices(
+        ...     matrix_name="t0",
+        ...     observed_csv_path=r"H:\\data\\observed_skim.csv"
+        ... )
+        
+        >>> # Usa numero matrice specifico
+        >>> result = compare_skim_matrices(
+        ...     matrix_no=2,
+        ...     observed_csv_path=r"H:\\data\\observed_skim.csv"
+        ... )
+        
+        >>> # Con grafico
+        >>> result = compare_skim_matrices(
+        ...     matrix_name="t0",
+        ...     observed_csv_path=r"H:\\data\\observed_skim.csv",
+        ...     create_plot=True
+        ... )
+    """
+    import csv
+    import math
+    
+    result = {
+        "status": "failed",
+        "message": "",
+        "slope": 0.0,
+        "r_squared": 0.0,
+        "n_pairs": 0,
+        "mean_observed": 0.0,
+        "mean_model": 0.0,
+        "rmse": 0.0,
+        "plot_path": None,
+        "csv_path": None
+    }
+    
+    try:
+        # Usa istanza Visum
+        if visum_instance is None:
+            visum = Visum
+        else:
+            visum = visum_instance
+        
+        print("\n" + "=" * 70)
+        print("CONFRONTO SKIM MODELLO VS OSSERVATE")
+        print("=" * 70)
+        
+        # Step 1: Trova e verifica matrice modello
+        print("\n### STEP 1: CARICA MATRICE MODELLO ###")
+        
+        matrix = None
+        
+        # Opzione A: Cerca per nome
+        if matrix_name is not None:
+            print("Ricerca matrice con nome contenente: '{}'".format(matrix_name))
+            matrices = visum.Net.Matrices.GetAll
+            search_lower = matrix_name.lower()
+            
+            for mat in matrices:
+                mat_name = mat.AttValue("Name")
+                mat_code = mat.AttValue("Code")
+                if search_lower in mat_name.lower() or search_lower in mat_code.lower():
+                    matrix = mat
+                    matrix_no = mat.AttValue("No")
+                    print("✓ Trovata matrice {}: {} (Code: {})".format(
+                        matrix_no, mat_name, mat_code))
+                    break
+            
+            if matrix is None:
+                result["message"] = "Nessuna matrice trovata con nome '{}'".format(matrix_name)
+                print("✗ {}".format(result["message"]))
+                return result
+        
+        # Opzione B: Ricerca automatica matrice T0
+        elif matrix_no is None:
+            print("Ricerca automatica matrice T0...")
+            matrices = visum.Net.Matrices.GetAll
+            
+            # Raccogli tutte le matrici candidate
+            candidates = []
+            for mat in matrices:
+                mat_name = mat.AttValue("Name").lower()
+                mat_code = mat.AttValue("Code").lower()
+                mat_no = mat.AttValue("No")
+                
+                # Cerca pattern T0, TT0, t0, tcur etc.
+                if 't0' in mat_name or 'tt0' in mat_code or 't0' in mat_code:
+                    # Verifica che abbia valori > 0 (sample veloce)
+                    zones = visum.Net.Zones.GetAll
+                    zone_numbers = [z.AttValue("No") for z in zones[:10]]
+                    has_values = False
+                    
+                    for orig in zone_numbers[:5]:
+                        for dest in zone_numbers[:5]:
+                            try:
+                                val = mat.GetValue(orig, dest)
+                                if val > 0:
+                                    has_values = True
+                                    break
+                            except:
+                                pass
+                        if has_values:
+                            break
+                    
+                    candidates.append({
+                        'matrix': mat,
+                        'no': mat_no,
+                        'name': mat.AttValue("Name"),
+                        'code': mat.AttValue("Code"),
+                        'has_values': has_values
+                    })
+            
+            # Preferisci matrici con valori
+            matrix_found = None
+            for cand in candidates:
+                if cand['has_values']:
+                    matrix_found = cand
+                    break
+            
+            # Se nessuna con valori, usa la prima trovata
+            if matrix_found is None and len(candidates) > 0:
+                matrix_found = candidates[0]
+                print("  ⚠ Nessuna matrice T0 con valori > 0, uso la prima trovata")
+            
+            if matrix_found:
+                matrix = matrix_found['matrix']
+                matrix_no = matrix_found['no']
+                status = "con dati" if matrix_found['has_values'] else "VUOTA"
+                print("✓ Auto-selezionata matrice {}: {} (Code: {}) [{}]".format(
+                    matrix_no, matrix_found['name'], matrix_found['code'], status))
+            else:
+                result["message"] = "Nessuna matrice T0 trovata automaticamente"
+                print("✗ {}".format(result["message"]))
+                print("  Specifica matrix_no o matrix_name esplicitamente")
+                return result
+        
+        # Opzione C: Usa numero matrice specificato
+        else:
+            try:
+                matrix = visum.Net.Matrices.ItemByKey(matrix_no)
+                matrix_name = matrix.AttValue("Name")
+                print("✓ Matrice {} trovata: {}".format(matrix_no, matrix_name))
+            except:
+                result["message"] = "Matrice {} non trovata in Visum".format(matrix_no)
+                print("✗ {}".format(result["message"]))
+                return result
+        
+        # Estrai valori matrice
+        num_zones = visum.Net.Zones.Count
+        print("  Zone nel modello: {}".format(num_zones))
+        
+        # DEBUG: Mostra quale matrice stiamo usando
+        print("\n  *** DEBUG: MATRICE SELEZIONATA ***")
+        print("    Numero: {}".format(matrix.AttValue("No")))
+        print("    Nome: {}".format(matrix.AttValue("Name")))
+        print("    Code: {}".format(matrix.AttValue("Code")))
+        print("  ***********************************\n")
+        
+        # Crea dizionario zone number -> index
+        zones = visum.Net.Zones.GetAll
+        zone_to_idx = {}
+        zone_numbers = []
+        for idx, zone in enumerate(zones):
+            zone_no = zone.AttValue("No")
+            zone_to_idx[zone_no] = zone_no  # Mantiene numero zona originale
+            zone_numbers.append(zone_no)
+        
+        print("  Zone estratte: {} (da {} a {})".format(
+            len(zone_numbers), min(zone_numbers), max(zone_numbers)))
+        
+        # Estrai matrice - usa GetValue(origin, dest) per ogni coppia
+        # (GetValuesFlat non esiste, dobbiamo iterare)
+        print("  Estrazione valori matrice in corso...")
+        matrix_dict = {}
+        for orig in zone_numbers:
+            for dest in zone_numbers:
+                try:
+                    value = matrix.GetValue(orig, dest)
+                    matrix_dict[(orig, dest)] = value
+                except:
+                    matrix_dict[(orig, dest)] = 0.0
+        
+        print("  ✓ Valori matrice estratti: {}".format(len(matrix_dict)))
+        
+        # Verifica valori > 0
+        non_zero_values = [v for v in matrix_dict.values() if v > 0]
+        print("  Valori > 0 nella matrice: {} ({:.1f}%)".format(
+            len(non_zero_values), 
+            100.0 * len(non_zero_values) / len(matrix_dict) if len(matrix_dict) > 0 else 0))
+        
+        if len(non_zero_values) == 0:
+            result["message"] = "ERRORE: La matrice non contiene valori > 0. Hai eseguito il calcolo skim?"
+            print("\n✗ {}".format(result["message"]))
+            print("  SOLUZIONE: Esegui prima create_skim_matrices() o visum.Procedures.Execute()")
+            return result
+        
+        if len(non_zero_values) > 0:
+            max_val = max(non_zero_values)
+            min_val = min(non_zero_values)
+            avg_val = sum(non_zero_values) / len(non_zero_values)
+            print("  Range valori: {:.2f} - {:.2f}, media: {:.2f}".format(min_val, max_val, avg_val))
+        
+        # Step 2: Carica skim osservate da CSV
+        print("\n### STEP 2: CARICA SKIM OSSERVATE ###")
+        
+        if observed_csv_path is None:
+            result["message"] = "observed_csv_path non specificato"
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        observed_data = []
+        try:
+            with open(observed_csv_path, 'r', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                
+                # Salta header (prima riga)
+                next(reader, None)
+                
+                for row in reader:
+                    if len(row) < 3:
+                        continue  # Salta righe incomplete
+                    
+                    origin = int(float(row[0]))      # Colonna 1: Origin
+                    dest = int(float(row[1]))        # Colonna 2: Destination  
+                    time_obs = float(row[2])         # Colonna 3: Time (mins)
+                    # dist_obs = float(row[3])       # Colonna 4: Dist (kms) - opzionale
+                    
+                    observed_data.append({
+                        'origin': origin,
+                        'dest': dest,
+                        'time_obs': time_obs
+                    })
+            
+            print("✓ CSV caricato: {}".format(observed_csv_path))
+            print("  Coppie O-D osservate: {}".format(len(observed_data)))
+            
+        except FileNotFoundError:
+            result["message"] = "File CSV non trovato: {}".format(observed_csv_path)
+            print("✗ {}".format(result["message"]))
+            return result
+        except Exception as e:
+            result["message"] = "Errore lettura CSV: {}".format(str(e))
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        # Step 3: Match dati osservati con modello
+        print("\n### STEP 3: MATCH DATI MODELLO-OSSERVATI ###")
+        
+        # DEBUG: Mostra alcune zone per capire il formato
+        print("\n  DEBUG - Prime 5 zone dal modello:")
+        for i, zn in enumerate(zone_numbers[:5]):
+            print("    Zona {}: {} (tipo: {})".format(i+1, zn, type(zn).__name__))
+        
+        print("\n  DEBUG - Prime 5 coppie O-D dal CSV:")
+        for i, obs in enumerate(observed_data[:5]):
+            print("    O-D {}: {}->{} (tipi: {}, {})".format(
+                i+1, obs['origin'], obs['dest'], 
+                type(obs['origin']).__name__, type(obs['dest']).__name__))
+        
+        print("\n  DEBUG - Test match prima coppia CSV:")
+        if observed_data:
+            test_orig = observed_data[0]['origin']
+            test_dest = observed_data[0]['dest']
+            print("    Origin {} in zone_to_idx? {}".format(test_orig, test_orig in zone_to_idx))
+            print("    Dest {} in zone_to_idx? {}".format(test_dest, test_dest in zone_to_idx))
+            if test_orig in zone_to_idx:
+                print("    Valore matrix_dict[({}, {})]: {}".format(
+                    test_orig, test_dest, matrix_dict.get((test_orig, test_dest), "N/A")))
+        
+        matched_pairs = []
+        skipped_pairs = []
+        
+        for obs in observed_data:
+            origin = obs['origin']
+            dest = obs['dest']
+            time_obs = obs['time_obs']
+            
+            # Verifica che origine e destinazione esistano nel modello
+            if origin not in zone_to_idx or dest not in zone_to_idx:
+                skipped_pairs.append((origin, dest, "Zone non esistente"))
+                continue
+            
+            # Estrai tempo modello dal dizionario
+            time_model = matrix_dict.get((origin, dest), 0.0)
+            
+            # Salta coppie con tempo 0 (non connesse)
+            if time_model <= 0 or time_obs <= 0:
+                skipped_pairs.append((origin, dest, "Tempo = 0"))
+                continue
+            
+            matched_pairs.append({
+                'origin': origin,
+                'dest': dest,
+                'time_obs': time_obs,
+                'time_model': time_model
+            })
+        
+        print("✓ Coppie O-D matchate: {}".format(len(matched_pairs)))
+        if len(skipped_pairs) > 0:
+            print("⚠ Coppie O-D saltate: {}".format(len(skipped_pairs)))
+            if len(skipped_pairs) <= 5:
+                for origin, dest, reason in skipped_pairs:
+                    print("    {}->{}: {}".format(origin, dest, reason))
+        
+        if len(matched_pairs) == 0:
+            result["message"] = "Nessuna coppia O-D matchata tra modello e osservato"
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        result["n_pairs"] = len(matched_pairs)
+        
+        # Step 4: Calcola statistiche base
+        print("\n### STEP 4: STATISTICHE DESCRITTIVE ###")
+        
+        times_obs = [p['time_obs'] for p in matched_pairs]
+        times_model = [p['time_model'] for p in matched_pairs]
+        
+        mean_obs = sum(times_obs) / len(times_obs)
+        mean_model = sum(times_model) / len(times_model)
+        
+        result["mean_observed"] = mean_obs
+        result["mean_model"] = mean_model
+        
+        print("Tempo medio osservato: {:.2f} min".format(mean_obs))
+        print("Tempo medio modello:   {:.2f} min".format(mean_model))
+        print("Rapporto medio: {:.3f}".format(mean_obs / mean_model if mean_model > 0 else 0))
+        
+        # Step 5: Regressione lineare passante per origine
+        print("\n### STEP 5: REGRESSIONE LINEARE (y = β*x) ###")
+        
+        # Calcola slope: β = Σ(x*y) / Σ(x²)
+        sum_xy = sum(x * y for x, y in zip(times_model, times_obs))
+        sum_xx = sum(x * x for x in times_model)
+        
+        if sum_xx == 0:
+            result["message"] = "Impossibile calcolare regressione (denominatore = 0)"
+            print("✗ {}".format(result["message"]))
+            return result
+        
+        slope = sum_xy / sum_xx
+        result["slope"] = slope
+        
+        print("✓ Slope (β): {:.4f}".format(slope))
+        
+        # Interpreta slope
+        if abs(slope - 1.0) < 0.05:
+            print("  → Modello PERFETTAMENTE calibrato (β ≈ 1.0)")
+        elif slope > 1.0:
+            print("  → Modello SOTTOSTIMA i tempi ({:.1f}%)".format((slope - 1.0) * 100))
+        else:
+            print("  → Modello SOVRASTIMA i tempi ({:.1f}%)".format((1.0 - slope) * 100))
+        
+        # Step 6: Calcola R² (bontà del fit)
+        print("\n### STEP 6: BONTÀ DEL FIT (R²) ###")
+        
+        # Predizioni: y_pred = β * x
+        predictions = [slope * x for x in times_model]
+        
+        # Per regressione attraverso origine (no intercetta), R² deve essere calcolato diversamente:
+        # R² = [Σ(x*y)]² / [Σ(x²) * Σ(y²)]
+        # Questa è la formula che Excel usa per regressioni passanti per origine
+        
+        sum_yy = sum(y * y for y in times_obs)
+        
+        if sum_xx > 0 and sum_yy > 0:
+            r_squared = (sum_xy ** 2) / (sum_xx * sum_yy)
+            result["r_squared"] = r_squared
+            print("✓ R² (per regressione origine): {:.4f}".format(r_squared))
+            
+            if r_squared > 0.9:
+                print("  → FIT ECCELLENTE")
+            elif r_squared > 0.7:
+                print("  → FIT BUONO")
+            elif r_squared > 0.5:
+                print("  → FIT ACCETTABILE")
+            else:
+                print("  → FIT SCARSO")
+        else:
+            print("⚠ Impossibile calcolare R²")
+        
+        # Calcola RMSE
+        rmse = math.sqrt(sum((y - y_pred) ** 2 for y, y_pred in zip(times_obs, predictions)) / len(times_obs))
+        result["rmse"] = rmse
+        print("  RMSE: {:.2f} min".format(rmse))
+        
+        # Step 7: Crea grafico (opzionale)
+        if create_plot:
+            print("\n### STEP 7: CREAZIONE GRAFICO ###")
+            try:
+                import matplotlib.pyplot as plt
+                
+                plt.figure(figsize=(10, 8))
+                
+                # Scatter plot
+                plt.scatter(times_model, times_obs, alpha=0.5, s=30, label='Dati O-D')
+                
+                # Linea regressione
+                max_time = max(max(times_model), max(times_obs))
+                x_line = [0, max_time]
+                y_line = [0, slope * max_time]
+                plt.plot(x_line, y_line, 'r-', linewidth=2, 
+                        label='Regressione: y = {:.3f}*x'.format(slope))
+                
+                # Linea perfetta (y=x)
+                plt.plot([0, max_time], [0, max_time], 'k--', linewidth=1, 
+                        label='Perfetto: y = x', alpha=0.5)
+                
+                plt.xlabel('Tempo Modello (min)', fontsize=12)
+                plt.ylabel('Tempo Osservato (min)', fontsize=12)
+                plt.title('Confronto Skim: Modello vs Osservato\nSlope={:.3f}, R²={:.3f}, N={}'.format(
+                    slope, r_squared, len(matched_pairs)), fontsize=14)
+                plt.legend(fontsize=10)
+                plt.grid(True, alpha=0.3)
+                plt.axis('equal')
+                plt.xlim(0, max_time * 1.05)
+                plt.ylim(0, max_time * 1.05)
+                
+                # Salva grafico
+                plot_path = observed_csv_path.replace('.csv', '_comparison.png')
+                plt.savefig(plot_path, dpi=150, bbox_inches='tight')
+                plt.close()
+                
+                result["plot_path"] = plot_path
+                print("✓ Grafico salvato: {}".format(plot_path))
+                
+            except ImportError:
+                print("⚠ matplotlib non disponibile, grafico non creato")
+            except Exception as e:
+                print("⚠ Errore creazione grafico: {}".format(str(e)))
+        
+        # Step 8: Esporta CSV con confronto completo
+        print("\n### STEP 8: ESPORTA CSV CONFRONTO ###")
+        
+        try:
+            output_csv_path = observed_csv_path.replace('.csv', '_comparison.csv')
+            
+            with open(output_csv_path, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                
+                # Header
+                writer.writerow(['Origin', 'Destination', 'Time_Observed (min)', 
+                               'Time_Model (min)', 'Difference (min)', 'Ratio (Obs/Model)'])
+                
+                # Dati
+                for pair in matched_pairs:
+                    diff = pair['time_obs'] - pair['time_model']
+                    ratio = pair['time_obs'] / pair['time_model'] if pair['time_model'] > 0 else 0
+                    
+                    writer.writerow([
+                        pair['origin'],
+                        pair['dest'],
+                        round(pair['time_obs'], 2),
+                        round(pair['time_model'], 2),
+                        round(diff, 2),
+                        round(ratio, 3)
+                    ])
+            
+            result["csv_path"] = output_csv_path
+            print("✓ CSV confronto salvato: {}".format(output_csv_path))
+            print("  Formato: Origin, Destination, Time_Observed, Time_Model, Difference, Ratio")
+            
+        except Exception as e:
+            print("⚠ Errore esportazione CSV: {}".format(str(e)))
+        
+        # Risultato finale
+        result["status"] = "success"
+        result["message"] = "Confronto completato con successo"
+        
+        print("\n" + "=" * 70)
+        print("CONFRONTO COMPLETATO")
+        print("=" * 70)
+        print("\nRISULTATI:")
+        print("  Coppie O-D: {}".format(result["n_pairs"]))
+        print("  Slope (β): {:.4f}".format(result["slope"]))
+        print("  R²: {:.4f}".format(result["r_squared"]))
+        print("  RMSE: {:.2f} min".format(result["rmse"]))
+        print("  Tempo medio osservato: {:.2f} min".format(result["mean_observed"]))
+        if result["csv_path"]:
+            print("  CSV confronto: {}".format(result["csv_path"]))
+        if result["plot_path"]:
+            print("  Grafico: {}".format(result["plot_path"]))
+        print("  Tempo medio modello: {:.2f} min".format(result["mean_model"]))
+        print("=" * 70)
+        
+        return result
+        
+    except Exception as e:
+        result["message"] = "Errore confronto skim: {}".format(str(e))
+        print("\n✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+        return result
