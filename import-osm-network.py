@@ -2741,6 +2741,7 @@ def activate_nodes_by_linktype(linktype_list=None, exclude_linktype_list=None, v
 def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
                           node_filter_active=False, bidirectional=True,
                           mode="add_all", distribute_by_quadrant=False,
+                          only_in_own_zone=False,
                           visum_instance=None):
     """
     Crea connectors automatici tra zone e nodi della rete Visum.
@@ -2750,6 +2751,8 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
     - Nodi devono esistere (visum.Net.Nodes.Count > 0)
     - Se node_filter_active=True, chiamare prima activate_nodes_by_linktype()
       (usa AddVal1=1 per marcare i nodi)
+    - Se only_in_own_zone=True, chiamare prima tag_nodes_with_zone()
+      (usa AddVal2=ZoneNo per marcare appartenenza nodo a zona)
     
     METODO:
     Itera su ogni zona, trova i nodi più vicini entro max_distance,
@@ -2765,6 +2768,7 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
             - "add_missing": Aggiungi connectors SOLO a zone senza connectors
             - "add_all": Aggiungi connectors a TUTTE le zone (default)
         distribute_by_quadrant (bool): Distribuisci connectors per quadrante (0-90°, 90-180°, 180-270°, 270-360°) (default: False)
+        only_in_own_zone (bool): Se True, connetti zone solo a nodi della stessa zona (usa AddVal2) (default: False)
         visum_instance: Istanza Visum (default: usa Visum da console)
     
     Returns:
@@ -2814,6 +2818,18 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
         ...     distribute_by_quadrant=True
         ... )
         >>> print(f"Connectors distribuiti geograficamente: {result['connectors_created']}")
+    
+    Esempio connettori solo nella propria zona:
+        >>> # 1. Tagga nodi con zona di appartenenza
+        >>> tag_nodes_with_zone()
+        >>> 
+        >>> # 2. Crea connectors solo verso nodi interni alla zona
+        >>> result = create_zone_connectors(
+        ...     max_distance=1000,
+        ...     max_connectors_per_zone=3,
+        ...     only_in_own_zone=True
+        ... )
+        >>> print(f"Connectors intra-zone: {result['connectors_created']}")
     """
     result = {
         "status": "failed",
@@ -2868,6 +2884,7 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
         print("Max connectors/zona: {}".format(max_connectors_per_zone))
         print("Filtro nodi attivi: {}".format(node_filter_active))
         print("Distribuzione per quadrante: {}".format(distribute_by_quadrant))
+        print("Solo nodi nella propria zona: {}".format(only_in_own_zone))
         
         # Ottieni coordinate nodi
         print("\nCaricamento coordinate nodi...")
@@ -2880,7 +2897,10 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
         if node_filter_active:
             node_addvals = visum.Net.Nodes.GetMultiAttValues("AddVal1")
         
-        # Crea dizionario coordinate nodi
+        if only_in_own_zone:
+            node_zone_tags = visum.Net.Nodes.GetMultiAttValues("AddVal2")
+        
+        # Crea dizionario coordinate nodi (con zona di appartenenza se only_in_own_zone)
         nodes_coords = {}
         for i in range(len(node_nos)):
             node_no = int(node_nos[i][1])  # [index, value]
@@ -2890,10 +2910,16 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
             # Se filtro attivo, verifica AddVal1=1
             if node_filter_active:
                 addval = int(node_addvals[i][1])
-                if addval == 1:
-                    nodes_coords[node_no] = {'x': x_coord, 'y': y_coord}
-            else:
-                nodes_coords[node_no] = {'x': x_coord, 'y': y_coord}
+                if addval != 1:
+                    continue  # Skip nodi non attivi
+            
+            # Salva coordinate e zona (se only_in_own_zone)
+            node_data = {'x': x_coord, 'y': y_coord}
+            if only_in_own_zone:
+                zone_tag = int(node_zone_tags[i][1])
+                node_data['zone'] = zone_tag
+            
+            nodes_coords[node_no] = node_data
         
         print("Nodi disponibili: {}".format(len(nodes_coords)))
         
@@ -2958,6 +2984,12 @@ def create_zone_connectors(max_distance=1000, max_connectors_per_zone=5,
             # Calcola distanze e angoli a tutti i nodi
             distances = []
             for node_key, coords in nodes_coords.items():
+                # Se only_in_own_zone, salta nodi di altre zone
+                if only_in_own_zone:
+                    node_zone = coords.get('zone', 0)
+                    if node_zone != zone_no:
+                        continue  # Nodo appartiene a un'altra zona
+                
                 # Calcola distanza geografica con Haversine (in METRI)
                 # Coordinate: x=longitude, y=latitude
                 dist_m = haversine_distance(
