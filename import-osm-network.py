@@ -1535,6 +1535,556 @@ def run_auto_zoning_subprocess(config_json_path, conda_env="zoning_env",
         return result
 
 
+# ============================================================================
+# NETWORK SPEED OPTIMIZATION FUNCTIONS
+# ============================================================================
+# Ottimizzazione velocità LinkType via Bounded Least Squares iterativo.
+# Minimizza l'errore tra tempi shortest-path (osmnx/networkx) e tempi
+# osservati tra centroidi, ottimizzando v_k per ogni LinkType.
+#
+# Approccio matematico:
+#   T_od = sum_k D_od_k * beta_k  (beta_k = 1/v_k, LINEARE in beta)
+#   → scipy.optimize.lsq_linear con bounds di velocità
+#   → iterazione con re-routing fino a convergenza
+# ============================================================================
+
+
+def create_speed_optimization_config(
+        network_dir,
+        observed_times_csv,
+        output_dir,
+        file_prefix=None,
+        od_col_orig="origin",
+        od_col_dest="destination",
+        od_col_time="time_m",
+        v0prt_field="V0PRT",
+        length_field="LENGTH",
+        linktype_field="TYPENO",
+        speed_min_kmh=10.0,
+        speed_max_kmh=150.0,
+        speed_delta_kmh=10.0,
+        speed_class_gap_kmh=1.0,
+        speed_delta_arc_kmh=20.0,
+        optimization_mode="per_type",
+        max_active_arcs=500,
+        od_error_frac=None,
+        n_sub_cycles=3,
+        n_iterations=5,
+        convergence_threshold=0.005,
+        fix_connector_t0=True,
+        sample_od_pairs=None,
+        random_seed=42):
+    """
+    Crea il file config.json per run_speed_optimization_subprocess().
+
+    T0 NON viene esportato di default dagli shapefile Visum.
+    Il T0 viene calcolato automaticamente:  T0 = (LENGTH_km / V0PRT_kmh) × 60 [min]
+
+    Colonne shapefile Visum (export default):
+        FROMNODENO  TONODENO  TYPENO  LENGTH    V0PRT    CAPPRT  ...
+        1           2         60      0.041km   50km/h   2200    ...
+
+    Args:
+        network_dir (str): Cartella con shapefile Visum esportati
+                          (*_link.shp, *_node.shp, *_zone_centroid.shp, *_connector.shp)
+        observed_times_csv (str): CSV con tempi osservati tra centroidi
+                                 Colonne: origin (int), destination (int), time_min (float)
+        output_dir (str): Cartella dove salvare i risultati
+        file_prefix (str): Prefisso file shapefile (es. "roma" → roma_link.shp).
+                          None = autodetect dal glob *_link.shp. Default: None
+        od_col_orig (str): Nome colonna origine nel CSV. Default: "origin"
+        od_col_dest (str): Nome colonna destinazione nel CSV. Default: "destination"
+        od_col_time (str): Nome colonna tempi (MINUTI) nel CSV. Default: "time_min"
+        v0prt_field (str): Campo velocità libera nel shapefile (es. "50km/h"). Default: "V0PRT"
+        length_field (str): Campo lunghezza nel shapefile (es. "0.041km"). Default: "LENGTH"
+        linktype_field (str): Campo tipo link. Default: "TYPENO"
+        speed_min_kmh (float): Velocità minima ammessa (km/h). Default: 10.0
+        speed_max_kmh (float): Velocità massima ammessa (km/h). Default: 150.0
+        speed_delta_kmh (float): Massima variazione per classe (+-km/h). Default: 10.0
+        speed_class_gap_kmh (float): Gap minimo tra classi adiacenti (km/h). Default: 1.0
+        speed_delta_arc_kmh (float): [per_arc] Max variazione per singolo arco (km/h). Default: 20.0
+        optimization_mode (str): 'per_type' o 'per_arc'. Default: 'per_type'
+        max_active_arcs (int): [per_arc] Max archi ottimizzati per iterazione (i più percorsi). Default: 5000
+        n_iterations (int): Max iterazioni ottimizzazione. Default: 10
+        convergence_threshold (float): Soglia convergenza (es. 0.005 = 0.5%). Default: 0.005
+        fix_connector_t0 (bool): Se True i connettori NON vengono ottimizzati. Default: True
+        sample_od_pairs (int|None): Campiona N coppie OD (None = tutte). Default: None
+        random_seed (int): Seed casuale per campionamento. Default: 42
+
+    Returns:
+        str: Path al file config.json temporaneo creato
+
+    Esempio:
+        >>> config_file = create_speed_optimization_config(
+        ...     network_dir=r"H:\\data\\network_shp",
+        ...     observed_times_csv=r"H:\\data\\observed_times.csv",
+        ...     output_dir=r"H:\\data\\optimization_results"
+        ... )
+        >>> result = run_speed_optimization_subprocess(config_file)
+    """
+    config = {
+        "network_dir":           str(network_dir),
+        "file_prefix":           file_prefix,
+        "observed_times_csv":    str(observed_times_csv),
+        "output_dir":            str(output_dir),
+        "od_col_orig":           od_col_orig,
+        "od_col_dest":           od_col_dest,
+        "od_col_time":           od_col_time,
+        "v0prt_field":           v0prt_field,
+        "length_field":          length_field,
+        "linktype_field":        linktype_field,
+        "fromnodeno_field":      "FROMNODENO",
+        "tonodeno_field":        "TONODENO",
+        "speed_min_kmh":         speed_min_kmh,
+        "speed_max_kmh":         speed_max_kmh,
+        "speed_delta_kmh":       speed_delta_kmh,
+        "speed_class_gap_kmh":   speed_class_gap_kmh,
+        "speed_delta_arc_kmh":   speed_delta_arc_kmh,
+        "optimization_mode":     optimization_mode,
+        "max_active_arcs":       max_active_arcs,
+        "od_error_frac":         od_error_frac,
+        "n_sub_cycles":          n_sub_cycles,
+        "n_iterations":          n_iterations,
+        "convergence_threshold": convergence_threshold,
+        "fix_connector_t0":      fix_connector_t0,
+        "sample_od_pairs":       sample_od_pairs,
+        "random_seed":           random_seed,
+    }
+
+    temp_file = tempfile.NamedTemporaryFile(
+        mode="w", suffix="_speedopt_config.json",
+        delete=False, encoding="utf-8"
+    )
+    json.dump(config, temp_file, indent=4)
+    temp_file.close()
+
+    print("✓ Config creato: {}".format(temp_file.name))
+    return temp_file.name
+
+
+def run_speed_optimization_subprocess(
+        config_json_path,
+        conda_env=None,
+        optimizer_script_path=None,
+        timeout=7200):
+    """
+    Lancia l'ottimizzazione velocità LinkType in subprocess usando conda environment.
+    Modello: lowest-path tra centroidi con osmnx/networkx, ottimizzazione
+    scipy.optimize.lsq_linear iterativa.
+
+    Args:
+        config_json_path (str): Path al file config.json (da create_speed_optimization_config)
+        conda_env (str): Path o nome del conda environment (es. r"H:\\go\\network_builder\\.env")
+                        Default: None = usa Python di sistema
+        optimizer_script_path (str): Path allo script optimize_link_speeds.py
+                                    Default: None = cerca in network-speed-optimization/
+        timeout (int): Timeout in secondi (default: 7200 = 2 ore)
+
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "message": str,
+            "output_dir": str,
+            "speeds_file": str,   # Path a optimized_speeds.csv
+            "log_file": str
+        }
+
+    Esempio:
+        >>> config_file = create_speed_optimization_config(
+        ...     network_dir=r"H:\\data\\network_shp",
+        ...     observed_times_csv=r"H:\\data\\observed_times.csv",
+        ...     output_dir=r"H:\\data\\results"
+        ... )
+        >>> result = run_speed_optimization_subprocess(
+        ...     config_file,
+        ...     conda_env=r"H:\\go\\network_builder\\.env"
+        ... )
+        >>> print(result['speeds_file'])
+    """
+    result = {
+        "status": "failed",
+        "message": "",
+        "output_dir": "",
+        "speeds_file": "",
+        "log_file": "",
+    }
+
+    try:
+        # ── Trova lo script optimize_link_speeds.py
+        if optimizer_script_path:
+            script_path = Path(optimizer_script_path)
+        else:
+            possible = [
+                Path(__file__).parent / "network-speed-optimization" / "optimize_link_speeds.py",
+                Path("H:/visum-thinker-mcp-server/network-speed-optimization/optimize_link_speeds.py"),
+                Path("network-speed-optimization/optimize_link_speeds.py"),
+            ]
+            script_path = next((p for p in possible if p.exists()), None)
+            if script_path is None:
+                result["message"] = (
+                    "Script optimize_link_speeds.py non trovato. "
+                    "Specifica optimizer_script_path. Cercato in: {}".format(
+                        [str(p) for p in possible])
+                )
+                print("✗ {}".format(result["message"]))
+                return result
+
+        if not script_path.exists():
+            result["message"] = "Script non trovato: {}".format(script_path)
+            print("✗ {}".format(result["message"]))
+            return result
+
+        print("\n" + "=" * 70)
+        print("ESECUZIONE SPEED OPTIMIZATION IN SUBPROCESS")
+        print("=" * 70)
+        print("Script:  {}".format(script_path))
+        print("Config:  {}".format(config_json_path))
+        print("Timeout: {} secondi ({} min)".format(timeout, timeout // 60))
+
+        # ── Leggi output_dir dal config per trovare i file risultato
+        with open(config_json_path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+        output_dir = cfg.get("output_dir", "")
+        result["output_dir"] = output_dir
+
+        # ── Costruisci il comando
+        if conda_env:
+            is_path = ("\\/" in conda_env or ":" in conda_env
+                       or "\\" in conda_env or "/" in conda_env)
+            # Cerca conda.exe
+            conda_exe = None
+            possible_conda = [
+                "conda",
+                r"H:\ProgramData\Miniconda3\Scripts\conda.exe",
+                r"C:\ProgramData\Anaconda3\Scripts\conda.exe",
+                r"C:\ProgramData\Miniconda3\Scripts\conda.exe",
+                r"C:\Users\{}\Anaconda3\Scripts\conda.exe".format(
+                    os.environ.get("USERNAME", "")),
+                r"C:\Users\{}\Miniconda3\Scripts\conda.exe".format(
+                    os.environ.get("USERNAME", "")),
+            ]
+            for cp in possible_conda:
+                try:
+                    subprocess.run([cp, "--version"],
+                                   capture_output=True, timeout=5, check=True)
+                    conda_exe = cp
+                    break
+                except Exception:
+                    continue
+
+            if not conda_exe:
+                result["message"] = "Conda non trovato nel PATH o nelle posizioni standard"
+                print("✗ {}".format(result["message"]))
+                return result
+
+            prefix_flag = "-p" if is_path else "-n"
+            cmd = [conda_exe, "run",
+                   prefix_flag, conda_env,
+                   "python", "-u", str(script_path), config_json_path]
+            print("Conda:   {} ({})".format(conda_exe, conda_env))
+        else:
+            # Usa Python di sistema (es. dalla console Visum)
+            cmd = [sys.executable, "-u", str(script_path), config_json_path]
+            print("Python:  {}".format(sys.executable))
+
+        # ── File di log in output_dir (accessibile subito, scritto in real-time)
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        log_path = str(Path(output_dir) / "optimization.log")
+        result["log_file"] = log_path
+
+        # Intestazione log
+        import datetime
+        with open(log_path, "w", encoding="utf-8") as f:
+            f.write("=" * 70 + "\n")
+            f.write("SPEED OPTIMIZATION SUBPROCESS LOG\n")
+            f.write("Data: {}\n".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            f.write("Script:   {}\n".format(script_path))
+            f.write("Config:   {}\n".format(config_json_path))
+            f.write("Comando:  {}\n".format(" ".join(cmd)))
+            f.write("=" * 70 + "\n\n")
+
+        print("Log (real-time): {}".format(log_path))
+        print("Comando: {}".format(" ".join(cmd)))
+        print("\nAvvio processo... (segui avanzamento nel log)\n")
+
+        # ── Esegui subprocess con streaming real-time al log
+        # PYTHONIOENCODING=utf-8: evita UnicodeEncodeError su Windows cp1252
+        # --no-capture-output: evita che conda run ri-codifichi stdout attraverso cp1252
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
+        env["PYTHONUTF8"] = "1"
+
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,   # stderr fuso con stdout: un unico flusso
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env=env,
+            cwd=str(script_path.parent),
+        )
+
+        try:
+            # Streaming riga per riga: stampa a console E scrive nel log in tempo reale
+            with open(log_path, "a", encoding="utf-8") as lf:
+                for line in process.stdout:
+                    print(line, end="", flush=True)
+                    lf.write(line)
+                    lf.flush()
+            process.wait(timeout=timeout)
+
+            with open(log_path, "a", encoding="utf-8") as lf:
+                lf.write("\n" + "=" * 70 + "\n")
+                lf.write("ExitCode: {}\n".format(process.returncode))
+
+            if process.returncode == 0:
+                flag_file  = Path(output_dir) / "optimization_complete.flag"
+                speeds_file = Path(output_dir) / "optimized_speeds.csv"
+
+                if flag_file.exists():
+                    with open(flag_file, "r", encoding="utf-8") as f:
+                        flag_data = json.load(f)
+                    result["status"]            = flag_data.get("status", "success")
+                    result["message"]           = "Ottimizzazione completata in {} iterazioni".format(
+                        flag_data.get("n_iterations", "?"))
+                    result["optimized_speeds"]  = flag_data.get("optimized_speeds", {})
+                    result["links_remapped_csv"] = flag_data.get("links_remapped_csv", "")
+                    result["linktype_stats_csv"] = flag_data.get("linktype_stats_csv", "")
+                else:
+                    result["status"]  = "success"
+                    result["message"] = "Subprocess completato (flag non trovato)"
+
+                result["speeds_file"] = str(speeds_file) if speeds_file.exists() else ""
+
+                print("\n[OK] {}".format(result["message"]))
+                if result["speeds_file"]:
+                    try:
+                        speeds_df = pd.read_csv(result["speeds_file"], sep=";")
+                        print("\nVelocita' ottimizzate:")
+                        for _, row in speeds_df.iterrows():
+                            print("  LinkType {:3d}: {:6.1f} km/h".format(
+                                int(row["linktype"]), float(row["speed_kmh_optimized"])))
+                    except Exception:
+                        pass
+
+                print("\nLog completo: {}".format(log_path))
+            else:
+                result["message"] = "Subprocess terminato con errore (code: {}). Log: {}".format(
+                    process.returncode, log_path)
+                print("[ERRORE] {}".format(result["message"]))
+
+        except subprocess.TimeoutExpired:
+            process.kill()
+            result["message"] = "Timeout dopo {} secondi. Log: {}".format(timeout, log_path)
+            print("[TIMEOUT] {}".format(result["message"]))
+
+        return result
+
+    except Exception as e:
+        result["message"] = "Errore subprocess: {}".format(str(e))
+        print("✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+def remap_linktypes_from_optimized_speeds(
+        network_dir,
+        optimized_speeds,
+        output_dir=None,
+        file_prefix=None,
+        v0prt_field="V0PRT",
+        linktype_field="TYPENO"):
+    """
+    Riassegna il LinkType di ogni arco al tipo la cui velocità ottimizzata
+    è più vicina al V0PRT dell'arco.
+
+    Può essere chiamata direttamente dopo run_speed_optimization_subprocess,
+    oppure in un secondo momento leggendo optimized_speeds dal file CSV.
+
+    Args:
+        network_dir (str): Cartella con gli shapefile Visum
+        optimized_speeds (str|dict): Path a optimized_speeds.csv  OPPURE
+                                     dict {linktype_int: speed_kmh}
+                                     OPPURE result["optimized_speeds"] da run_speed_optimization_subprocess
+        output_dir (str|None): Se indicato, salva il CSV di remapping lì.
+                               Default: stessa cartella di network_dir
+        file_prefix (str|None): Prefisso shapefile (None = autodetect)
+        v0prt_field (str): Nome colonna velocità. Default: "V0PRT"
+        linktype_field (str): Nome colonna tipo arco. Default: "TYPENO"
+
+    Returns:
+        dict: {
+            "remap_df":      DataFrame FROMNODENO/TONODENO/TYPENO_ORIG/TYPENO_OPT/...,
+            "remap_csv":     str  path al CSV salvato (o vuoto),
+            "n_links":       int,
+            "n_changed":     int,
+            "pct_changed":   float,
+            "optimized_speeds": dict {linktype: speed_kmh}
+        }
+
+    Esempio:
+        # Dopo run_speed_optimization_subprocess:
+        result = run_speed_optimization_subprocess(config_file, conda_env=...)
+        remap  = remap_linktypes_from_optimized_speeds(
+            network_dir       = r"H:\\go\\network_builder\\inputs\\net_export",
+            optimized_speeds  = result["optimized_speeds"],  # dict già in memoria
+            output_dir        = r"H:\\go\\network_builder\\outputs\\speed_optimization",
+        )
+        print(remap["remap_df"].head())
+
+        # Oppure da file CSV:
+        remap = remap_linktypes_from_optimized_speeds(
+            network_dir      = r"H:\\go\\network_builder\\inputs\\net_export",
+            optimized_speeds = r"H:\\go\\network_builder\\outputs\\speed_optimization\\optimized_speeds.csv",
+        )
+    """
+    import geopandas as gpd
+    import numpy as np
+
+    ret = {
+        "remap_df":        None,
+        "remap_csv":       "",
+        "n_links":         0,
+        "n_changed":       0,
+        "pct_changed":     0.0,
+        "optimized_speeds": {},
+    }
+
+    # ── Carica velocità ottimizzate
+    if isinstance(optimized_speeds, str):
+        speeds_df = pd.read_csv(optimized_speeds, sep=";", encoding="utf-8-sig")
+        speeds = {int(r["linktype"]): float(r["speed_kmh_optimized"])
+                  for _, r in speeds_df.iterrows()}
+    elif isinstance(optimized_speeds, dict):
+        speeds = {int(k): float(v) for k, v in optimized_speeds.items()}
+    else:
+        print("✗ optimized_speeds deve essere un path CSV o un dict")
+        return ret
+
+    ret["optimized_speeds"] = speeds
+    print("\nVelocità ottimizzate caricate: {} LinkType".format(len(speeds)))
+    for lt, v in sorted(speeds.items()):
+        print("  Type {:3d}: {:6.1f} km/h".format(lt, v))
+
+    # ── Carica shapefile link
+    net_path = Path(network_dir)
+    if file_prefix:
+        link_shp = net_path / "{}_link.shp".format(file_prefix)
+    else:
+        found = list(net_path.glob("*_link.shp")) or list(net_path.glob("*link*.shp"))
+        link_shp = found[0] if found else None
+
+    if not link_shp or not Path(link_shp).exists():
+        print("✗ File _link.shp non trovato in {}".format(network_dir))
+        return ret
+
+    try:
+        gdf = gpd.read_file(str(link_shp))
+    except Exception as e:
+        # Fallback pyshp
+        try:
+            import shapefile
+            sf = shapefile.Reader(str(link_shp))
+            fields = [f[0] for f in sf.fields[1:]]
+            records = [r.record for r in sf.shapeRecords()]
+            gdf = pd.DataFrame(records, columns=fields)
+        except Exception as e2:
+            print("✗ Impossibile caricare shapefile: {}".format(e2))
+            return ret
+
+    print("Shapefile caricato: {} archi, colonne: {}".format(
+        len(gdf), list(gdf.columns)))
+
+    # ── Cerca colonne (case-insensitive)
+    def _find_col(df, aliases):
+        cols_up = {c.upper(): c for c in df.columns}
+        for a in aliases:
+            k = a.upper().replace("(","").replace(")","").replace(" ","")
+            if k in cols_up:
+                return cols_up[k]
+            for cu, co in cols_up.items():
+                if k in cu:
+                    return co
+        return None
+
+    v0_col   = _find_col(gdf, [v0prt_field, "V0PRT", "V0_PRT", "SPEED", "V0"])
+    type_col = _find_col(gdf, [linktype_field, "TYPENO", "LINKTYPE", "TYPE"])
+    from_col = _find_col(gdf, ["FROMNODENO", "FROMNODE", "FROM"])
+    to_col   = _find_col(gdf, ["TONODENO", "TONODE", "TO"])
+
+    if not v0_col or not type_col:
+        print("✘ Colonne non trovate: V0PRT={}, TYPENO={}".format(v0_col, type_col))
+        print("  Disponibili: {}".format(list(gdf.columns)))
+        return ret
+
+    # ── Parsing unità V0PRT (es. "50km/h" → 50.0)
+    def _parse_speed(val):
+        import re
+        if isinstance(val, (int, float)):
+            return float(val)
+        m = re.match(r'^([\d.]+)', str(val).strip())
+        return float(m.group(1)) if m else 50.0
+
+    # Vettori ordinati per velocità
+    sorted_items = sorted(speeds.items(), key=lambda x: x[1])
+    lt_arr = np.array([lt for lt, _ in sorted_items], dtype=int)
+    v_arr  = np.array([v  for _, v  in sorted_items], dtype=float)
+
+    # ── Remapping
+    records = []
+    changed = 0
+    for _, row in gdf.iterrows():
+        v0    = _parse_speed(row[v0_col])
+        lt_old = int(row[type_col]) if type_col else 0
+        fn    = int(row[from_col]) if from_col else None
+        tn    = int(row[to_col])   if to_col   else None
+
+        idx    = int(np.argmin(np.abs(v_arr - v0)))
+        lt_new = int(lt_arr[idx])
+        v_opt  = float(v_arr[idx])
+
+        records.append({
+            "FROMNODENO":      fn,
+            "TONODENO":        tn,
+            "V0PRT_kmh":       round(v0, 2),
+            "TYPENO_ORIG":     lt_old,
+            "TYPENO_OPT":      lt_new,
+            "SPEED_OPT_kmh":   round(v_opt, 2),
+            "SPEED_DELTA_kmh": round(v_opt - v0, 2),
+            "CHANGED":         int(lt_new != lt_old),
+        })
+        if lt_new != lt_old:
+            changed += 1
+
+    remap_df = pd.DataFrame(records)
+    pct = changed / max(len(records), 1) * 100
+
+    print("\nRemapping completato: {} / {} archi riassegnati ({:.1f}%)".format(
+        changed, len(records), pct))
+    print("\nDistribuzione nuovi LinkType:")
+    for lt_new, cnt in remap_df["TYPENO_OPT"].value_counts().sort_index().items():
+        print("  Type {:3d}: {:6d} archi  (speed_opt={:.1f} km/h)".format(
+            lt_new, cnt, speeds.get(lt_new, 0)))
+
+    # ── Salva CSV
+    out_dir = output_dir or network_dir
+    Path(out_dir).mkdir(parents=True, exist_ok=True)
+    remap_csv = str(Path(out_dir) / "links_remapped.csv")
+    remap_df.to_csv(remap_csv, index=False, sep=";")
+    print("\n✓ Remapping salvato: {}".format(remap_csv))
+
+    ret.update({
+        "remap_df":      remap_df,
+        "remap_csv":     remap_csv,
+        "n_links":       len(records),
+        "n_changed":     changed,
+        "pct_changed":   round(pct, 2),
+    })
+    return ret
+
+
 def import_zones_shapefile_with_geometry(shapefile_path, visum_instance=None):
     """
     Importa zone da Shapefile in Visum usando visum.IO (CON geometrie complete)

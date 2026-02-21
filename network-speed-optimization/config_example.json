@@ -1,0 +1,46 @@
+{
+    "_comment": "Configurazione ottimizzazione velocità LinkType",
+
+    "network_dir":          "H:/go/your_project/shapefile_export",
+    "file_prefix":          null,
+    "observed_times_csv":   "H:/go/your_project/observed_od_times.csv",
+    "output_dir":           "H:/go/your_project/optimization_results",
+
+    "_comment_od_csv": "Il CSV deve avere colonne: origin (int), destination (int), time_min (float)",
+    "od_col_orig":     "origin",
+    "od_col_dest":     "destination",
+    "od_col_time":     "time_m",
+
+    "_comment_shapefile_cols": "Nomi colonne nei shapefile Visum (case-insensitive, con gestione automatica delle unità)",
+    "_comment_t0": "T0 NON esportato di default. Il T0 viene calcolato da: (LENGTH_km / V0PRT_kmh) × 60 [min]",
+    "v0prt_field":     "V0PRT",
+    "length_field":    "LENGTH",
+    "linktype_field":  "TYPENO",
+    "fromnodeno_field":"FROMNODENO",
+    "tonodeno_field":  "TONODENO",
+
+    "_comment_optim": "Parametri ottimizzazione",
+    "optimization_mode":     "per_type",
+    "_comment_mode":         "per_type = ottimizza velocita' per LinkType | per_arc = ottimizza per singolo arco e riassegna tipo",
+    "speed_min_kmh":         10.0,
+    "speed_max_kmh":         150.0,
+    "speed_delta_kmh":       10.0,
+    "_comment_delta":        "[per_type] Massima variazione km/h per ogni classe (+-delta_v dall'iniziale)",
+    "speed_class_gap_kmh":   1.0,
+    "_comment_gap":          "[per_type] Gap minimo km/h tra classi adiacenti (evita sovrapposizioni)",
+    "speed_delta_arc_kmh":   20.0,
+    "_comment_arc_delta":    "[per_arc] Max variazione km/h per singolo arco",
+    "max_active_arcs":       500,
+    "_comment_max_arcs":     "[per_arc] Max archi per sub-cycle (piccolo = dense/bvls veloce; ~500 consigliato)",
+    "od_error_frac":         null,
+    "_comment_od_frac":      "[per_arc] Frazione OD peggiori per sub-cycle (null=auto: 30%/<2k OD, 20%/<5k, 10%/>5k)",
+    "n_sub_cycles":          3,
+    "_comment_sub":          "[per_arc] Sub-cicli per iter senza Dijkstra (ri-seleziona OD peggiori e ri-ottimizza)",
+    "n_iterations":          5,
+    "convergence_threshold": 0.005,
+    "fix_connector_t0":      true,
+
+    "_comment_sample": "null = usa tutte le coppie OD; int = campione casuale (test veloce)",
+    "sample_od_pairs": null,
+    "random_seed":     42
+}
