@@ -1573,7 +1573,9 @@ def create_speed_optimization_config(
         convergence_threshold=0.005,
         fix_connector_t0=True,
         sample_od_pairs=None,
-        random_seed=42):
+        random_seed=42,
+        speed_delta_lower_pct=None,
+        speed_delta_upper_pct=None):
     """
     Crea il file config.json per run_speed_optimization_subprocess().
 
@@ -1610,6 +1612,10 @@ def create_speed_optimization_config(
         fix_connector_t0 (bool): Se True i connettori NON vengono ottimizzati. Default: True
         sample_od_pairs (int|None): Campiona N coppie OD (None = tutte). Default: None
         random_seed (int): Seed casuale per campionamento. Default: 42
+        speed_delta_lower_pct (float|None): [per_arc] % riduzione max (es. 25.0 = -25%). Default: None
+        speed_delta_upper_pct (float|None): [per_arc] % aumento max (es. 20.0 = +20%). Default: None
+            Se entrambi None, usa speed_delta_arc_kmh (bounds assoluti).
+            Se forniti, abilita anche il remapping 4-digit BBSC.
 
     Returns:
         str: Path al file config.json temporaneo creato
@@ -1649,6 +1655,8 @@ def create_speed_optimization_config(
         "fix_connector_t0":      fix_connector_t0,
         "sample_od_pairs":       sample_od_pairs,
         "random_seed":           random_seed,
+        "speed_delta_lower_pct": speed_delta_lower_pct,
+        "speed_delta_upper_pct": speed_delta_upper_pct,
     }
 
     temp_file = tempfile.NamedTemporaryFile(

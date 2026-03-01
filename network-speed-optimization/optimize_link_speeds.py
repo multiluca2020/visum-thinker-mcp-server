@@ -97,7 +97,9 @@ DEFAULT_CONFIG = {
     "speed_max_kmh": 150.0,
     "speed_delta_kmh": 10.0,         # per_type: max variazione per tipo (km/h)
     "speed_class_gap_kmh": 1.0,      # per_type: gap minimo tra classi
-    "speed_delta_arc_kmh": 20.0,     # per_arc:  max variazione per arco (km/h)
+    "speed_delta_arc_kmh": 20.0,     # per_arc:  max variazione per arco (km/h) -- LEGACY (non usato se _pct presenti)
+    "speed_delta_lower_pct": 25.0,    # per_arc:  max riduzione %  (classe 0 = -25%)
+    "speed_delta_upper_pct": 20.0,    # per_arc:  max aumento %    (classe 9 = +20%)
     "max_active_arcs":   500,       # per_arc:  top archi per sub-cycle (piccolo -> bvls dense rapido)
     "od_error_frac":     None,      # per_arc:  frazione OD peggiori per sub-cycle (None=auto: 30/20/10%)
     "n_sub_cycles":      3,         # per_arc:  sub-cicli per iterazione (ri-selezione OD senza Dijkstra)
@@ -908,13 +910,17 @@ def build_composition_matrix_per_arc(G, od_paths_subset, max_arcs=None,
 
 
 def optimize_speeds_per_arc(D_sparse, T_obs, arc_list, arc_initial_speeds,
-                            delta_v=20.0, v_min=10.0, v_max=150.0):
+                            delta_v=20.0, v_min=10.0, v_max=150.0,
+                            delta_lower_pct=None, delta_upper_pct=None):
     """
     Ottimizzazione per-arco:
         T_od [min] = sum_j  D_j [km] * beta_j [h/km] * 60
         beta_j = 1 / v_j
 
-    Bounds per arco: +- delta_v km/h dalla velocita iniziale dell'arco.
+    Bounds per arco:
+      - Se delta_lower_pct/delta_upper_pct forniti: bounds percentuali
+        v_lb = v0 * (1 - lower_pct/100),  v_ub = v0 * (1 + upper_pct/100)
+      - Altrimenti (legacy): +- delta_v km/h assoluti
 
     Strategia solvente:
       - Matrice densa (n_od * n_arcs <= DENSE_LIMIT): converti e usa bvls (piu' veloce)
@@ -923,6 +929,7 @@ def optimize_speeds_per_arc(D_sparse, T_obs, arc_list, arc_initial_speeds,
     from scipy.optimize import lsq_linear
     from scipy.sparse import issparse
 
+    use_pct = (delta_lower_pct is not None and delta_upper_pct is not None)
     DENSE_LIMIT = 4_000_000   # celle: se n_od*n_arcs <= 4M usa dense+bvls
 
     n_od, n_arcs = D_sparse.shape
@@ -931,14 +938,27 @@ def optimize_speeds_per_arc(D_sparse, T_obs, arc_list, arc_initial_speeds,
 
     # Bounds per arco in spazio beta (beta = 1/v)
     EPS = 1e-6
-    lb = np.array([
-        1.0 / min(arc_initial_speeds.get(arc, 50.0) + delta_v, v_max)
-        for arc in arc_list
-    ], dtype=np.float64)
-    ub = np.array([
-        1.0 / max(arc_initial_speeds.get(arc, 50.0) - delta_v, v_min)
-        for arc in arc_list
-    ], dtype=np.float64)
+    if use_pct:
+        # Bounds percentuali: -lower% / +upper%
+        lb = np.array([
+            1.0 / min(arc_initial_speeds.get(arc, 50.0) * (1.0 + delta_upper_pct / 100.0), v_max)
+            for arc in arc_list
+        ], dtype=np.float64)
+        ub = np.array([
+            1.0 / max(arc_initial_speeds.get(arc, 50.0) * (1.0 - delta_lower_pct / 100.0), v_min)
+            for arc in arc_list
+        ], dtype=np.float64)
+        print("  Bounds: percentuali (-{:.0f}% / +{:.0f}%)".format(delta_lower_pct, delta_upper_pct))
+    else:
+        # Bounds assoluti (legacy) +- delta_v km/h
+        lb = np.array([
+            1.0 / min(arc_initial_speeds.get(arc, 50.0) + delta_v, v_max)
+            for arc in arc_list
+        ], dtype=np.float64)
+        ub = np.array([
+            1.0 / max(arc_initial_speeds.get(arc, 50.0) - delta_v, v_min)
+            for arc in arc_list
+        ], dtype=np.float64)
 
     # Garanzia lb < ub stretto
     bad = lb >= ub - EPS
@@ -1091,6 +1111,8 @@ def run_iterative_optimization_per_arc(G, centroid_ids, T_obs_dict, linktype_lis
     v_min       = config.get("speed_min_kmh", 10.0)
     v_max       = config.get("speed_max_kmh", 150.0)
     delta_v     = config.get("speed_delta_arc_kmh", 20.0)
+    delta_lower_pct = config.get("speed_delta_lower_pct", None)  # % riduzione (25 = -25%)
+    delta_upper_pct = config.get("speed_delta_upper_pct", None)  # % aumento   (20 = +20%)
     fix_conn    = config.get("fix_connector_t0", True)
     max_arcs    = config.get("max_active_arcs", 500)
     od_frac_cfg = config.get("od_error_frac", None)   # non usato, ignorato
@@ -1121,10 +1143,51 @@ def run_iterative_optimization_per_arc(G, centroid_ids, T_obs_dict, linktype_lis
     history = []
     od_filter = set(od_pairs)
 
+    # ------------------------------------------------------------------ #
+    # LOG FILE: Tee su file - stesso contenuto della console               #
+    # Checkpoint (close+reopen) a fine di ogni iterazione                  #
+    # ------------------------------------------------------------------ #
+    _out_dir = config.get("output_dir", None)
+
+    class _TeeLogger:
+        """Specchia sys.stdout su file. checkpoint() chiude e riapre (flush disco)."""
+        def __init__(self, orig, path):
+            self._orig = orig
+            self._path = path
+            Path(path).parent.mkdir(parents=True, exist_ok=True)
+            self._fh = open(path, "w", encoding="utf-8")
+        def write(self, msg):
+            self._orig.write(msg)
+            self._fh.write(msg)
+        def flush(self):
+            self._orig.flush()
+            self._fh.flush()
+        def checkpoint(self):
+            """Chiudi e riapri in append per forzare flush su disco."""
+            self._fh.close()
+            self._fh = open(self._path, "a", encoding="utf-8")
+        def restore(self):
+            self._fh.close()
+        def __getattr__(self, name):
+            return getattr(self._orig, name)
+
+    _tee = None
+    if _out_dir:
+        _log_path = str(Path(_out_dir) / "optimization_log.txt")
+        _tee = _TeeLogger(_sys.stdout, _log_path)
+        _sys.stdout = _tee
+
+    def _log_checkpoint():
+        if _tee is not None:
+            _tee.checkpoint()
+
     print("\n" + "=" * 70)
     print("OTTIMIZZAZIONE PER ARCO - archi disgiunti tra iterazioni")
     print("=" * 70)
-    print("  delta_v arco:   +- {:.1f} km/h".format(delta_v))
+    if delta_lower_pct is not None and delta_upper_pct is not None:
+        print("  Bounds arco:    -{:.0f}% / +{:.0f}%".format(delta_lower_pct, delta_upper_pct))
+    else:
+        print("  delta_v arco:   +- {:.1f} km/h".format(delta_v))
     print("  max archi/iter: {}".format(max_arcs))
     print("  n_iterations:   {}".format(n_iter))
     print("  Archi ottimizzabili: {}".format(len(arc_initial_speeds)))
@@ -1146,6 +1209,9 @@ def run_iterative_optimization_per_arc(G, centroid_ids, T_obs_dict, linktype_lis
     valid_ods_all = [(od, T_obs_dict[od]) for od in od_pairs if od in od_paths]
     if not valid_ods_all:
         print("  [!] Nessuna coppia OD valida - uscita")
+        if _tee is not None:
+            _sys.stdout = _tee._orig
+            _tee.restore()
         return best_arc_assignments, type_speeds, history
 
     # Errori iniziali
@@ -1165,9 +1231,11 @@ def run_iterative_optimization_per_arc(G, centroid_ids, T_obs_dict, linktype_lis
                     "_T_pred_arr": T_pred_arr0})
 
     print("  OD validi per BVLS: {}".format(len(valid_ods_all)))
+    _log_checkpoint()
 
     # Archi gia' ottimizzati nelle iterazioni precedenti (persistente)
     already_optimized = set()
+    _n_pass = 1   # numero del passaggio corrente (reset counter)
 
     # ------------------------------------------------------------------ #
     # LOOP PRINCIPALE                                                      #
@@ -1199,16 +1267,47 @@ def run_iterative_optimization_per_arc(G, centroid_ids, T_obs_dict, linktype_lis
             exclude_arcs=already_optimized)
 
         if len(arc_list_iter) == 0:
-            print("  [!] Nessun arco rimasto da ottimizzare - stop.")
-            break
+            print("  [!] Nessun arco rimasto da ottimizzare - reset e ricomincia (passaggio {})".format(_n_pass))
+            already_optimized = set()
+            _n_pass += 1
+            D_iter, arc_list_iter, od_order_iter, _ = build_composition_matrix_per_arc(
+                G, full_paths, max_arcs=max_arcs, exclude_arcs=already_optimized)
+            if len(arc_list_iter) == 0:
+                print("  [!] Nessun arco disponibile neanche dopo il reset - stop.")
+                _log_checkpoint()
+                break
+            print("  Reset OK: {} archi nel passaggio {}.".format(len(arc_list_iter), _n_pass))
 
-        T_obs_iter_bvls = np.array([T_obs_dict[od] for od in od_order_iter])
+        # Target BVLS = T_obs - contributo degli archi gia' ottimizzati (beta fisso).
+        # Questo porta il BVLS a ottimizzare i beta attivi rispetto al *residuo*
+        # corretto, tenendo conto di tutti gli archi nella funzione obiettivo.
+        T_obs_raw_bvls = np.array([T_obs_dict[od] for od in od_order_iter])
+        if already_optimized:
+            t_fixed = np.zeros(len(od_order_iter), dtype=np.float64)
+            for i_od, od in enumerate(od_order_iter):
+                path = full_paths.get(od, [])
+                for u, v in zip(path[:-1], path[1:]):
+                    if (u, v) in already_optimized and G.has_edge(u, v):
+                        edge = G[u][v]
+                        if edge.get("is_connector", False):
+                            continue
+                        length_km = edge.get("length", 0.0) / 1000.0
+                        v_cur = max(edge.get("v0prt", 50.0), 1e-6)
+                        t_fixed[i_od] += (length_km / v_cur) * 60.0  # minuti
+            T_obs_iter_bvls = np.maximum(T_obs_raw_bvls - t_fixed, 0.01)
+            pct_fisso = 100.0 * t_fixed.mean() / max(T_obs_raw_bvls.mean(), 1e-6)
+            print("  T_target=T_obs-T_fisso: {:.1f}% rimosso da archi congelati"
+                  "  (residuo medio {:.3f} min)".format(pct_fisso, T_obs_iter_bvls.mean()))
+        else:
+            T_obs_iter_bvls = T_obs_raw_bvls
+
         print("  BVLS: {} OD x {} archi".format(len(od_order_iter), len(arc_list_iter)))
         _sys.stdout.flush()
 
         arc_opt_speeds, _ = optimize_speeds_per_arc(
             D_iter, T_obs_iter_bvls, arc_list_iter, arc_initial_speeds,
-            delta_v=delta_v, v_min=v_min, v_max=v_max)
+            delta_v=delta_v, v_min=v_min, v_max=v_max,
+            delta_lower_pct=delta_lower_pct, delta_upper_pct=delta_upper_pct)
 
         update_graph_arc_speeds(G, arc_opt_speeds, fix_connectors=fix_conn)
 
@@ -1286,6 +1385,7 @@ def run_iterative_optimization_per_arc(G, centroid_ids, T_obs_dict, linktype_lis
         if slope_ok and r2_ok:
             print("  [OK] CONVERGENZA: slope={:.4f} in [{:.2f},{:.2f}]  R2={:.4f} >= {:.2f}".format(
                 m_iter["slope"], slope_min, slope_max, m_iter["r2"], r2_target))
+            _log_checkpoint()
             break
         else:
             missing = []
@@ -1295,7 +1395,11 @@ def run_iterative_optimization_per_arc(G, centroid_ids, T_obs_dict, linktype_lis
             if not r2_ok:
                 missing.append("R2={:.4f} < {:.2f}".format(m_iter["r2"], r2_target))
             print("  [..] Non convergito: {}".format(" | ".join(missing)))
+            _log_checkpoint()
 
+    if _tee is not None:
+        _sys.stdout = _tee._orig
+        _tee.restore()
     return best_arc_assignments, type_speeds, history
 
 
@@ -1538,54 +1642,159 @@ def compute_linktype_stats(G, linktype_list, initial_speeds, best_speeds):
 def remap_links_by_optimized_speed(links_df, best_speeds,
                                     v0prt_field="V0PRT", linktype_field="TYPENO",
                                     fromnodeno_field="FROMNODENO",
-                                    tonodeno_field="TONODENO"):
+                                    tonodeno_field="TONODENO",
+                                    numlanes_field="NUMLANES",
+                                    G=None,
+                                    use_4digit_types=False):
     """
-    Riassegna il LinkType di ogni arco al tipo la cui velocita ottimizzata
-    e piu vicina al V0PRT dell'arco.
+    Riassegna il LinkType di ogni arco in base alla V0PRT ottimizzata.
 
-    Logica:
-        new_type = argmin_k |V0PRT_link - speed_opt[k]|
+    Modalita 4-digit (use_4digit_types=True):
+      Codifica BBSC:
+        BB = tipo base originale (prime 2 cifre del TYPENO corrente,
+             oppure TYPENO se gia' 2 cifre)
+        S  = classe velocita 0..9:
+             0=-25%, 1=-20%, 2=-15%, 3=-10%, 4=-5%, 5=0%, 6=+5%, 7=+10%, 8=+15%, 9=+20%
+        C  = classe capacita (fisso 5 per ora)
 
-    Ritorna:
-        DataFrame con colonne:
-            FROMNODENO | TONODENO | V0PRT_kmh | TYPENO_ORIG |
-            TYPENO_OPT | SPEED_OPT_kmh | SPEED_DELTA_kmh | CHANGED
+      V0PRT_base = velocita default del tipo base (BB).
+      ratio = V0PRT_opt / V0PRT_base
+      -> mappa a classe S piu' vicina.
+
+    Modalita legacy (use_4digit_types=False):
+      Cerca il tipo con V0PRT default piu' vicina tra quelli con stesse corsie.
+
+    Ritorna DataFrame con colonne:
+        FROMNODENO | TONODENO | NUMLANES | V0PRT_ORIG_kmh | V0PRT_OPT_kmh |
+        TYPENO_ORIG | TYPENO_NEW | SPEED_NEW_DEFAULT_kmh |
+        DELTA_OPT_VS_ORIG_kmh | CHANGED
     """
     v0prt_col = find_column(links_df, v0prt_field)
     type_col  = find_column(links_df, linktype_field)
     from_col  = find_column(links_df, fromnodeno_field)
     to_col    = find_column(links_df, tonodeno_field)
+    lanes_col = find_column(links_df, numlanes_field)
 
     if not best_speeds:
         print("  [!] best_speeds vuoto -- remapping non eseguito")
         return pd.DataFrame()
 
-    # Vettori ordinati per velocita (minima -> massima)
+    # Indice (u,v) -> v0prt ottimizzata nel grafo
+    arc_opt_v0 = {}
+    if G is not None:
+        for u, v, data in G.edges(data=True):
+            if not data.get("is_connector", False):
+                arc_opt_v0[(u, v)] = data.get("v0prt", None)
+
+    # ---- Tabella classi velocita (4-digit) ---- #
+    # Classe S -> fattore moltiplicativo sulla velocita base
+    _CLASS_FACTORS = {
+        0: 0.75, 1: 0.80, 2: 0.85, 3: 0.90, 4: 0.95,
+        5: 1.00, 6: 1.05, 7: 1.10, 8: 1.15, 9: 1.20,
+    }
+    _FACTOR_LIST = np.array([_CLASS_FACTORS[k] for k in range(10)])
+    CAP_DIGIT = 5   # cifra capacita fissa per ora
+
+    def _base_type(lt):
+        """Estrae il tipo base (BB) da un TYPENO a 2 o 4 cifre."""
+        if lt >= 100:
+            return lt // 100
+        return lt
+
+    # Velocita' default dei tipi base (2 cifre):
+    # Prende da best_speeds i tipi con codice <= 99
+    base_type_speeds = {}
+    for lt, v in best_speeds.items():
+        if lt < 100:
+            base_type_speeds[lt] = v
+    # Per i tipi a 4 cifre: il tipo base e' lt//100, velocita base e' best_speeds[base]
+    # Se manca il tipo 2-cifre, lo ricava dal tipo xx05 (classe 5 = base)
+    for lt, v in best_speeds.items():
+        if lt >= 100:
+            bb = lt // 100
+            sc = (lt % 100) // 10
+            if bb not in base_type_speeds and sc == 5:
+                base_type_speeds[bb] = v
+
+    # --- Preparazione legacy (usata se use_4digit_types=False) --- #
     sorted_items = sorted(best_speeds.items(), key=lambda x: x[1])
-    lt_arr = np.array([lt for lt, _ in sorted_items], dtype=int)
-    v_arr  = np.array([v  for _, v  in sorted_items], dtype=float)
+    lt_arr_all = np.array([lt for lt, _ in sorted_items], dtype=int)
+    v_arr_all  = np.array([v  for _, v  in sorted_items], dtype=float)
+
+    type_lanes_set = {}
+    if lanes_col and not use_4digit_types:
+        type_lanes_map = {}
+        for _, row in links_df.iterrows():
+            lt = int(row[type_col]) if type_col else -1
+            nl = row[lanes_col]
+            if lt >= 0 and not pd.isna(nl):
+                nl = int(nl)
+                if lt not in type_lanes_map:
+                    type_lanes_map[lt] = {}
+                type_lanes_map[lt][nl] = type_lanes_map[lt].get(nl, 0) + 1
+        type_lanes_set = {lt: set(d.keys()) for lt, d in type_lanes_map.items()}
+
+    def _candidates_for_lanes(nl):
+        if not type_lanes_set:
+            return lt_arr_all, v_arr_all
+        mask = np.array([nl in type_lanes_set.get(int(lt), set()) for lt in lt_arr_all])
+        if mask.sum() == 0:
+            return lt_arr_all, v_arr_all
+        return lt_arr_all[mask], v_arr_all[mask]
 
     records = []
     changed = 0
     for _, row in links_df.iterrows():
-        v0     = speed_to_kmh(row[v0prt_col]) if v0prt_col else 50.0
-        lt_old = int(row[type_col]) if type_col else 0
-        fn     = int(row[from_col]) if from_col else None
-        tn     = int(row[to_col])   if to_col   else None
+        v0_orig = speed_to_kmh(row[v0prt_col]) if v0prt_col else 50.0
+        lt_old  = int(row[type_col]) if type_col else 0
+        fn      = int(row[from_col]) if from_col else None
+        tn      = int(row[to_col])   if to_col   else None
+        nl      = int(row[lanes_col]) if (lanes_col and not pd.isna(row[lanes_col])) else None
 
-        idx    = int(np.argmin(np.abs(v_arr - v0)))
-        lt_new = int(lt_arr[idx])
-        v_opt  = float(v_arr[idx])
+        # V0PRT ottimizzata: dal grafo se disponibile, altrimenti quella originale
+        v0_opt = arc_opt_v0.get((fn, tn), v0_orig) if (fn is not None and tn is not None) else v0_orig
+        if v0_opt is None:
+            v0_opt = v0_orig
+
+        delta = v0_opt - v0_orig
+
+        if use_4digit_types:
+            # ---- Logica 4-digit BBSC ----
+            bb = _base_type(lt_old)
+            v_base = base_type_speeds.get(bb, v0_orig)
+
+            if abs(delta) < 0.5 or v_base <= 0:
+                # Nessuna variazione -> classe 5 (base), capacita 5
+                lt_new = bb * 100 + 5 * 10 + CAP_DIGIT
+                v_new_default = v_base
+            else:
+                ratio = v0_opt / v_base if v_base > 0 else 1.0
+                # Trova classe S piu' vicina
+                s_class = int(np.argmin(np.abs(_FACTOR_LIST - ratio)))
+                lt_new = bb * 100 + s_class * 10 + CAP_DIGIT
+                v_new_default = v_base * _CLASS_FACTORS[s_class]
+        else:
+            # ---- Logica legacy ----
+            if abs(delta) < 0.5:
+                lt_new = lt_old
+                v_new_default = float(best_speeds.get(lt_old, v0_orig))
+            else:
+                lt_cand, v_cand = _candidates_for_lanes(nl) if nl is not None else (lt_arr_all, v_arr_all)
+                idx    = int(np.argmin(np.abs(v_cand - v0_opt)))
+                lt_new = int(lt_cand[idx])
+                v_new_default = float(v_cand[idx])
 
         rec = {
-            "FROMNODENO":     fn,
-            "TONODENO":       tn,
-            "V0PRT_kmh":      round(v0, 2),
-            "TYPENO_ORIG":    lt_old,
-            "TYPENO_OPT":     lt_new,
-            "SPEED_OPT_kmh":  round(v_opt, 2),
-            "SPEED_DELTA_kmh": round(v_opt - v0, 2),
-            "CHANGED":        int(lt_new != lt_old),
+            "FROMNODENO":              fn,
+            "TONODENO":                tn,
+            "NUMLANES":                nl,
+            "V0PRT_ORIG_kmh":          round(v0_orig, 2),
+            "V0PRT_OPT_kmh":           round(v0_opt,  2),
+            "TYPENO_ORIG":             lt_old,
+            "TYPENO_NEW":              lt_new,
+            "SPEED_NEW_DEFAULT_kmh":   round(v_new_default, 2),
+            "DELTA_OPT_VS_ORIG_kmh":   round(delta, 2),
+            "CHANGED":                 int(lt_new != lt_old),
         }
         records.append(rec)
         if lt_new != lt_old:
@@ -1596,19 +1805,20 @@ def remap_links_by_optimized_speed(links_df, best_speeds,
     print(f"  Archi riassegnati: {changed} / {len(records)}  ({pct:.1f}%)")
 
     # Riepilogo per tipo
-    if not remap_df.empty and "TYPENO_ORIG" in remap_df.columns:
+    if not remap_df.empty:
         print(f"  Distribuzione nuovi LinkType:")
-        for lt_new, cnt in remap_df["TYPENO_OPT"].value_counts().sort_index().items():
-            print(f"    Type {lt_new:3d}: {cnt:6d} archi  "
-                  f"(speed_opt={best_speeds.get(lt_new, 0):.1f} km/h)")
+        for lt_new, cnt in remap_df["TYPENO_NEW"].value_counts().sort_index().items():
+            v_def = best_speeds.get(lt_new, 0)
+            print(f"    Type {lt_new:5d}: {cnt:6d} archi  "
+                  f"(speed_default={v_def:.1f} km/h)")
     return remap_df
 
 
-def save_scatter_plots(output_dir, history, skim_df, T_obs_dict):
+def save_scatter_plots(output_dir, history, skim_df, T_obs_dict, snap_data=None):
     """
-    Genera scatter T_obs vs T_modello all'inizio e alla fine dell'ottimizzazione.
-    Tre pannelli: [Iniziale] [Finale] [Sovrapposto con entrambe le nuvole].
-    Retta di regressione passante per l'origine su entrambi i pannelli.
+    Genera scatter T_obs vs T_modello.
+    Pannelli: [Iniziale] [Finale BVLS] [Sovrapposto] + opzionale [Post-snap tipo]
+    snap_data : tuple (T_obs_snap, T_pred_snap, metrics_snap) oppure None.
     Salvato come scatter_model_vs_obs.png nella cartella output.
     """
     try:
@@ -1647,50 +1857,53 @@ def save_scatter_plots(output_dir, history, skim_df, T_obs_dict):
             T_pred_final = np.array([r[1] for r in rows])
             m_final      = history[-1]["metrics"] if history else None
 
+    # ---- Dati POST-SNAP (velocita' discrete tipo ottimale) --------------
+    T_obs_snap = T_pred_snap = m_snap_plot = None
+    if snap_data is not None:
+        T_obs_snap, T_pred_snap, m_snap_plot = snap_data
+
     if T_obs_init is None and T_obs_final is None:
         print("  [!] Nessun dato disponibile per scatter plot")
         return None
 
     # ---- Asse comune (basato su 99° percentile) -------------------------
     all_vals = []
-    for arr in [T_obs_init, T_pred_init, T_obs_final, T_pred_final]:
+    for arr in [T_obs_init, T_pred_init, T_obs_final, T_pred_final,
+                T_obs_snap, T_pred_snap]:
         if arr is not None:
             all_vals.extend(arr.tolist())
     ax_max = float(np.percentile(all_vals, 99)) * 1.05
 
-    # ---- Funzioni di disegno --------------------------------------------
-    BLUE   = "#1E88E5"
-    GREEN  = "#43A047"
-    DBLUE  = "#0D47A1"
-    DGREEN = "#1B5E20"
+    # ---- Colori ---------------------------------------------------------
+    BLUE    = "#1E88E5"
+    GREEN   = "#43A047"
+    ORANGE  = "#FB8C00"
+    DBLUE   = "#0D47A1"
+    DGREEN  = "#1B5E20"
+    DORANGE = "#E65100"
 
     def _metrics_text(m):
+        n = m.get("n_od", len(T_obs_final) if T_obs_final is not None else 0)
         return ("R\u00b2(origin)={:.4f}\n"
                 "slope     ={:.4f}\n"
                 "RMSE={:.2f} min\n"
                 "MAE ={:.2f} min\n"
                 "MAPE={:.1f}%\n"
-                "n={}").format(
-            m["r2"], m["slope"], m["rmse"], m["mae"],
-            m["mape"], m.get("n_od", len(T_obs_final) if T_obs_final is not None else 0))
+                "n={}").format(m["r2"], m["slope"], m["rmse"], m["mae"], m["mape"], n)
 
     def _draw_panel(ax, T_obs, T_pred, m, title, dot_col, line_col):
         ax.scatter(T_obs, T_pred, s=7, alpha=0.30, color=dot_col, rasterized=True)
-        # 1:1 perfetto
         ax.plot([0, ax_max], [0, ax_max], "k--", lw=1.5, label="1:1 perfetto", zorder=5)
-        # Regressione per l'origine
         slope = m["slope"]
         x_r   = np.array([0, ax_max])
         ax.plot(x_r, slope * x_r, "-", color=line_col, lw=2.2,
                 label="regressione (slope={:.3f})".format(slope))
-        # Box metriche
         ax.text(0.97, 0.04, _metrics_text(m),
                 transform=ax.transAxes, fontsize=8.5,
                 va="bottom", ha="right", family="monospace",
                 bbox=dict(boxstyle="round,pad=0.45",
                           facecolor="white", edgecolor="#cccccc", alpha=0.90))
-        ax.set_xlim(0, ax_max)
-        ax.set_ylim(0, ax_max)
+        ax.set_xlim(0, ax_max);  ax.set_ylim(0, ax_max)
         ax.set_xlabel("T osservato [min]", fontsize=10)
         ax.set_ylabel("T modello [min]",   fontsize=10)
         ax.set_title(title, fontsize=11, fontweight="bold")
@@ -1700,12 +1913,16 @@ def save_scatter_plots(output_dir, history, skim_df, T_obs_dict):
 
     # ---- Layout figura --------------------------------------------------
     has_both = (T_obs_init is not None and T_obs_final is not None)
-    n_cols   = 3 if has_both else (1 if T_obs_init is not None or T_obs_final is not None else 0)
+    has_snap = (T_obs_snap is not None)
+    # Pannelli: Iniziale | Finale BVLS | Confronto sovrapposto | Post-snap
+    n_cols = max(1, (1 if T_obs_init is not None else 0)
+                  + (1 if T_obs_final is not None else 0)
+                  + (1 if has_both else 0)
+                  + (1 if has_snap else 0))
     if n_cols == 0:
         return None
 
-    fig, axes = plt.subplots(1, n_cols, figsize=(6.8 * n_cols, 7.0),
-                             squeeze=False)
+    fig, axes = plt.subplots(1, n_cols, figsize=(6.8 * n_cols, 7.0), squeeze=False)
     axes = axes[0]
 
     col = 0
@@ -1717,26 +1934,25 @@ def save_scatter_plots(output_dir, history, skim_df, T_obs_dict):
     if T_obs_final is not None:
         last_iter = history[-1].get("iteration", "?") if history else "?"
         _draw_panel(axes[col], T_obs_final, T_pred_final, m_final,
-                    "FINALE\n(iterazione {})".format(last_iter), GREEN, DGREEN)
+                    "FINALE BVLS\n(iterazione {})".format(last_iter), GREEN, DGREEN)
         col += 1
 
     if has_both:
         ax = axes[col]
         ax.scatter(T_obs_init,  T_pred_init,  s=7, alpha=0.20, color=BLUE,  label="iniziale",  rasterized=True)
-        ax.scatter(T_obs_final, T_pred_final, s=7, alpha=0.20, color=GREEN, label="finale",    rasterized=True)
+        ax.scatter(T_obs_final, T_pred_final, s=7, alpha=0.20, color=GREEN, label="BVLS finale", rasterized=True)
         ax.plot([0, ax_max], [0, ax_max], "k--", lw=1.5, label="1:1 perfetto", zorder=5)
         for T_obs, T_pred, m, lc, lbl in [
             (T_obs_init,  T_pred_init,  m_init,  DBLUE,  "reg. inizio"),
-            (T_obs_final, T_pred_final, m_final, DGREEN, "reg. fine"),
+            (T_obs_final, T_pred_final, m_final, DGREEN, "reg. BVLS"),
         ]:
             x_r = np.array([0, ax_max])
             ax.plot(x_r, m["slope"] * x_r, "-", color=lc, lw=2.2,
                     label="{} (slope={:.3f})".format(lbl, m["slope"]))
-        # Mini box delta metriche
         dr2   = m_final["r2"]   - m_init["r2"]
         drmse = m_final["rmse"] - m_init["rmse"]
         dmape = m_final["mape"] - m_init["mape"]
-        delta_txt = ("Delta inizio->fine:\n"
+        delta_txt = ("Delta inizio->BVLS:\n"
                      "R\u00b2 {:+.4f}\n"
                      "RMSE {:+.2f} min\n"
                      "MAPE {:+.1f}%").format(dr2, drmse, dmape)
@@ -1745,14 +1961,29 @@ def save_scatter_plots(output_dir, history, skim_df, T_obs_dict):
                 va="bottom", ha="right", family="monospace",
                 bbox=dict(boxstyle="round,pad=0.45",
                           facecolor="#FFFDE7", edgecolor="#F9A825", alpha=0.92))
-        ax.set_xlim(0, ax_max)
-        ax.set_ylim(0, ax_max)
+        ax.set_xlim(0, ax_max);  ax.set_ylim(0, ax_max)
         ax.set_xlabel("T osservato [min]", fontsize=10)
         ax.set_ylabel("T modello [min]",   fontsize=10)
-        ax.set_title("CONFRONTO\n(inizio vs fine)", fontsize=11, fontweight="bold")
+        ax.set_title("CONFRONTO\n(inizio vs BVLS)", fontsize=11, fontweight="bold")
         ax.legend(fontsize=8.5, loc="upper left")
         ax.set_aspect("equal", adjustable="box")
         ax.grid(True, lw=0.5, alpha=0.45)
+        col += 1
+
+    if has_snap:
+        _draw_panel(axes[col], T_obs_snap, T_pred_snap, m_snap_plot,
+                    "POST-SNAP\n(velocita' tipo ottimale)", ORANGE, DORANGE)
+        # Aggiunge anche le 3 rette di regressione sovrapposte per confronto visivo
+        ax = axes[col]
+        refs = []
+        if m_init  is not None: refs.append((m_init,      DBLUE,   "inizio"))
+        if m_final is not None: refs.append((m_final,     DGREEN,  "BVLS"))
+        for m_ref, lc, lbl in refs:
+            x_r = np.array([0, ax_max])
+            ax.plot(x_r, m_ref["slope"] * x_r, "--", color=lc, lw=1.2, alpha=0.55,
+                    label="slope {} ={:.3f}".format(lbl, m_ref["slope"]))
+        ax.legend(fontsize=7.5, loc="upper left")
+        col += 1
 
     fig.suptitle(
         "T modello vs T osservato  -  Regressione passante per l'origine",
@@ -1796,7 +2027,7 @@ def save_arc_assignments(output_dir, arc_assignments, type_speeds,
 
     arc_df = pd.DataFrame(rows)
     arc_file = out_path / "arc_assignments.csv"
-    arc_df.to_csv(arc_file, index=False, sep=";")
+    arc_df.to_csv(arc_file, index=False, sep=",")
     print("  [OK] Assegnazioni archi: {} ({} archi)".format(arc_file, len(arc_df)))
 
     # 2. type_assignment_counts.csv
@@ -1809,11 +2040,11 @@ def save_arc_assignments(output_dir, arc_assignments, type_speeds,
     if summary_rows:
         summary_df = pd.DataFrame(summary_rows)
         summary_file = out_path / "type_assignment_counts.csv"
-        summary_df.to_csv(summary_file, index=False, sep=";")
+        summary_df.to_csv(summary_file, index=False, sep=",")
         print("  [OK] Conteggio per tipo: {}".format(summary_file))
         print("\n  Distribuzione archi per tipo dopo ottimizzazione:")
         for _, r in summary_df.iterrows():
-            print("    Type {:3d} ({:5.1f} km/h): {:,} archi".format(
+            print("    Type {:5d} ({:5.1f} km/h): {:,} archi".format(
                 int(r["type"]), float(r["v_kmh"]), int(r["n_arcs_assigned"])))
 
     return str(arc_file)
@@ -1825,6 +2056,7 @@ def save_results(output_dir, best_speeds, history, skim_df, T_obs_dict, config,
     """Salva tutti i risultati nella cartella output."""
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
+    remap_df = None   # inizializzato qui, popolato sotto se links_df disponibile
 
     # 1. Velocita ottimizzate
     speeds_df = pd.DataFrame([
@@ -1832,7 +2064,7 @@ def save_results(output_dir, best_speeds, history, skim_df, T_obs_dict, config,
         for lt, v in sorted(best_speeds.items())
     ])
     speeds_file = out_path / "optimized_speeds.csv"
-    speeds_df.to_csv(speeds_file, index=False, sep=";")
+    speeds_df.to_csv(speeds_file, index=False, sep=",")
     print(f"  [OK] Velocita ottimizzate: {speeds_file}")
 
     # 2. History iterazioni
@@ -1851,7 +2083,7 @@ def save_results(output_dir, best_speeds, history, skim_df, T_obs_dict, config,
         history_rows.append(row)
     history_df = pd.DataFrame(history_rows)
     history_file = out_path / "optimization_history.csv"
-    history_df.to_csv(history_file, index=False, sep=";")
+    history_df.to_csv(history_file, index=False, sep=",")
     print(f"  [OK] History iterazioni: {history_file}")
 
     # 3. Confronto tempi modello vs osservati
@@ -1863,14 +2095,14 @@ def save_results(output_dir, best_speeds, history, skim_df, T_obs_dict, config,
         skim_df["error_pct"]   = (skim_df["error_min"]
                                   / skim_df["time_observed_min"].replace(0, np.nan) * 100)
         comparison_file = out_path / "od_comparison.csv"
-        skim_df.to_csv(comparison_file, index=False, sep=";")
+        skim_df.to_csv(comparison_file, index=False, sep=",")
         print(f"  [OK] Confronto OD: {comparison_file}")
 
     # 4. Statistiche per LinkType con velocita iniziali vs ottimizzate
     if G is not None and initial_speeds is not None and linktype_list:
         stats_df = compute_linktype_stats(G, linktype_list, initial_speeds, best_speeds)
         stats_file = out_path / "linktype_stats.csv"
-        stats_df.to_csv(stats_file, index=False, sep=";")
+        stats_df.to_csv(stats_file, index=False, sep=",")
         print(f"  [OK] Statistiche LinkType: {stats_file}")
         print(f"\n  Riepilogo velocita per LinkType:")
         for _, r in stats_df.iterrows():
@@ -1880,27 +2112,105 @@ def save_results(output_dir, best_speeds, history, skim_df, T_obs_dict, config,
                   f"{arrow}{abs(float(r['delta_pct'])):4.1f}%  "
                   f"({int(r['n_links'])} archi, {r['total_length_km']} km)")
 
-    # 5. Remapping LinkType in base a velocita ottimizzate
+    # 5. Remapping LinkType in base a velocita ottimizzate per arco
+    snap_plot_data = None   # popolato nel blocco post-snap se disponibile
     if links_df is not None and best_speeds:
-        print(f"\n  Remapping LinkType (V0PRT -> closest optimized speed):")
+        _use_4d = (config.get("speed_delta_lower_pct") is not None
+                   and config.get("speed_delta_upper_pct") is not None)
+        _mode_str = "4-digit BBSC" if _use_4d else "tipo piu' vicino"
+        print(f"\n  Remapping LinkType (V0PRT ottimizzata -> {_mode_str}):")
         remap_df = remap_links_by_optimized_speed(
             links_df, best_speeds,
             v0prt_field=config.get("v0prt_field", "V0PRT"),
             linktype_field=config.get("linktype_field", "TYPENO"),
+            G=G,
+            use_4digit_types=_use_4d,
         )
         if not remap_df.empty:
             remap_file = out_path / "links_remapped.csv"
-            remap_df.to_csv(remap_file, index=False, sep=";")
+            remap_df.to_csv(remap_file, index=False, sep=",")
             print(f"  [OK] Remapping archi: {remap_file}")
 
-    # 5b. Per-arc assignments (solo in per-arc mode)
-    if arc_assignments is not None and arc_initial_speeds is not None and G is not None:
-        save_arc_assignments(output_dir, arc_assignments,
-                             best_speeds,   # in per-arc mode best_speeds = type_speeds
-                             arc_initial_speeds, G)
+        # 5c. Statistiche post-snap: applica la velocita' di default del nuovo tipo
+        #     al grafo e ricalcola OD times -> RMSE/slope con velocita snappate
+        if G is not None and not remap_df.empty and T_obs_dict:
+            print(f"\n  Statistiche POST-SNAP (velocita' default nuovo tipo):")
+            # Costruisce mappa (from,to)->speed_new_default
+            snap_map = {
+                (r["FROMNODENO"], r["TONODENO"]): r["SPEED_NEW_DEFAULT_kmh"]
+                for _, r in remap_df.iterrows()
+                if r["FROMNODENO"] is not None and r["TONODENO"] is not None
+            }
+            # Applica temporaneamente le velocita' snappate al grafo
+            G_snap_backup = {}
+            for (u, v), v_snap in snap_map.items():
+                if G.has_edge(u, v):
+                    data = G[u][v]
+                    G_snap_backup[(u, v)] = (data.get("v0prt"), data.get("t0"))
+                    length = data.get("length", 0.0)
+                    data["v0prt"] = v_snap
+                    data["t0"]    = (length / 1000.0 / max(v_snap, 0.1)) * 60.0 if length > 0 else data["t0"]
+            # Dijkstra con velocita' snappate.
+            # Ricava i centroid IDs dalle chiavi di T_obs_dict (zone_id positivi usati
+            # nell'ottimizzazione). I nodi centroide nel grafo hanno ID = -zone_id.
+            od_pairs_local  = list(T_obs_dict.keys())
+            zone_ids_in_obs = sorted(set(
+                z for pair in od_pairs_local for z in pair
+            ))
+            centroid_ids_local = [z for z in zone_ids_in_obs if G.has_node(-z)]
+            od_filter_snap = set(od_pairs_local)
+            print("    Ricalcolo percorsi con velocita' snappate "
+                  "({} centroidi)...".format(len(centroid_ids_local)))
+            od_times_snap, _ = compute_od_skims(
+                G, centroid_ids_local, verbose=False, od_filter=od_filter_snap)
+            valid_snap = [(od, T_obs_dict[od]) for od in od_pairs_local
+                          if od in od_times_snap]
+            snap_plot_data = None
+            if valid_snap:
+                T_obs_s  = np.array([t for _, t in valid_snap])
+                T_pred_s = np.array([od_times_snap[od] for od, _ in valid_snap])
+                m_snap = compute_metrics(T_pred_s, T_obs_s)
+                m_snap["n_od"] = len(valid_snap)
+                snap_plot_data = (T_obs_s, T_pred_s, m_snap)
+                print("    RMSE: {:.3f} min  |  MAE: {:.3f} min  |  "
+                      "R2: {:.4f}  |  slope: {:.4f}  |  MAPE: {:.2f}%".format(
+                          m_snap["rmse"], m_snap["mae"], m_snap["r2"],
+                          m_snap["slope"], m_snap["mape"]))
+            else:
+                print("    [!] Nessuna coppia OD valida nel post-snap "
+                      "({} centroidi, {} coppie filtro)".format(
+                          len(centroid_ids_local), len(od_filter_snap)))
+            # Ripristina il grafo originale (velocita' continue ottimizzate)
+            for (u, v), (v_old, t_old) in G_snap_backup.items():
+                if G.has_edge(u, v):
+                    G[u][v]["v0prt"] = v_old
+                    G[u][v]["t0"]    = t_old
 
-    # 6. Scatter plot T_modello vs T_osservato (iniziale e finale)
-    save_scatter_plots(output_dir, history, skim_df, T_obs_dict)
+    # 5b. Per-arc assignments (solo in per-arc mode)
+    # (snap_plot_data puo' essere None se il post-snap non e' stato eseguito)
+    if arc_assignments is not None and arc_initial_speeds is not None and G is not None:
+        # In modalita' 4-digit BBSC, remap_df ha gia' i TYPENO_NEW corretti.
+        # Ricostruiamo arc_assignments e type_speeds dal remap per coerenza.
+        if _use_4d and remap_df is not None and not remap_df.empty:
+            arc_assignments_4d = {
+                (int(r["FROMNODENO"]), int(r["TONODENO"])): int(r["TYPENO_NEW"])
+                for _, r in remap_df.iterrows()
+                if r["FROMNODENO"] is not None and r["TONODENO"] is not None
+            }
+            type_speeds_4d = {
+                int(r["TYPENO_NEW"]): float(r["SPEED_NEW_DEFAULT_kmh"])
+                for _, r in remap_df.iterrows()
+            }
+            save_arc_assignments(output_dir, arc_assignments_4d,
+                                 type_speeds_4d, arc_initial_speeds, G)
+        else:
+            save_arc_assignments(output_dir, arc_assignments,
+                                 best_speeds,
+                                 arc_initial_speeds, G)
+
+    # 6. Scatter plot T_modello vs T_osservato (iniziale, finale BVLS, post-snap)
+    save_scatter_plots(output_dir, history, skim_df, T_obs_dict,
+                       snap_data=snap_plot_data)
 
     # 7. Report JSON  (i campi _T_obs_arr/_T_pred_arr vengono esclusi)
     def _strip_private(h_entry):
