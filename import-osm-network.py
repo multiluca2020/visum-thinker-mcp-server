@@ -1674,7 +1674,8 @@ def run_speed_optimization_subprocess(
         config_json_path,
         conda_env=None,
         optimizer_script_path=None,
-        timeout=7200):
+        timeout=7200,
+        visum_instance=None):
     """
     Lancia l'ottimizzazione velocità LinkType in subprocess usando conda environment.
     Modello: lowest-path tra centroidi con osmnx/networkx, ottimizzazione
@@ -1687,17 +1688,24 @@ def run_speed_optimization_subprocess(
         optimizer_script_path (str): Path allo script optimize_link_speeds.py
                                     Default: None = cerca in network-speed-optimization/
         timeout (int): Timeout in secondi (default: 7200 = 2 ore)
+        visum_instance: Handle COM Visum. Se fornito, al termine dell'ottimizzazione
+                        chiama automaticamente apply_typeno_remap_to_visum() per
+                        aggiornare i TypeNo degli archi nella rete Visum aperta.
+                        Default: None = nessun aggiornamento automatico.
 
     Returns:
         dict: {
             "status": "success"|"failed",
             "message": str,
             "output_dir": str,
-            "speeds_file": str,   # Path a optimized_speeds.csv
-            "log_file": str
+            "speeds_file": str,          # Path a optimized_speeds.csv
+            "log_file": str,
+            "links_remapped_csv": str,   # Path a links_remapped.csv (BBSC TYPENO)
+            "linktype_stats_csv": str,   # Path a linktype_stats.csv
+            "typeno_applied": dict,      # Risultato apply_typeno_remap_to_visum (solo se visum_instance fornito)
         }
 
-    Esempio:
+    Esempio (senza aggiornamento automatico Visum):
         >>> config_file = create_speed_optimization_config(
         ...     network_dir=r"H:\\data\\network_shp",
         ...     observed_times_csv=r"H:\\data\\observed_times.csv",
@@ -1708,13 +1716,25 @@ def run_speed_optimization_subprocess(
         ...     conda_env=r"H:\\go\\network_builder\\.env"
         ... )
         >>> print(result['speeds_file'])
+
+    Esempio (con aggiornamento automatico TypeNo in Visum):
+        >>> result = run_speed_optimization_subprocess(
+        ...     config_file,
+        ...     conda_env=r"H:\\go\\network_builder\\.env",
+        ...     visum_instance=Visum      # Handle COM dalla console Visum
+        ... )
+        >>> # Al termine, i TypeNo BBSC sono già aggiornati nella rete aperta
+        >>> print(result['typeno_applied'])
     """
     result = {
-        "status": "failed",
-        "message": "",
-        "output_dir": "",
-        "speeds_file": "",
-        "log_file": "",
+        "status":            "failed",
+        "message":           "",
+        "output_dir":        "",
+        "speeds_file":       "",
+        "log_file":          "",
+        "links_remapped_csv": "",
+        "linktype_stats_csv": "",
+        "typeno_applied":    None,
     }
 
     try:
@@ -1877,6 +1897,14 @@ def run_speed_optimization_subprocess(
                         pass
 
                 print("\nLog completo: {}".format(log_path))
+
+                # ── Auto-importa TypeNo in Visum se handle fornito
+                if visum_instance is not None and result.get("links_remapped_csv"):
+                    print("\n── Aggiornamento TypeNo in Visum (apply_typeno_remap_to_visum)...")
+                    remap_result = apply_typeno_remap_to_visum(
+                        result["links_remapped_csv"], visum_instance)
+                    result["typeno_applied"] = remap_result
+
             else:
                 result["message"] = "Subprocess terminato con errore (code: {}). Log: {}".format(
                     process.returncode, log_path)
@@ -2093,6 +2121,150 @@ def remap_linktypes_from_optimized_speeds(
     return ret
 
 
+def apply_typeno_remap_to_visum(remap_csv_path, Visum=None):
+    """
+    Applica i TYPENO ottimizzati (da links_remapped.csv) ai link Visum via COM API.
+
+    Legge il CSV prodotto da optimize_link_speeds.py (save_results), che contiene
+    FROMNODENO, TONODENO, TYPENO_NEW (oppure TYPENO_OPT per il vecchio pipeline).
+    Usa GetMultiAttValues per bulk-leggere FromNodeNo/ToNodeNo, poi SetAttValue per
+    aggiornare solo gli archi che cambiano tipo.
+
+    Args:
+        remap_csv_path (str): Path a links_remapped.csv
+        Visum: Handle COM Visum (es. variabile globale ``Visum`` dalla console Visum).
+               Se None, cerca la variabile globale ``Visum`` nel namespace corrente.
+
+    Returns:
+        dict: {
+            "status":        "success" | "failed",
+            "message":       str,
+            "n_total_links": int  (link Visum totali),
+            "n_matched":     int  (link trovati nel CSV),
+            "n_changed":     int  (link con tipo effettivamente cambiato),
+        }
+
+    Esempio d'uso dalla console Visum (dopo run_speed_optimization_subprocess):
+        >>> result = run_speed_optimization_subprocess(config_file, conda_env=r"H:\\go\\network_builder\\.env")
+        >>> if result["status"] == "success" and result["links_remapped_csv"]:
+        ...     apply_typeno_remap_to_visum(result["links_remapped_csv"], Visum)
+    """
+    ret = {
+        "status":        "failed",
+        "message":       "",
+        "n_total_links": 0,
+        "n_matched":     0,
+        "n_changed":     0,
+    }
+
+    # ── Risolvi handle Visum
+    if Visum is None:
+        import builtins
+        Visum = getattr(builtins, "Visum", None)
+    if Visum is None:
+        ret["message"] = "Visum handle non fornito e non trovato nel namespace globale."
+        print("✗ " + ret["message"])
+        return ret
+
+    # ── Leggi CSV (sep auto: prova "," poi ";")
+    import pandas as pd
+    try:
+        df = pd.read_csv(remap_csv_path, sep=None, engine="python", encoding="utf-8-sig")
+    except Exception as e:
+        ret["message"] = "Impossibile leggere {}: {}".format(remap_csv_path, e)
+        print("✗ " + ret["message"])
+        return ret
+
+    # Supporta sia colonna TYPENO_NEW (nuovo pipeline) che TYPENO_OPT (vecchio pipeline)
+    type_col = None
+    for cand in ("TYPENO_NEW", "TYPENO_OPT"):
+        if cand in df.columns:
+            type_col = cand
+            break
+    if type_col is None:
+        ret["message"] = "CSV non contiene TYPENO_NEW né TYPENO_OPT. Colonne: {}".format(
+            list(df.columns))
+        print("✗ " + ret["message"])
+        return ret
+
+    # Filtra solo righe che cambiano (CHANGED==1 o TYPENO_NEW != TYPENO_ORIG)
+    changed_col = "CHANGED" if "CHANGED" in df.columns else None
+    if changed_col:
+        df_changed = df[df[changed_col] == 1].copy()
+    else:
+        orig_col = "TYPENO_ORIG" if "TYPENO_ORIG" in df.columns else None
+        if orig_col:
+            df_changed = df[df[type_col] != df[orig_col]].copy()
+        else:
+            df_changed = df.copy()
+
+    # Costruisci indice {(FROMNODENO, TONODENO): TYPENO_NEW}
+    remap_dict = {}
+    for _, row in df_changed.iterrows():
+        fn = int(row["FROMNODENO"])
+        tn = int(row["TONODENO"])
+        remap_dict[(fn, tn)] = int(row[type_col])
+
+    print("Archi con tipo cambiato nel CSV: {}".format(len(remap_dict)))
+
+    # ── Bulk-leggi attributi link da Visum
+    try:
+        all_links       = Visum.Net.Links.GetAll
+        link_fromnodes  = Visum.Net.Links.GetMultiAttValues("FromNodeNo")
+        link_tonodes    = Visum.Net.Links.GetMultiAttValues("ToNodeNo")
+        link_typenums   = Visum.Net.Links.GetMultiAttValues("TypeNo")
+        n_total         = len(link_fromnodes)
+    except Exception as e:
+        ret["message"] = "Errore lettura link da Visum: {}".format(e)
+        print("✗ " + ret["message"])
+        return ret
+
+    print("Link totali in Visum: {}".format(n_total))
+    ret["n_total_links"] = n_total
+
+    # ── Applica aggiornamenti
+    n_matched = 0
+    n_changed = 0
+    try:
+        for i in range(n_total):
+            idx_1based   = int(link_fromnodes[i][0])
+            fn           = int(link_fromnodes[i][1])
+            tn           = int(link_tonodes[i][1])
+            current_type = int(link_typenums[i][1])
+
+            new_type = remap_dict.get((fn, tn))
+            if new_type is None:
+                continue
+
+            n_matched += 1
+            if new_type == current_type:
+                continue  # già corretto, nessuna scrittura COM necessaria
+
+            link = all_links[idx_1based - 1]  # GetAll è 0-based, indice 1-based → -1
+            link.SetAttValue("TypeNo", new_type)
+            n_changed += 1
+
+    except Exception as e:
+        ret["message"] = "Errore durante aggiornamento link (dopo {} modifiche): {}".format(
+            n_changed, e)
+        print("✗ " + ret["message"])
+        return ret
+
+    msg = ("apply_typeno_remap_to_visum completato: "
+           "{} link corrispondenti, {} TypeNo aggiornati su {} totali.".format(
+               n_matched, n_changed, n_total))
+    print("\n✓ " + msg)
+    print("  (CSV: {})".format(remap_csv_path))
+
+    ret.update({
+        "status":    "success",
+        "message":   msg,
+        "n_matched": n_matched,
+        "n_changed": n_changed,
+    })
+    return ret
+
+
 def import_zones_shapefile_with_geometry(shapefile_path, visum_instance=None):
     """
     Importa zone da Shapefile in Visum usando visum.IO (CON geometrie complete)
@@ -2203,7 +2375,306 @@ def import_zones_shapefile_with_geometry(shapefile_path, visum_instance=None):
         return result
 
 
-def calculate_weighted_centroids_subprocess(geojson_file, istat_shapefile, 
+def import_external_zones_from_shapefile(shapefile_path, start_id, name_field=None,
+                                         conda_env=None, visum_instance=None):
+    """
+    Importa zone esterne da Shapefile aggiungendole alle zone già presenti in Visum.
+
+    Usa un subprocess conda (con geopandas) per leggere lo shapefile, riproiettare
+    in WGS84, rinumerare gli ID a partire da start_id e calcolare i centroidi.
+    Il risultato viene poi scritto zona per zona in Visum via COM (senza cancellare
+    le zone esistenti).
+
+    Args:
+        shapefile_path (str): Path al file .shp con le zone esterne
+        start_id (int): ID da cui far partire la numerazione delle nuove zone
+                        (es. 9001 se le zone interne arrivano a 9000)
+        name_field (str): Campo del shapefile da usare come nome zona (default: None)
+        conda_env (str): Path/nome conda environment con geopandas installato
+                         (es. r"H:\\go\\network_builder\\.env")
+        visum_instance: Istanza Visum (default: usa Visum da console)
+
+    Returns:
+        dict: {
+            "status":      "success" | "failed",
+            "message":     str,
+            "zones_added": int,
+            "zones_total": int,
+            "id_range":    (first_id, last_id),
+            "skipped_ids": list,
+            "geojson_file": str,   # GeoJSON temporaneo creato dal subprocess
+        }
+
+    Esempio:
+        >>> import_external_zones_from_shapefile(
+        ...     shapefile_path=r"H:\\data\\zone_esterne.shp",
+        ...     start_id=9001,
+        ...     name_field="NOME",
+        ...     conda_env=r"H:\\go\\network_builder\\.env",
+        ... )
+    """
+    import tempfile, json, subprocess as _sp, traceback as _tb
+
+    ret = {
+        "status":       "failed",
+        "message":      "",
+        "zones_added":  0,
+        "zones_total":  0,
+        "id_range":     (None, None),
+        "skipped_ids":  [],
+        "geojson_file": "",
+    }
+
+    # ── Risolvi handle Visum
+    visum = visum_instance if visum_instance is not None else Visum
+
+    shp_path = Path(shapefile_path)
+    if not shp_path.exists():
+        ret["message"] = "File non trovato: {}".format(shapefile_path)
+        print("✗ " + ret["message"])
+        return ret
+
+    print("\n" + "=" * 70)
+    print("IMPORT ZONE ESTERNE DA SHAPEFILE")
+    print("=" * 70)
+    print("File:      {}".format(shp_path.name))
+    print("Start ID:  {}".format(start_id))
+    print("Conda env: {}".format(conda_env or "sistema"))
+
+    # ── ID delle zone già presenti (per evitare collisioni)
+    try:
+        existing_ids = sorted(int(r[1]) for r in visum.Net.Zones.GetMultiAttValues("No"))
+        existing_ids_set = set(existing_ids)
+    except Exception:
+        existing_ids_set = set()
+    print("Zone già presenti in Visum: {}".format(len(existing_ids_set)))
+
+    # ── Prepara file JSON temporaneo per i risultati del subprocess
+    tmp_dir  = Path(tempfile.gettempdir())
+    tmp_json = str(tmp_dir / "ext_zones_data.json")
+    tmp_geojson = str(tmp_dir / "ext_zones_remap.geojson")
+
+    # ── Script subprocess: legge shapefile, rinumera, calcola centroidi, scrive JSON
+    existing_ids_repr = repr(list(existing_ids_set))
+    name_field_repr   = repr(name_field) if name_field else "None"
+
+    subprocess_script = """
+import geopandas as gpd
+import json
+from pathlib import Path
+
+shp_path        = r"{shp_path}"
+start_id        = {start_id}
+existing_ids    = set({existing_ids_repr})
+name_field      = {name_field_repr}
+output_json     = r"{tmp_json}"
+output_geojson  = r"{tmp_geojson}"
+
+gdf = gpd.read_file(shp_path)
+print("Feature lette: {{}}".format(len(gdf)))
+print("Colonne: {{}}".format(list(gdf.columns)))
+
+# Riproietta in WGS84
+if gdf.crs and gdf.crs.to_epsg() != 4326:
+    gdf = gdf.to_crs(epsg=4326)
+    print("Riproiettato in WGS84")
+
+# Rinumera ID evitando collisioni
+new_ids  = []
+skipped  = []
+cur_id   = int(start_id)
+for i in range(len(gdf)):
+    while cur_id in existing_ids:
+        skipped.append(cur_id)
+        cur_id += 1
+    new_ids.append(cur_id)
+    existing_ids.add(cur_id)
+    cur_id += 1
+
+gdf["zone_id"] = new_ids
+
+# Nome zona
+if name_field and name_field in gdf.columns:
+    gdf["zone_name"] = gdf[name_field].astype(str)
+else:
+    gdf["zone_name"] = ["Ext_{{}}".format(i) for i in new_ids]
+
+# Calcola centroidi
+gdf_wgs = gdf.copy()
+centroids = gdf_wgs.geometry.centroid
+
+zones_data = []
+for i, (idx, row) in enumerate(gdf_wgs.iterrows()):
+    zones_data.append({{
+        "id":   int(row["zone_id"]),
+        "name": str(row["zone_name"]),
+        "x":    float(centroids.iloc[i].x),
+        "y":    float(centroids.iloc[i].y),
+    }})
+
+# Scrivi GeoJSON (per eventuale uso futuro)
+gdf_out = gdf_wgs[["zone_id", "zone_name", "geometry"]].copy()
+gdf_out.rename(columns={{"zone_id": "id", "zone_name": "name"}}, inplace=True)
+gdf_out.to_file(output_geojson, driver="GeoJSON")
+
+# Scrivi JSON con dati zone
+result = {{
+    "zones":       zones_data,
+    "skipped_ids": skipped,
+    "n_features":  len(gdf),
+}}
+with open(output_json, "w", encoding="utf-8") as f:
+    json.dump(result, f, indent=2)
+
+print("Zone elaborate: {{}}".format(len(zones_data)))
+print("ID saltati:     {{}}".format(len(skipped)))
+print("Output JSON:    {{}}".format(output_json))
+""".format(
+        shp_path=str(shp_path),
+        start_id=int(start_id),
+        existing_ids_repr=existing_ids_repr,
+        name_field_repr=name_field_repr,
+        tmp_json=tmp_json,
+        tmp_geojson=tmp_geojson,
+    )
+
+    # ── Scrivi script temporaneo
+    tmp_script = str(tmp_dir / "ext_zones_import.py")
+    with open(tmp_script, "w", encoding="utf-8") as f:
+        f.write(subprocess_script)
+
+    # ── Costruisci comando conda (stessa logica di run_auto_zoning_subprocess)
+    import subprocess as _sp2
+    if conda_env:
+        is_path = Path(conda_env).exists()
+        possible_conda = [
+            "conda",
+            r"H:\ProgramData\Miniconda3\Scripts\conda.exe",
+            r"C:\ProgramData\Miniconda3\Scripts\conda.exe",
+            r"C:\ProgramData\Anaconda3\Scripts\conda.exe",
+            r"C:\Users\{}\Miniconda3\Scripts\conda.exe".format(os.environ.get("USERNAME", "")),
+            r"C:\Users\{}\Anaconda3\Scripts\conda.exe".format(os.environ.get("USERNAME", "")),
+        ]
+        conda_exe = None
+        for cand in possible_conda:
+            try:
+                _sp2.run([cand, "--version"], capture_output=True, timeout=5, check=True)
+                conda_exe = cand
+                break
+            except Exception:
+                continue
+        if not conda_exe:
+            ret["message"] = "Conda non trovato nel PATH né nelle posizioni standard."
+            print("✗ " + ret["message"])
+            return ret
+        print("Conda: {}".format(conda_exe))
+        if is_path:
+            cmd = [conda_exe, "run", "-p", conda_env, "--no-capture-output", "python", tmp_script]
+        else:
+            cmd = [conda_exe, "run", "-n", conda_env, "--no-capture-output", "python", tmp_script]
+    else:
+        cmd = ["python", tmp_script]
+
+    print("\nEsecuzione subprocess geopandas...")
+    try:
+        proc = _sp.run(cmd, capture_output=True, text=True, timeout=120,
+                       encoding="utf-8", errors="replace")
+        if proc.stdout:
+            print(proc.stdout.strip())
+        if proc.returncode != 0:
+            ret["message"] = "Subprocess fallito (exit {}): {}".format(
+                proc.returncode, proc.stderr[:500])
+            print("✗ " + ret["message"])
+            return ret
+    except _sp.TimeoutExpired:
+        ret["message"] = "Subprocess timeout (>120s)"
+        print("✗ " + ret["message"])
+        return ret
+    except Exception as e:
+        ret["message"] = "Errore avvio subprocess: {}".format(e)
+        print("✗ " + ret["message"])
+        return ret
+
+    # ── Leggi risultati JSON
+    if not Path(tmp_json).exists():
+        ret["message"] = "File JSON risultati non trovato: {}".format(tmp_json)
+        print("✗ " + ret["message"])
+        return ret
+
+    with open(tmp_json, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    zones_data  = data["zones"]
+    skipped_ids = data["skipped_ids"]
+    print("Zone da importare: {}".format(len(zones_data)))
+
+    # ── Crea attributi utente POP ed EMP se non esistono
+    for attr_code, attr_long in [("POP", "Popolazione"), ("EMP", "Addetti")]:
+        try:
+            visum.Net.Zones.GetMultiAttValues(attr_code)
+        except Exception:
+            try:
+                visum.Net.Zones.AddUserDefinedAttribute(attr_code, attr_code, attr_long, 2)
+                print("  ✓ Creato attributo: {}".format(attr_code))
+            except Exception:
+                pass
+
+    # ── Crea zone in Visum una per una (senza cancellare le esistenti)
+    zones_added = 0
+    errors = []
+    first_id = zones_data[0]["id"]  if zones_data else None
+    last_id  = zones_data[-1]["id"] if zones_data else None
+
+    print("Import zone in Visum...")
+    for i, z in enumerate(zones_data):
+        try:
+            zone_id = int(z["id"])
+            # Usa zona esistente se già presente (non dovrebbe capitare), altrimenti crea
+            try:
+                zone = visum.Net.Zones.ItemByKey(zone_id)
+            except Exception:
+                zone = visum.Net.AddZone(zone_id)
+                zones_added += 1
+
+            zone.SetAttValue("XCoord", float(z["x"]))
+            zone.SetAttValue("YCoord", float(z["y"]))
+            try:
+                zone.SetAttValue("Name", str(z["name"]))
+            except Exception:
+                pass
+
+            if (i + 1) % 50 == 0:
+                print("  Importate {} zone...".format(i + 1))
+
+        except Exception as e:
+            errors.append("Zona {}: {}".format(z.get("id", i), e))
+            if len(errors) <= 5:
+                print("  ⚠ {}".format(errors[-1]))
+
+    zones_total = visum.Net.Zones.Count
+    ret["geojson_file"] = tmp_geojson
+
+    msg = ("Import zone esterne completato: {} zone aggiunte "
+           "(ID {} → {}), totale Visum: {}.".format(
+               zones_added, first_id, last_id, zones_total))
+    if errors:
+        msg += " ({} errori)".format(len(errors))
+    print("✓ " + msg)
+    if skipped_ids:
+        print("  ⚠ ID saltati (già usati): {}".format(skipped_ids))
+
+    ret.update({
+        "status":      "success",
+        "message":     msg,
+        "zones_added": zones_added,
+        "zones_total": zones_total,
+        "id_range":    (first_id, last_id),
+        "skipped_ids": skipped_ids,
+    })
+    return ret
+
+
+def calculate_weighted_centroids_subprocess(geojson_file, istat_shapefile,
                                             weight_fields=None, weight_values=None,
                                             min_weight_threshold=0.1, conda_env=None):
     """
@@ -4773,6 +5244,193 @@ def compare_skim_matrices(matrix_no=None,
         
     except Exception as e:
         result["message"] = "Errore confronto skim: {}".format(str(e))
+        print("\n✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+def import_demand_matrices_from_csv(csv_path, separator=";", visum_instance=None):
+    """
+    Importa matrici di domanda da un file CSV in Visum.
+
+    Il CSV deve avere 4 colonne (con o senza riga di intestazione):
+        1. dseg   : codice del demand segment (es. "P", "CAR", "HGV")
+        2. from_O : numero zona di origine
+        3. to_D   : numero zona di destinazione
+        4. value  : valore della coppia OD
+
+    Il file può contenere più demand segment: ogni gruppo viene
+    importato nella matrice già associata al DSeg in Visum.
+    Se il DSeg non ha ancora una matrice assegnata, ne viene creata
+    una nuova con il primo numero disponibile.
+
+    Args:
+        csv_path (str)  : percorso al file CSV
+        separator (str) : separatore colonne (default ";")
+        visum_instance  : istanza Visum (default: usa variabile globale Visum)
+
+    Returns:
+        dict: {
+            "status"  : "success" | "failed",
+            "message" : str,
+            "imported": { dseg_code: { "matrix_no": int, "od_pairs": int } }
+        }
+
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        >>> result = import_demand_matrices_from_csv(r"C:\\dati\\domanda.csv")
+        >>> print(result)
+
+        >>> # Con separatore virgola
+        >>> result = import_demand_matrices_from_csv(r"C:\\dati\\domanda.csv", separator=",")
+    """
+    import csv as _csv
+
+    result = {
+        "status": "failed",
+        "message": "",
+        "imported": {}
+    }
+
+    try:
+        visum = visum_instance if visum_instance is not None else globals().get("Visum")
+        if visum is None:
+            raise RuntimeError("Nessuna istanza Visum disponibile: passa visum_instance oppure esegui dalla console Visum")
+
+        print("\n" + "=" * 70)
+        print("IMPORTAZIONE MATRICI DI DOMANDA DA CSV")
+        print("=" * 70)
+        print("File: {}".format(csv_path))
+
+        # --- Leggi il CSV e raggruppa per DSeg ---
+        od_by_dseg = {}  # { dseg_code: [ (from_no, to_no, value), ... ] }
+
+        with open(csv_path, "r", encoding="utf-8-sig") as f:
+            reader = _csv.reader(f, delimiter=separator)
+            first_row = next(reader, None)
+
+            def _add_row(row):
+                if len(row) < 4:
+                    return
+                dseg_code = row[0].strip()
+                od_by_dseg.setdefault(dseg_code, []).append(
+                    (int(row[1]), int(row[2]), float(row[3]))
+                )
+
+            # Controlla se la prima riga è un'intestazione o un dato
+            if first_row is not None:
+                try:
+                    float(first_row[3])
+                    _add_row(first_row)   # era una riga dati
+                except (ValueError, IndexError):
+                    pass                  # era un'intestazione, la saltiamo
+
+            for row in reader:
+                _add_row(row)
+
+        if not od_by_dseg:
+            result["message"] = "Nessun dato trovato nel CSV"
+            print("✗ {}".format(result["message"]))
+            return result
+
+        print("Demand segment nel CSV: {}".format(list(od_by_dseg.keys())))
+
+        # --- Mappa zone_no -> indice 1-based (SetValue usa posizione, non numero zona) ---
+        zones_list = list(visum.Net.Zones.GetAll)
+        if not zones_list:
+            result["message"] = "Nessuna zona nella rete Visum"
+            print("✗ {}".format(result["message"]))
+            return result
+        zone_index = {int(z.AttValue("No")): idx + 1 for idx, z in enumerate(zones_list)}
+        print("Zone nella rete: {}".format(len(zone_index)))
+
+        # --- Numeri matrice già in uso (per eventuale creazione nuova) ---
+        existing_matrix_nos = set()
+        for m in visum.Net.Matrices.GetAll:
+            try:
+                existing_matrix_nos.add(int(m.AttValue("No")))
+            except Exception:
+                pass
+
+        # --- Importa un DSeg alla volta ---
+        for dseg_code, od_pairs in od_by_dseg.items():
+            print("\n### DSeg: {} ({} coppie OD) ###".format(dseg_code, len(od_pairs)))
+
+            # Trova il demand segment in Visum
+            try:
+                visum.Net.DemandSegments.ItemByKey(dseg_code)
+            except Exception:
+                print("  ✗ DSeg '{}' non trovato in Visum - salto".format(dseg_code))
+                continue
+
+            # Trova o crea la matrice associata al DSeg
+            # Visum 2025: DemandSegment non espone MatrixNo → cerca per codice o crea nuova
+            matrix = None
+            for m in visum.Net.Matrices.GetAll:
+                try:
+                    if m.AttValue("Code") == dseg_code:
+                        matrix = m
+                        matrix_no = int(m.AttValue("No"))
+                        print("  Matrice esistente: {} ({})".format(
+                            matrix_no, m.AttValue("Name")))
+                        break
+                except Exception:
+                    pass
+
+            if matrix is None:
+                matrix_no = 1
+                while matrix_no in existing_matrix_nos:
+                    matrix_no += 1
+                existing_matrix_nos.add(matrix_no)
+                matrix = visum.Net.AddMatrix(matrix_no)
+                matrix.SetAttValue("Name", "Demand_{}".format(dseg_code))
+                matrix.SetAttValue("Code", dseg_code)
+                matrix.SetAttValue("DSegCode", dseg_code)
+                print("  Creata nuova matrice: {}".format(matrix_no))
+
+            # Costruisci array 2D [n_zone][n_zone] e scrivi riga per riga (SetRow)
+            # SetRow(idx_1based, list_of_floats) – più affidabile di SetValuesDouble via COM
+            n = len(zone_index)
+            values_2d = [[0.0] * n for _ in range(n)]
+            skipped = 0
+            for (from_no, to_no, value) in od_pairs:
+                i = zone_index.get(from_no)
+                j = zone_index.get(to_no)
+                if i is None or j is None:
+                    skipped += 1
+                    continue
+                values_2d[i - 1][j - 1] = value  # da 1-based a 0-based per l'array
+
+            for row_idx, row_vals in enumerate(values_2d, start=1):
+                matrix.SetRow(row_idx, row_vals)
+
+            if skipped:
+                print("  ! {} coppie saltate (zone non trovate nella rete)".format(skipped))
+
+            loaded = len(od_pairs) - skipped
+            print("  ✓ Coppie OD caricate: {}".format(loaded))
+
+            result["imported"][dseg_code] = {
+                "matrix_no": matrix_no,
+                "od_pairs": loaded
+            }
+
+        result["status"] = "success"
+        result["message"] = "Importazione completata per {} DSeg".format(
+            len(result["imported"]))
+
+        print("\n" + "=" * 70)
+        print("IMPORTAZIONE COMPLETATA")
+        for dseg_code, info in result["imported"].items():
+            print("  DSeg {:10s} -> Matrice {:4d}  ({} coppie OD)".format(
+                dseg_code, info["matrix_no"], info["od_pairs"]))
+        print("=" * 70)
+
+        return result
+
+    except Exception as e:
+        result["message"] = "Errore: {}".format(str(e))
         print("\n✗ {}".format(result["message"]))
         import traceback
         traceback.print_exc()

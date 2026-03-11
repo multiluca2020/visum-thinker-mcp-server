@@ -2439,6 +2439,7 @@ def main():
     if opt_mode == "per_arc":
         flag_data["arc_assignments_csv"] = str(Path(config["output_dir"]) / "arc_assignments.csv")
         flag_data["type_assignment_counts_csv"] = str(Path(config["output_dir"]) / "type_assignment_counts.csv")
+        flag_data["links_remapped_csv"] = str(Path(config["output_dir"]) / "links_remapped.csv")
     else:
         flag_data["optimized_speeds"]  = {str(lt): v for lt, v in sorted(best_speeds.items())}
         flag_data["links_remapped_csv"] = str(Path(config["output_dir"]) / "links_remapped.csv")
