@@ -5435,3 +5435,478 @@ def import_demand_matrices_from_csv(csv_path, separator=";", visum_instance=None
         import traceback
         traceback.print_exc()
         return result
+
+
+def import_procedure_settings(xml_path, read_functions=True, read_operations=False,
+                               append_procedures=False, visum_instance=None):
+    """
+    Importa le impostazioni generali delle procedure da un file XML in Visum.
+
+    Utilizza Procedures.Open() che accetta sia file .xml che .par.
+
+    Per default carica SOLO le impostazioni generali (VDF, skim matrix settings,
+    parametri assegnazione, ecc.) senza modificare la sequenza di procedure.
+
+    Con read_functions=True importa:
+    - Curve di deflusso (VD Functions) per link e connettori
+    - Assegnazione VDF -> LinkType (VDFUNCTIONNO_LINKTYPE)
+    - Impostazioni skim matrix PrT e PuT
+    - Parametri generali assegnazione
+
+    Args:
+        xml_path (str)          : percorso al file .xml (o .par) di procedure settings
+        read_functions (bool)   : carica impostazioni generali, VDF, skim (default True)
+        read_operations (bool)  : carica la sequenza di operazioni (default False)
+        append_procedures (bool): se True aggiunge le operazioni in coda (default False)
+        visum_instance          : istanza Visum (default: usa console)
+
+    Returns:
+        dict: { "status": "success"|"failed", "message": str }
+
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+
+        >>> # Solo VDF e impostazioni generali (uso tipico)
+        >>> result = import_procedure_settings(r"H:\\go\\network_builder\\procedure_settings.xml")
+        >>> print(result)
+
+        >>> # VDF + sequenza procedure (sostituisce quella esistente)
+        >>> result = import_procedure_settings(
+        ...     r"H:\\go\\network_builder\\procedure_settings.xml",
+        ...     read_operations=True
+        ... )
+    """
+    result = {"status": "failed", "message": ""}
+
+    try:
+        visum = visum_instance if visum_instance is not None else globals().get("Visum")
+        if visum is None:
+            raise RuntimeError("Nessuna istanza Visum disponibile")
+
+        print("\n" + "=" * 70)
+        print("IMPORTAZIONE IMPOSTAZIONI PROCEDURE DA XML")
+        print("=" * 70)
+        print("File          : {}".format(xml_path))
+        print("Funzioni      : {}".format(read_functions))
+        print("Operazioni    : {}".format(read_operations))
+        print("Append proc.  : {}".format(append_procedures))
+
+        visum.Procedures.Open(xml_path,
+                              ReadOperations=read_operations,
+                              ReadFunctions=read_functions,
+                              AppendProcedures=append_procedures)
+
+        result["status"] = "success"
+        result["message"] = "Impostazioni caricate con successo"
+        print("✓ {}".format(result["message"]))
+        print("=" * 70)
+
+    except Exception as e:
+        result["message"] = "Errore: {}".format(str(e))
+        print("✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+
+    return result
+
+
+def add_prt_assignment_procedure(assignment_variant=2, execute=False, visum_instance=None):
+    """
+    Aggiunge una procedura di assegnazione PrT alla sequenza di procedure Visum.
+
+    Rileva automaticamente i demand segment (DSeg) che hanno una matrice di domanda
+    caricata nel progetto (matrice con attributo DSegCode non vuoto).
+
+    Args:
+        assignment_variant (int): Variante di assegnazione PrT (default: 2 = Equilibrium)
+            1 = Incremental
+            2 = Equilibrium
+            6 = Stochastic
+            9 = LUCE
+            12 = Frank-Wolfe (Bi-conjugate)
+        execute (bool): Se True, esegue la procedura dopo averla creata (default: False)
+        visum_instance: Istanza Visum (default: usa console)
+
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "message": str,
+            "dseg_list": list[str],
+            "operation_pos": int
+        }
+
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        >>> result = add_prt_assignment_procedure()
+        >>> print(result)
+
+        >>> # Con variante Frank-Wolfe ed esecuzione immediata
+        >>> result = add_prt_assignment_procedure(assignment_variant=12, execute=True)
+    """
+    result = {
+        "status": "failed",
+        "message": "",
+        "dseg_list": [],
+        "operation_pos": 0
+    }
+
+    try:
+        visum = visum_instance if visum_instance is not None else globals().get("Visum")
+        if visum is None:
+            raise RuntimeError("Nessuna istanza Visum disponibile")
+
+        print("\n" + "=" * 70)
+        print("AGGIUNTA PROCEDURA ASSEGNAZIONE PrT")
+        print("=" * 70)
+
+        # Step 1: Trova DSeg con matrice di domanda caricata
+        print("\n### STEP 1: RILEVAMENTO DEMAND SEGMENT CON MATRICE ###")
+
+        dseg_codes = []
+        for matrix in visum.Net.Matrices.GetAll:
+            try:
+                dseg_code = matrix.AttValue("DSegCode")
+                if dseg_code and str(dseg_code).strip():
+                    dseg_code = str(dseg_code).strip()
+                    # Verifica che il DSeg esista nel progetto
+                    try:
+                        visum.Net.DemandSegments.ItemByKey(dseg_code)
+                        if dseg_code not in dseg_codes:
+                            dseg_codes.append(dseg_code)
+                            print("  + DSeg '{}': matrice '{}' trovata".format(
+                                dseg_code, matrix.AttValue("Name")))
+                    except Exception:
+                        print("  ! DSeg '{}' non trovato nei demand segment del progetto, saltato".format(dseg_code))
+            except Exception:
+                pass
+
+        if not dseg_codes:
+            result["message"] = "Nessun demand segment con matrice di domanda trovato"
+            print("✗ {}".format(result["message"]))
+            return result
+
+        result["dseg_list"] = dseg_codes
+        dseg_set = ",".join(dseg_codes)
+        print("DSeg da assegnare: {}".format(dseg_set))
+
+        # Step 2: Trova ultima posizione nella sequenza di procedure
+        print("\n### STEP 2: POSIZIONAMENTO NELLA SEQUENZA ###")
+
+        operations = visum.Procedures.Operations
+        last_pos = 0
+        for i in range(1, 10001):
+            try:
+                operations.ItemByKey(i)
+                last_pos = i
+            except Exception:
+                break
+
+        new_pos = last_pos + 1
+        print("Ultima posizione occupata: {}".format(last_pos))
+        print("Nuova operazione in posizione: {}".format(new_pos))
+
+        # Step 3: Crea operazione di assegnazione PrT (tipo 101)
+        print("\n### STEP 3: CREAZIONE OPERAZIONE ###")
+
+        op = operations.AddOperation(new_pos)
+        op.SetAttValue("OPERATIONTYPE", 101)
+        print("Operazione PrT Assignment creata (tipo 101)")
+
+        # Step 4: Configura parametri
+        print("\n### STEP 4: CONFIGURAZIONE PARAMETRI ###")
+
+        params = op.PrTAssignmentParameters
+        params.SetAttValue("DSegSet", dseg_set)
+        print("DSegSet: {}".format(dseg_set))
+
+        params.SetAttValue("PrTAssignmentVariant", assignment_variant)
+        variant_names = {1: "Incremental", 2: "Equilibrium", 6: "Stochastic", 9: "LUCE", 12: "Frank-Wolfe"}
+        variant_name = variant_names.get(assignment_variant, str(assignment_variant))
+        print("Variante assegnazione: {} ({})".format(variant_name, assignment_variant))
+
+        result["operation_pos"] = new_pos
+
+        # Step 5 (opzionale): Esecuzione
+        if execute:
+            print("\n### STEP 5: ESECUZIONE ###")
+            print("Esecuzione assegnazione in corso...")
+            executor = visum.Procedures.OperationExecutor
+            executor.SetCurrentOperation(op)
+            executor.ExecuteCurrentOperation()
+            print("Assegnazione completata")
+
+        result["status"] = "success"
+        result["message"] = "Procedura PrT Assignment aggiunta in posizione {}".format(new_pos)
+
+        print("\n" + "=" * 70)
+        print("COMPLETATO")
+        print("=" * 70)
+        print("Posizione: {}".format(new_pos))
+        print("DSeg:      {}".format(dseg_set))
+        print("Variante:  {} ({})".format(variant_name, assignment_variant))
+        print("=" * 70)
+
+    except Exception as e:
+        result["message"] = "Errore: {}".format(str(e))
+        print("✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+
+    return result
+
+
+def add_prt_skim_tcur_procedure(execute=False, visum_instance=None):
+    """
+    Aggiunge una procedura di calcolo matrici SKIM PrT dopo l'assegnazione,
+    usando TCur (tempo congestionato) come criterio di ricerca.
+
+    Rileva automaticamente i demand segment con matrice di domanda caricata
+    e crea un'operazione skim (tipo 103) per ciascun DSeg.
+    Le matrici risultato (TCur e TripDist) vengono create automaticamente da Visum
+    al momento dell'esecuzione.
+
+    Parametri skim calcolati:
+        - TCur:     tempo di viaggio congestionato (minuti)
+        - TripDist: distanza percorso (km)
+
+    Args:
+        execute (bool): Se True, esegue le operazioni dopo averle create (default: False)
+        visum_instance: Istanza Visum (default: usa console)
+
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "message": str,
+            "dseg_list": list[str],
+            "operations": list[dict]  # [{dseg, pos}]
+        }
+
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        >>> result = add_prt_skim_tcur_procedure()
+        >>> print(result)
+
+    Note:
+        SearchCriterion = 1 (criteria_tCur = tempo congestionato)
+        UseExistingPaths = True (riusa i percorsi calcolati dall'assegnazione)
+        L'operazione deve essere eseguita DOPO l'assegnazione PrT.
+    """
+    result = {
+        "status": "failed",
+        "message": "",
+        "dseg_list": [],
+        "operations": []
+    }
+
+    try:
+        visum = visum_instance if visum_instance is not None else globals().get("Visum")
+        if visum is None:
+            raise RuntimeError("Nessuna istanza Visum disponibile")
+
+        print("\n" + "=" * 70)
+        print("AGGIUNTA PROCEDURA SKIM PrT (TCur - TEMPO CONGESTIONATO)")
+        print("=" * 70)
+
+        # Step 1: Trova DSeg con matrice di domanda caricata
+        print("\n### STEP 1: RILEVAMENTO DEMAND SEGMENT CON MATRICE ###")
+
+        dseg_codes = []
+        for matrix in visum.Net.Matrices.GetAll:
+            try:
+                dseg_code = matrix.AttValue("DSegCode")
+                if dseg_code and str(dseg_code).strip():
+                    dseg_code = str(dseg_code).strip()
+                    try:
+                        visum.Net.DemandSegments.ItemByKey(dseg_code)
+                        if dseg_code not in dseg_codes:
+                            dseg_codes.append(dseg_code)
+                            print("  + DSeg '{}': matrice '{}' trovata".format(
+                                dseg_code, matrix.AttValue("Name")))
+                    except Exception:
+                        print("  ! DSeg '{}' non trovato, saltato".format(dseg_code))
+            except Exception:
+                pass
+
+        if not dseg_codes:
+            result["message"] = "Nessun demand segment con matrice di domanda trovato"
+            print("✗ {}".format(result["message"]))
+            return result
+
+        result["dseg_list"] = dseg_codes
+
+        # Step 2: Trova ultima posizione nella sequenza di procedure
+        print("\n### STEP 2: CREAZIONE OPERAZIONI SKIM ###")
+
+        operations = visum.Procedures.Operations
+        last_pos = 0
+        for i in range(1, 10001):
+            try:
+                operations.ItemByKey(i)
+                last_pos = i
+            except Exception:
+                break
+
+        # Step 3: Crea un'operazione skim per ogni DSeg
+        for idx, dseg_code in enumerate(dseg_codes):
+            new_pos = last_pos + 1 + idx
+
+            print("\n  DSeg '{}' → posizione {}".format(dseg_code, new_pos))
+
+            # Crea operazione skim (tipo 103)
+            op = operations.AddOperation(new_pos)
+            op.SetAttValue("OPERATIONTYPE", 103)
+
+            # Configura parametri
+            skim_params = op.PrTSkimMatrixParameters
+            skim_params.SetAttValue("DSeg", dseg_code)
+
+            # SearchCriterion = 1 = criteria_tCur (tempo congestionato)
+            skim_params.SetAttValue("SearchCriterion", 1)
+            print("  ✓ SearchCriterion: 1 (criteria_tCur)")
+
+            # UseExistingPaths = True: riusa i percorsi dall'assegnazione
+            skim_params.SetAttValue("UseExistingPaths", True)
+            print("  ✓ UseExistingPaths: True")
+
+            # Abilita calcolo TCur (tempo congestionato)
+            skim_tcur = skim_params.SingleSkimMatrixParameters("TCur")
+            skim_tcur.SetAttValue("Calculate", True)
+            skim_tcur.SetAttValue("SaveToFile", False)
+            print("  ✓ Skim 'TCur': Calculate=True")
+
+            # Abilita calcolo TripDist (distanza percorso)
+            skim_tripdist = skim_params.SingleSkimMatrixParameters("TripDist")
+            skim_tripdist.SetAttValue("Calculate", True)
+            skim_tripdist.SetAttValue("SaveToFile", False)
+            print("  ✓ Skim 'TripDist': Calculate=True")
+
+            result["operations"].append({"dseg": dseg_code, "pos": new_pos})
+
+            # Esecuzione immediata (se richiesta)
+            if execute:
+                print("  Esecuzione skim '{}' in corso...".format(dseg_code))
+                executor = visum.Procedures.OperationExecutor
+                executor.SetCurrentOperation(op)
+                executor.ExecuteCurrentOperation()
+                print("  ✓ Skim '{}' completato".format(dseg_code))
+
+        result["status"] = "success"
+        result["message"] = "Skim TCur aggiunto per {} DSeg".format(len(dseg_codes))
+
+        print("\n" + "=" * 70)
+        print("COMPLETATO")
+        print("=" * 70)
+        for op_info in result["operations"]:
+            print("  DSeg={:<20} pos={:3d}".format(op_info["dseg"], op_info["pos"]))
+        print("  (Le matrici TCur e TripDist sono create automaticamente da Visum)")
+        print("=" * 70)
+
+    except Exception as e:
+        result["message"] = "Errore: {}".format(str(e))
+        print("✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+
+    return result
+
+
+def run_prt_assignment_and_skim(assignment_variant=2, visum_instance=None):
+    """
+    Esegue in sequenza:
+      1. Assegnazione PrT (tutti i DSeg con matrice di domanda)
+      2. Skim PrT TCur + TripDist (uno per DSeg, riusa percorsi assegnazione)
+      3. Esecuzione dell'intera sequenza di procedure
+
+    Rileva automaticamente i demand segment con matrice di domanda caricata.
+    Le matrici risultato skim vengono create automaticamente da Visum.
+
+    Args:
+        assignment_variant (int): Variante assegnazione PrT (default: 2 = Equilibrium)
+            1=Incremental, 2=Equilibrium, 6=Stochastic, 9=LUCE, 12=Frank-Wolfe
+        visum_instance: Istanza Visum (default: usa console)
+
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "message": str,
+            "assignment": dict,   # risultato add_prt_assignment_procedure
+            "skim": dict          # risultato add_prt_skim_tcur_procedure
+        }
+
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        >>> result = run_prt_assignment_and_skim()
+        >>> print(result["status"])
+
+        >>> # Con Frank-Wolfe
+        >>> result = run_prt_assignment_and_skim(assignment_variant=12)
+    """
+    result = {
+        "status": "failed",
+        "message": "",
+        "assignment": None,
+        "skim": None
+    }
+
+    try:
+        visum = visum_instance if visum_instance is not None else globals().get("Visum")
+        if visum is None:
+            raise RuntimeError("Nessuna istanza Visum disponibile")
+
+        print("\n" + "=" * 70)
+        print("ASSEGNAZIONE PrT + SKIM TCur - WORKFLOW COMPLETO")
+        print("=" * 70)
+
+        # Step 1: Aggiungi procedura assegnazione
+        r_assign = add_prt_assignment_procedure(
+            assignment_variant=assignment_variant,
+            execute=False,
+            visum_instance=visum
+        )
+        result["assignment"] = r_assign
+
+        if r_assign["status"] != "success":
+            result["message"] = "Errore assegnazione: {}".format(r_assign["message"])
+            return result
+
+        # Step 2: Aggiungi procedura skim TCur (una per DSeg)
+        r_skim = add_prt_skim_tcur_procedure(
+            execute=False,
+            visum_instance=visum
+        )
+        result["skim"] = r_skim
+
+        if r_skim["status"] != "success":
+            result["message"] = "Errore skim: {}".format(r_skim["message"])
+            return result
+
+        # Step 3: Esegui tutta la sequenza di procedure
+        print("\n" + "=" * 70)
+        print("ESECUZIONE SEQUENZA PROCEDURE")
+        print("=" * 70)
+        print("Avvio assegnazione + skim in corso...")
+
+        visum.Procedures.OperationExecutor.Execute()
+
+        print("✓ Esecuzione completata")
+
+        result["status"] = "success"
+        result["message"] = "Assegnazione e skim completati per DSeg: {}".format(
+            ", ".join(r_assign["dseg_list"]))
+
+        print("\n" + "=" * 70)
+        print("WORKFLOW COMPLETATO")
+        print("=" * 70)
+        print("DSeg assegnati: {}".format(", ".join(r_assign["dseg_list"])))
+        print("Operazioni skim aggiunte:")
+        for op_info in r_skim["operations"]:
+            print("  DSeg={} → posizione {}".format(op_info["dseg"], op_info["pos"]))
+        print("=" * 70)
+
+    except Exception as e:
+        result["message"] = "Errore: {}".format(str(e))
+        print("✗ {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+
+    return result
