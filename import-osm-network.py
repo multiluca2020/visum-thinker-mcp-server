@@ -5910,3 +5910,1266 @@ def run_prt_assignment_and_skim(assignment_variant=2, visum_instance=None):
         traceback.print_exc()
 
     return result
+
+
+def optimize_capacity_from_observed_times(
+        observed_times_csv,
+        max_iterations=10,
+        convergence_threshold=0.01,
+        separator=";",
+        od_col_orig="from_O",
+        od_col_dest="to_D",
+        od_col_time="observed_time",
+        assignment_variant=2,
+        vc_threshold_high=0.80,
+        vc_threshold_low=0.40,
+        visum_instance=None):
+    """
+    Ottimizza le capacita' dei link type per minimizzare l'errore tra
+    tempi congestionati modello (TCur da assegnazione) e tempi osservati.
+
+    Approccio iterativo:
+      1. Esegue assegnazione PrT + skim TCur
+      2. Estrae TCur per le coppie OD osservate dal CSV
+      3. Calcola RMSE e errore medio
+      4. Per ogni link type con varianti di capacita':
+         - Calcola rapporto v/c medio
+         - Se congestionato (v/c > soglia) E modello troppo lento: aumenta capacita' (+1 step)
+         - Se scarico (v/c < soglia) E modello troppo veloce: diminuisci capacita' (-1 step)
+      5. Cambia TypeNo dei link per usare la variante di capacita' aggiornata
+      6. Ripete fino a convergenza RMSE o max iterazioni
+
+    Le varianti usano la codifica: TypeNo = base * 100 + V_index * 10 + C_index
+    dove C_index: 0=-25%, 1=-20%, 2=-15%, 3=-10%, 4=-5%, 5=+0%, 6=+5%, 7=+10%, 8=+15%, 9=+20%
+
+    Args:
+        observed_times_csv (str): CSV con colonne [from_O, to_D, observed_time (minuti)]
+        max_iterations (int): Numero massimo iterazioni (default: 10)
+        convergence_threshold (float): Soglia convergenza RMSE relativa (default: 0.01 = 1%)
+        separator (str): Separatore CSV (default: ";")
+        od_col_orig (str): Nome colonna origine (default: "from_O")
+        od_col_dest (str): Nome colonna destinazione (default: "to_D")
+        od_col_time (str): Nome colonna tempo osservato in minuti (default: "observed_time")
+        assignment_variant (int): Variante assegnazione PrT (default: 2 = Equilibrium)
+        vc_threshold_high (float): Soglia v/c sopra cui aumentare capacita' (default: 0.80)
+        vc_threshold_low (float): Soglia v/c sotto cui diminuire capacita' (default: 0.40)
+        visum_instance: Istanza Visum COM (default: usa console)
+
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "message": str,
+            "iterations": int,
+            "rmse_history": list[float],
+            "capacity_changes": dict,
+            "final_rmse": float,
+            "initial_rmse": float,
+            "od_results": list[dict]
+        }
+
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        >>> result = optimize_capacity_from_observed_times(
+        ...     observed_times_csv=r"H:\\data\\observed_times.csv",
+        ...     max_iterations=10,
+        ...     assignment_variant=2
+        ... )
+        >>> print("RMSE: {:.2f} -> {:.2f}".format(result["initial_rmse"], result["final_rmse"]))
+    """
+    import csv as _csv
+    import math
+
+    CAP_PCT = {0: -25, 1: -20, 2: -15, 3: -10, 4: -5,
+               5: 0, 6: 5, 7: 10, 8: 15, 9: 20}
+
+    result = {
+        "status": "failed",
+        "message": "",
+        "iterations": 0,
+        "rmse_history": [],
+        "capacity_changes": {},
+        "final_rmse": 0.0,
+        "initial_rmse": 0.0,
+        "od_results": []
+    }
+
+    try:
+        visum = visum_instance if visum_instance is not None else globals().get("Visum")
+        if visum is None:
+            raise RuntimeError("Nessuna istanza Visum disponibile")
+
+        # -- 1. Leggi tempi osservati dal CSV --
+        print("\n" + "=" * 70)
+        print("OTTIMIZZAZIONE CAPACITA' DA TEMPI OSSERVATI")
+        print("=" * 70)
+        print("CSV: {}".format(observed_times_csv))
+
+        observed_od = []
+        with open(observed_times_csv, "r", encoding="utf-8-sig") as f:
+            reader = _csv.DictReader(f, delimiter=separator)
+            for row in reader:
+                o = int(row[od_col_orig])
+                d = int(row[od_col_dest])
+                t = float(row[od_col_time])
+                if t > 0:
+                    observed_od.append((o, d, t))
+
+        if not observed_od:
+            result["message"] = "Nessuna coppia OD valida nel CSV"
+            print("x {}".format(result["message"]))
+            return result
+
+        print("Coppie OD osservate caricate: {}".format(len(observed_od)))
+
+        # -- 2. Mappa zone -> indice matrice (1-based) --
+        zones_list = list(visum.Net.Zones.GetAll)
+        zone_index = {}
+        for idx, z in enumerate(zones_list):
+            zone_index[int(z.AttValue("No"))] = idx + 1
+
+        valid_od = [(o, d, t) for o, d, t in observed_od
+                    if o in zone_index and d in zone_index]
+        if len(valid_od) < len(observed_od):
+            print("  ({} coppie OD scartate: zone non presenti)".format(
+                len(observed_od) - len(valid_od)))
+        observed_od = valid_od
+        print("Coppie OD valide: {}".format(len(observed_od)))
+
+        # -- 3. Setup procedure (assegnazione + skim) --
+        print("\n### SETUP PROCEDURE ###")
+
+        operations = visum.Procedures.Operations
+        existing_count = 0
+        for i in range(1, 10001):
+            try:
+                operations.ItemByKey(i)
+                existing_count = i
+            except Exception:
+                break
+        for i in range(existing_count, 0, -1):
+            try:
+                operations.RemoveOperation(i)
+            except Exception:
+                pass
+        print("Sequenza procedure pulita")
+
+        # Trova DSeg con matrice di domanda
+        dseg_codes = []
+        for matrix in visum.Net.Matrices.GetAll:
+            try:
+                dseg_code = matrix.AttValue("DSegCode")
+                if dseg_code and str(dseg_code).strip():
+                    dseg_code = str(dseg_code).strip()
+                    try:
+                        visum.Net.DemandSegments.ItemByKey(dseg_code)
+                        if dseg_code not in dseg_codes:
+                            dseg_codes.append(dseg_code)
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
+        if not dseg_codes:
+            result["message"] = "Nessun demand segment con matrice di domanda"
+            print("x {}".format(result["message"]))
+            return result
+
+        print("DSeg trovati: {}".format(", ".join(dseg_codes)))
+
+        # Aggiungi assegnazione PrT
+        op_assign = operations.AddOperation(1)
+        op_assign.SetAttValue("OPERATIONTYPE", 101)
+        assign_params = op_assign.PrTAssignmentParameters
+        assign_params.SetAttValue("DSegSet", ",".join(dseg_codes))
+        assign_params.SetAttValue("PrTAssignmentVariant", assignment_variant)
+        print("Assegnazione PrT aggiunta (pos 1, variante {})".format(assignment_variant))
+
+        # Aggiungi skim TCur per ogni DSeg
+        skim_ops = []
+        for idx, dseg_code in enumerate(dseg_codes):
+            pos = 2 + idx
+            op_skim = operations.AddOperation(pos)
+            op_skim.SetAttValue("OPERATIONTYPE", 103)
+            skim_params = op_skim.PrTSkimMatrixParameters
+            skim_params.SetAttValue("DSeg", dseg_code)
+            skim_params.SetAttValue("SearchCriterion", 1)
+            skim_params.SetAttValue("UseExistingPaths", True)
+            skim_tcur = skim_params.SingleSkimMatrixParameters("TCur")
+            skim_tcur.SetAttValue("Calculate", True)
+            skim_tcur.SetAttValue("SaveToFile", False)
+            skim_ops.append({"dseg": dseg_code, "pos": pos})
+            print("Skim TCur aggiunta (pos {}, DSeg={})".format(pos, dseg_code))
+
+        # -- 4. Analisi link type iniziale --
+        print("\n### ANALISI LINK TYPE ###")
+
+        all_links = list(visum.Net.Links.GetAll)
+        link_type_info = {}
+
+        for link in all_links:
+            type_no = int(link.AttValue("TypeNo"))
+            if type_no >= 1000:
+                base = type_no // 100
+                v_idx = (type_no % 100) // 10
+            else:
+                base = type_no
+                v_idx = 5
+
+            if base not in link_type_info:
+                link_type_info[base] = {"v_indices": set(), "link_count": 0}
+            link_type_info[base]["v_indices"].add(v_idx)
+            link_type_info[base]["link_count"] += 1
+
+        optimizable_types = sorted([b for b in link_type_info
+                                     if b >= 10 and link_type_info[b]["link_count"] > 0])
+
+        print("Link type ottimizzabili: {} tipi base".format(len(optimizable_types)))
+        for bt in optimizable_types:
+            info = link_type_info[bt]
+            print("  Base {:3d}: {:5d} link, V_indices={}".format(
+                bt, info["link_count"], sorted(info["v_indices"])))
+
+        # C_index corrente per base_type (moda)
+        current_c_index = {}
+        for bt in optimizable_types:
+            c_indices = []
+            for link in all_links:
+                type_no = int(link.AttValue("TypeNo"))
+                link_base = type_no // 100 if type_no >= 1000 else type_no
+                if link_base == bt:
+                    c_indices.append(type_no % 10 if type_no >= 1000 else 5)
+            if c_indices:
+                from collections import Counter
+                current_c_index[bt] = Counter(c_indices).most_common(1)[0][0]
+            else:
+                current_c_index[bt] = 5
+
+        print("\nC_index iniziali:")
+        for bt in optimizable_types:
+            ci = current_c_index[bt]
+            print("  Base {:3d}: C_index={} (cap {:+d}%)".format(bt, ci, CAP_PCT[ci]))
+
+        cap_history = {bt: {"start": current_c_index[bt], "history": []}
+                       for bt in optimizable_types}
+
+        # -- 5. Helper: estrai TCur per coppie OD --
+        def _extract_tcur(visum_ref, od_pairs, zone_idx):
+            tcur_matrix = None
+            for mat in visum_ref.Net.Matrices.GetAll:
+                try:
+                    name = str(mat.AttValue("Name")).upper()
+                    code = str(mat.AttValue("Code")).upper()
+                    if "TCUR" in name or "TCUR" in code:
+                        tcur_matrix = mat
+                        break
+                except Exception:
+                    pass
+            if tcur_matrix is None:
+                return None, "Matrice TCur non trovata"
+
+            print("  Matrice TCur: '{}' (No={})".format(
+                tcur_matrix.AttValue("Name"), tcur_matrix.AttValue("No")))
+
+            values = []
+            for o, d, t_obs in od_pairs:
+                i = zone_idx[o]
+                j = zone_idx[d]
+                try:
+                    t_mod = float(tcur_matrix.GetValue(i, j))
+                    values.append((o, d, t_obs, t_mod))
+                except Exception:
+                    pass
+            return values, "OK"
+
+        # -- 6. Helper: applica C_index ai link --
+        def _apply_cap(all_lnks, c_idx_map):
+            changed = 0
+            for lnk in all_lnks:
+                type_no = int(lnk.AttValue("TypeNo"))
+                if type_no >= 1000:
+                    base = type_no // 100
+                    v_idx = (type_no % 100) // 10
+                    old_c = type_no % 10
+                else:
+                    base = type_no
+                    v_idx = 5
+                    old_c = 5
+
+                if base not in c_idx_map:
+                    continue
+
+                new_c = c_idx_map[base]
+                new_type_no = base * 100 + v_idx * 10 + new_c
+                if new_type_no != type_no:
+                    try:
+                        lnk.SetAttValue("TypeNo", new_type_no)
+                        changed += 1
+                    except Exception:
+                        pass
+            return changed
+
+        # -- 7. LOOP OTTIMIZZAZIONE --
+        print("\n" + "=" * 70)
+        print("INIZIO OTTIMIZZAZIONE ITERATIVA")
+        print("=" * 70)
+
+        rmse_history = []
+
+        for iteration in range(1, max_iterations + 1):
+            print("\n" + "-" * 50)
+            print("ITERAZIONE {}/{}".format(iteration, max_iterations))
+            print("-" * 50)
+
+            print("  Esecuzione assegnazione + skim...")
+            visum.Procedures.Execute()
+            print("  Assegnazione completata")
+
+            od_values, msg = _extract_tcur(visum, observed_od, zone_index)
+            if od_values is None:
+                result["message"] = "Errore estrazione TCur: {}".format(msg)
+                print("  x {}".format(result["message"]))
+                return result
+
+            errors = []
+            sq_errors = []
+            od_detail = []
+            for o, d, t_obs, t_mod in od_values:
+                err = t_mod - t_obs
+                errors.append(err)
+                sq_errors.append(err * err)
+                od_detail.append({
+                    "from_O": o, "to_D": d,
+                    "observed": round(t_obs, 2),
+                    "modeled": round(t_mod, 2),
+                    "error": round(err, 2),
+                    "error_pct": round((err / t_obs) * 100, 1) if t_obs > 0 else 0
+                })
+
+            rmse = math.sqrt(sum(sq_errors) / max(len(sq_errors), 1))
+            mean_error = sum(errors) / max(len(errors), 1)
+            mean_err_pct = sum(e["error_pct"] for e in od_detail) / max(len(od_detail), 1)
+
+            rmse_history.append(rmse)
+            print("  RMSE: {:.3f} min".format(rmse))
+            print("  Errore medio: {:+.3f} min ({:+.1f}%)".format(mean_error, mean_err_pct))
+            print("  Coppie OD: {}".format(len(od_values)))
+
+            if iteration == 1:
+                result["initial_rmse"] = rmse
+                result["od_results"] = od_detail
+
+            for od in sorted(od_detail, key=lambda x: abs(x["error"]), reverse=True)[:5]:
+                print("    OD {}-{}: obs={:.1f} mod={:.1f} err={:+.1f} ({:+.1f}%)".format(
+                    od["from_O"], od["to_D"], od["observed"], od["modeled"],
+                    od["error"], od["error_pct"]))
+
+            # Convergenza
+            if iteration > 1:
+                rmse_prev = rmse_history[-2]
+                improv = (rmse_prev - rmse) / max(rmse_prev, 0.001)
+                print("  Miglioramento RMSE: {:.2f}%".format(improv * 100))
+
+                if 0 <= improv < convergence_threshold:
+                    print("\n  Convergenza raggiunta")
+                    break
+
+                if improv < 0:
+                    print("  RMSE peggiorato! Annullo ultimo cambio")
+                    for bt in optimizable_types:
+                        if cap_history[bt]["history"]:
+                            last_dir = cap_history[bt]["history"][-1]
+                            current_c_index[bt] = max(0, min(9,
+                                current_c_index[bt] - last_dir))
+                            cap_history[bt]["history"].pop()
+                    _apply_cap(all_links, current_c_index)
+                    break
+
+            if iteration == max_iterations:
+                print("\n  Raggiunto limite massimo iterazioni")
+                break
+
+            # Calcola v/c per link type
+            print("\n  Analisi v/c per link type:")
+            type_vc = {}
+            for lnk in all_links:
+                type_no = int(lnk.AttValue("TypeNo"))
+                base = type_no // 100 if type_no >= 1000 else type_no
+                if base not in optimizable_types:
+                    continue
+                try:
+                    vol = float(lnk.AttValue("VolVehPrT(AP)"))
+                    cap = float(lnk.AttValue("CapPrT"))
+                except Exception:
+                    continue
+                if base not in type_vc:
+                    type_vc[base] = {"vol": 0.0, "cap": 0.0, "n": 0}
+                type_vc[base]["vol"] += vol
+                type_vc[base]["cap"] += cap
+                type_vc[base]["n"] += 1
+
+            # Aggiustamento capacita'
+            changes_made = 0
+            for bt in optimizable_types:
+                if bt not in type_vc or type_vc[bt]["cap"] == 0:
+                    continue
+
+                avg_vc = type_vc[bt]["vol"] / type_vc[bt]["cap"]
+                ci = current_c_index[bt]
+                direction = 0
+
+                if mean_error > 0 and avg_vc > vc_threshold_high and ci < 9:
+                    direction = +1
+                elif mean_error < 0 and avg_vc < vc_threshold_low and ci > 0:
+                    direction = -1
+
+                if direction != 0:
+                    new_ci = ci + direction
+                    current_c_index[bt] = new_ci
+                    cap_history[bt]["history"].append(direction)
+                    changes_made += 1
+                    print("    Base {:3d}: v/c={:.2f} -> C_index {} -> {} (cap {:+d}% -> {:+d}%)".format(
+                        bt, avg_vc, ci, new_ci, CAP_PCT[ci], CAP_PCT[new_ci]))
+
+            if changes_made == 0:
+                print("  Nessun cambio capacita' -> convergenza")
+                break
+
+            n_changed = _apply_cap(all_links, current_c_index)
+            print("\n  {} link aggiornati ({} tipi modificati)".format(n_changed, changes_made))
+
+        # -- 8. Risultati finali --
+        result["status"] = "success"
+        result["iterations"] = len(rmse_history)
+        result["rmse_history"] = [round(r, 4) for r in rmse_history]
+        result["final_rmse"] = round(rmse_history[-1], 4) if rmse_history else 0
+        result["initial_rmse"] = round(rmse_history[0], 4) if rmse_history else 0
+        if od_detail:
+            result["od_results"] = od_detail
+
+        for bt in optimizable_types:
+            cap_history[bt]["final"] = current_c_index[bt]
+            cap_history[bt]["cap_pct_start"] = CAP_PCT[cap_history[bt]["start"]]
+            cap_history[bt]["cap_pct_final"] = CAP_PCT[current_c_index[bt]]
+        result["capacity_changes"] = cap_history
+
+        result["message"] = ("Ottimizzazione completata in {} iterazioni. "
+                             "RMSE: {:.3f} -> {:.3f} min".format(
+                                 result["iterations"],
+                                 result["initial_rmse"],
+                                 result["final_rmse"]))
+
+        print("\n" + "=" * 70)
+        print("OTTIMIZZAZIONE COMPLETATA")
+        print("=" * 70)
+        print("Iterazioni: {}".format(result["iterations"]))
+        print("RMSE: {:.3f} -> {:.3f} min".format(result["initial_rmse"], result["final_rmse"]))
+        if result["initial_rmse"] > 0:
+            pct_improv = (1 - result["final_rmse"] / result["initial_rmse"]) * 100
+            print("Miglioramento: {:.1f}%".format(pct_improv))
+        print("\nCapacita' modificate:")
+        for bt in optimizable_types:
+            ci_s = cap_history[bt]["start"]
+            ci_f = current_c_index[bt]
+            if ci_s != ci_f:
+                print("  Base {:3d}: {:+d}% -> {:+d}% (C_index {} -> {})".format(
+                    bt, CAP_PCT[ci_s], CAP_PCT[ci_f], ci_s, ci_f))
+        print("\nStorico RMSE: {}".format(
+            " -> ".join(["{:.3f}".format(r) for r in rmse_history])))
+        print("=" * 70)
+
+    except Exception as cap_opt_err:
+        result["message"] = "Errore: {}".format(str(cap_opt_err))
+        print("x {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+
+    return result
+
+
+def export_loaded_network(output_dir, visum_instance=None):
+    """
+    Esporta la rete Visum carica (dopo assegnazione) in shapefile,
+    includendo attributi congestionati (TCur, Volume, Capacita').
+
+    Usa il metodo Visum ExportShapefile per esportare link, nodi,
+    centroidi e connettori con tutti gli attributi necessari per
+    l'ottimizzazione capacita' esterna.
+
+    Args:
+        output_dir (str): Cartella dove esportare gli shapefile
+        attributes (list|None): Lista attributi extra link da esportare.
+            Default: ["TCur_PrTSys(C)", "VolVehPrT(AP)", "CapPrT",
+                       "v0PrT", "Length", "TypeNo", "NumLanes"]
+        visum_instance: Istanza Visum COM (default: usa console)
+
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "message": str,
+            "output_dir": str,
+            "link_shp": str,
+            "node_shp": str,
+            "centroid_shp": str,
+            "connector_shp": str
+        }
+
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        >>> result = export_loaded_network(r"H:\\data\\net_export_loaded")
+    """
+    result = {
+        "status": "failed",
+        "message": "",
+        "output_dir": str(output_dir),
+        "link_shp": "",
+        "node_shp": "",
+        "centroid_shp": "",
+        "connector_shp": ""
+    }
+
+    try:
+        visum = visum_instance if visum_instance is not None else globals().get("Visum")
+        if visum is None:
+            raise RuntimeError("Nessuna istanza Visum disponibile")
+
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+        print("\n" + "=" * 70)
+        print("ESPORTAZIONE RETE CARICA IN SHAPEFILE")
+        print("=" * 70)
+        print("Output: {}".format(output_dir))
+
+        # Prefix per i file
+        prefix = "loaded"
+
+        # --- Helper: esporta un tipo di oggetto con attributi specifici ---
+        def _export_shp(filename, obj_type, columns, description):
+            """
+            obj_type: ShapeFileObjType enum value
+                0=Links, 1=Nodes, 3=Zones, 4=Connectors, 53=ZoneCentroids
+            columns: lista di stringhe attributo Visum (es. "No", "TypeNo", ...)
+            """
+            para = visum.IO.CreateExportShapeFilePara()
+            para.ObjectType = obj_type
+            # NON usare AddKeyColumns() - aggiunge troppe colonne e puo'
+            # causare problemi. Aggiungiamo solo quelle che servono.
+            para.ClearLayout()
+            for col in columns:
+                try:
+                    para.AddColumn(col)
+                    print("    + {}".format(col))
+                except Exception as e:
+                    print("    [WARN] AddColumn('{}') fallito: {}".format(col, e))
+            visum.IO.ExportShapefile(filename, para)
+            print("  {} -> {}".format(description, filename))
+
+        # Rileva codice PrT transport system provando AddColumn su un para di test
+        # TCur_PrTSys richiede il codice TSys come sub-attributo, es. TCur_PrTSys(C)
+        prt_tsys_code = None
+
+        # Raccogli tutti i codici TSys dal modello
+        tsys_codes = []
+        try:
+            for tsys in visum.Net.TSystems.GetAll:
+                try:
+                    tsys_code = str(tsys.AttValue("Code")).strip()
+                    tsys_type = str(tsys.AttValue("Type")).strip()
+                    print("    TSys: Code='{}', Type='{}'".format(tsys_code, tsys_type))
+                    tsys_codes.append(tsys_code)
+                except Exception:
+                    pass
+        except Exception as e:
+            print("  [WARN] Errore lettura TSystems: {}".format(e))
+
+        # Prova ogni TSys code con AddColumn finche' uno funziona
+        for code in tsys_codes:
+            test_para = visum.IO.CreateExportShapeFilePara()
+            test_para.ObjectType = 0  # Links
+            try:
+                test_para.AddColumn("TCur_PrTSys({})".format(code))
+                prt_tsys_code = code
+                print("  PrT Transport System trovato: '{}' (TCur_PrTSys({}) OK)".format(
+                    code, code))
+                break
+            except Exception:
+                pass
+
+        if not prt_tsys_code:
+            prt_tsys_code = "C"
+            print("  [WARN] Nessun TSys funziona con TCur_PrTSys, uso default: 'C'")
+
+        # Attributi link (inclusi risultati assegnazione)
+        tcur_attr = "TCur_PrTSys({})".format(prt_tsys_code)
+        print("  Attributo TCur: '{}'".format(tcur_attr))
+        link_attrs = [
+            "No", "FromNodeNo", "ToNodeNo",
+            "TypeNo", "Length", "NumLanes",
+            "v0PrT", "CapPrT",
+            tcur_attr,
+            "VolVehPrT(AP)",
+        ]
+
+        # Visum appende automaticamente il suffisso del tipo oggetto al nome file:
+        #   base.shp + Links -> base_link.shp
+        #   base.shp + Nodes -> base_node.shp
+        #   base.shp + ZoneCentroids -> base_zone_centroid.shp
+        #   base.shp + Connectors -> base_connector.shp
+        # Quindi passiamo solo il prefisso base come filename.
+        base_shp = str(Path(output_dir) / "{}.shp".format(prefix))
+
+        # Esporta link
+        print("\nEsportazione link...")
+        _export_shp(base_shp, 0, link_attrs, "Link")
+        link_shp = str(Path(output_dir) / "{}_link.shp".format(prefix))
+        result["link_shp"] = link_shp
+
+        # Esporta nodi
+        print("Esportazione nodi...")
+        _export_shp(base_shp, 1, ["No"], "Node")
+        node_shp = str(Path(output_dir) / "{}_node.shp".format(prefix))
+        result["node_shp"] = node_shp
+
+        # Esporta centroidi (zone centroids = punti)
+        print("Esportazione centroidi...")
+        _export_shp(base_shp, 53, ["No"], "Zone Centroid")
+        centroid_shp = str(Path(output_dir) / "{}_zone_centroid.shp".format(prefix))
+        result["centroid_shp"] = centroid_shp
+
+        # Esporta connettori
+        print("Esportazione connettori...")
+        _export_shp(base_shp, 4, ["ZoneNo", "NodeNo", "Length", "v0PrT"], "Connector")
+        connector_shp = str(Path(output_dir) / "{}_connector.shp".format(prefix))
+        result["connector_shp"] = connector_shp
+
+        result["status"] = "success"
+        result["message"] = "Rete esportata in {}".format(output_dir)
+        print("\n{} Esportazione completata".format("OK"))
+        print("=" * 70)
+
+    except Exception as e:
+        result["message"] = "Errore esportazione: {}".format(str(e))
+        print("x {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+
+    return result
+
+
+def create_capacity_optimization_config(
+        network_dir,
+        observed_times_csv,
+        output_dir,
+        file_prefix=None,
+        od_col_orig="from_O",
+        od_col_dest="to_D",
+        od_col_time="observed_time",
+        tcur_field="TCUR_PRT",
+        vol_field="VOLVEHPRT",
+        cap_field="CAPPRT",
+        vc_threshold=0.6,
+        speed_delta_pct=25.0,
+        n_iterations=5,
+        convergence_threshold=0.005,
+        fix_connector_t0=True,
+        sample_od_pairs=None,
+        random_seed=42):
+    """
+    Crea il file config.json per optimize_capacity.py (subprocess esterno).
+
+    Args:
+        network_dir (str): Cartella con shapefile Visum esportati (da export_loaded_network)
+        observed_times_csv (str): CSV tempi osservati (from_O, to_D, observed_time in minuti)
+        output_dir (str): Cartella output risultati
+        file_prefix (str|None): Prefisso shapefile (None = autodetect)
+        vc_threshold (float): Soglia v/c per archi congestionati (default: 0.6)
+        speed_delta_pct (float): Max variazione % velocita' congestionata (default: 25.0)
+        n_iterations (int): Max iterazioni BVLS (default: 5)
+
+    Returns:
+        str: Path al file config.json creato
+
+    Esempio:
+        >>> config_file = create_capacity_optimization_config(
+        ...     network_dir=r"H:\\data\\net_export_loaded",
+        ...     observed_times_csv=r"H:\\data\\observed_times.csv",
+        ...     output_dir=r"H:\\data\\capacity_results"
+        ... )
+    """
+    config = {
+        "network_dir":           str(network_dir),
+        "file_prefix":           file_prefix,
+        "observed_times_csv":    str(observed_times_csv),
+        "output_dir":            str(output_dir),
+        "od_col_orig":           od_col_orig,
+        "od_col_dest":           od_col_dest,
+        "od_col_time":           od_col_time,
+        "tcur_field":            tcur_field,
+        "vol_field":             vol_field,
+        "cap_field":             cap_field,
+        "v0prt_field":           "V0PRT",
+        "length_field":          "LENGTH",
+        "linktype_field":        "TYPENO",
+        "fromnodeno_field":      "FROMNODENO",
+        "tonodeno_field":        "TONODENO",
+        "vc_threshold":          vc_threshold,
+        "speed_delta_pct":       speed_delta_pct,
+        "n_iterations":          n_iterations,
+        "convergence_threshold": convergence_threshold,
+        "fix_connector_t0":      fix_connector_t0,
+        "sample_od_pairs":       sample_od_pairs,
+        "random_seed":           random_seed,
+    }
+
+    temp_file = tempfile.NamedTemporaryFile(
+        mode="w", suffix="_capopt_config.json",
+        delete=False, encoding="utf-8"
+    )
+    json.dump(config, temp_file, indent=4)
+    temp_file.close()
+
+    print("Config creato: {}".format(temp_file.name))
+    return temp_file.name
+
+
+def run_capacity_optimization_subprocess(
+        config_json_path,
+        conda_env=None,
+        optimizer_script_path=None,
+        timeout=7200,
+        visum_instance=None):
+    """
+    Lancia l'ottimizzazione capacita' in subprocess (come run_speed_optimization_subprocess).
+
+    Esegue optimize_capacity.py con il config fornito, poi opzionalmente
+    applica i risultati alla rete Visum aperta.
+
+    Args:
+        config_json_path (str): Path al config.json (da create_capacity_optimization_config)
+        conda_env (str|None): Path/nome conda environment
+        optimizer_script_path (str|None): Path a optimize_capacity.py
+        timeout (int): Timeout in secondi (default: 7200)
+        visum_instance: Se fornito, applica automaticamente i risultati a Visum
+
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "message": str,
+            "output_dir": str,
+            "capacity_remap_csv": str,
+            "log_file": str,
+            "capacity_applied": dict|None
+        }
+
+    Esempio:
+        >>> config_file = create_capacity_optimization_config(...)
+        >>> result = run_capacity_optimization_subprocess(
+        ...     config_file,
+        ...     conda_env=r"H:\\go\\network_builder\\.env"
+        ... )
+    """
+    result = {
+        "status": "failed",
+        "message": "",
+        "output_dir": "",
+        "capacity_remap_csv": "",
+        "log_file": "",
+        "capacity_applied": None,
+    }
+
+    try:
+        # Trova lo script optimize_capacity.py
+        if optimizer_script_path:
+            script_path = Path(optimizer_script_path)
+        else:
+            possible = [
+                Path(__file__).parent / "network-speed-optimization" / "optimize_capacity.py",
+                Path("H:/visum-thinker-mcp-server/network-speed-optimization/optimize_capacity.py"),
+                Path("network-speed-optimization/optimize_capacity.py"),
+            ]
+            script_path = next((p for p in possible if p.exists()), None)
+            if script_path is None:
+                result["message"] = (
+                    "Script optimize_capacity.py non trovato. Cercato in: {}".format(
+                        [str(p) for p in possible]))
+                print("x {}".format(result["message"]))
+                return result
+
+        if not script_path.exists():
+            result["message"] = "Script non trovato: {}".format(script_path)
+            print("x {}".format(result["message"]))
+            return result
+
+        print("\n" + "=" * 70)
+        print("ESECUZIONE CAPACITY OPTIMIZATION IN SUBPROCESS")
+        print("=" * 70)
+        print("Script:  {}".format(script_path))
+        print("Config:  {}".format(config_json_path))
+
+        # Leggi output_dir dal config
+        with open(config_json_path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+        output_dir = cfg.get("output_dir", "")
+        result["output_dir"] = output_dir
+
+        # Costruisci comando
+        if conda_env:
+            is_path = ("\\" in conda_env or ":" in conda_env or "/" in conda_env)
+            conda_exe = None
+            possible_conda = [
+                "conda",
+                r"H:\ProgramData\Miniconda3\Scripts\conda.exe",
+                r"C:\ProgramData\Anaconda3\Scripts\conda.exe",
+                r"C:\ProgramData\Miniconda3\Scripts\conda.exe",
+                r"C:\Users\{}\Anaconda3\Scripts\conda.exe".format(
+                    os.environ.get("USERNAME", "")),
+                r"C:\Users\{}\Miniconda3\Scripts\conda.exe".format(
+                    os.environ.get("USERNAME", "")),
+            ]
+            for cp in possible_conda:
+                try:
+                    subprocess.run([cp, "--version"],
+                                   capture_output=True, timeout=5, check=True)
+                    conda_exe = cp
+                    break
+                except Exception:
+                    continue
+
+            if not conda_exe:
+                result["message"] = "Conda non trovato"
+                print("x {}".format(result["message"]))
+                return result
+
+            prefix_flag = "-p" if is_path else "-n"
+            cmd = [conda_exe, "run",
+                   prefix_flag, conda_env,
+                   "python", "-u", str(script_path), config_json_path]
+        else:
+            cmd = [sys.executable, "-u", str(script_path), config_json_path]
+
+        # Log
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        log_path = str(Path(output_dir) / "capacity_optimization.log")
+        result["log_file"] = log_path
+
+        import datetime
+        with open(log_path, "w", encoding="utf-8") as f:
+            f.write("=" * 70 + "\n")
+            f.write("CAPACITY OPTIMIZATION SUBPROCESS LOG\n")
+            f.write("Data: {}\n".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            f.write("Comando: {}\n".format(" ".join(cmd)))
+            f.write("=" * 70 + "\n\n")
+
+        print("Log: {}".format(log_path))
+        print("Comando: {}".format(" ".join(cmd)))
+        print("\nAvvio processo...\n")
+
+        # Esegui subprocess
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
+        env["PYTHONUTF8"] = "1"
+
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env=env,
+            cwd=str(script_path.parent),
+        )
+
+        try:
+            with open(log_path, "a", encoding="utf-8") as lf:
+                for line in process.stdout:
+                    print(line, end="", flush=True)
+                    lf.write(line)
+                    lf.flush()
+            process.wait(timeout=timeout)
+
+            if process.returncode == 0:
+                flag_file = Path(output_dir) / "optimization_complete.flag"
+                if flag_file.exists():
+                    with open(flag_file, "r", encoding="utf-8") as f:
+                        flag_data = json.load(f)
+                    result["status"] = flag_data.get("status", "success")
+                    result["message"] = "Ottimizzazione completata"
+                    result["capacity_remap_csv"] = flag_data.get("capacity_remap_csv", "")
+                    result["links_remapped_csv"] = flag_data.get(
+                        "links_remapped_csv",
+                        str(Path(output_dir) / "links_remapped.csv"))
+                else:
+                    result["status"] = "success"
+                    result["message"] = "Subprocess completato (flag non trovato)"
+                    result["links_remapped_csv"] = str(
+                        Path(output_dir) / "links_remapped.csv")
+
+                print("\n[OK] {}".format(result["message"]))
+
+                # Auto-applica a Visum se handle fornito (per-link con apply_typeno_remap_to_visum)
+                if visum_instance is not None:
+                    remap_csv = result.get("links_remapped_csv", "")
+                    if remap_csv and Path(remap_csv).exists():
+                        print("\n-- Applicazione TypeNo a Visum (per-link)...")
+                        apply_result = apply_typeno_remap_to_visum(
+                            remap_csv, Visum=visum_instance)
+                        result["capacity_applied"] = apply_result
+            else:
+                result["message"] = "Errore subprocess (code: {})".format(process.returncode)
+                print("[ERRORE] {}".format(result["message"]))
+
+        except subprocess.TimeoutExpired:
+            process.kill()
+            result["message"] = "Timeout dopo {} secondi".format(timeout)
+            print("[TIMEOUT] {}".format(result["message"]))
+
+        return result
+
+    except Exception as e:
+        result["message"] = "Errore: {}".format(str(e))
+        print("x {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+        return result
+
+
+def apply_capacity_remap_to_visum(capacity_remap, visum_instance=None):
+    """
+    Applica il C_index ottimale ai link Visum cambiando TypeNo.
+
+    Per ogni link: mantiene base_type e V_index, cambia solo C_index.
+    TypeNo = base * 100 + V_index * 10 + new_C_index
+
+    Args:
+        capacity_remap (dict|str): {base_type: C_index} oppure path a capacity_remap.csv
+        visum_instance: Istanza Visum COM (default: usa console)
+
+    Returns:
+        dict: {
+            "status": "success"|"failed",
+            "n_links_changed": int,
+            "n_links_total": int,
+            "types_changed": dict
+        }
+    """
+    result = {
+        "status": "failed",
+        "n_links_changed": 0,
+        "n_links_total": 0,
+        "types_changed": {}
+    }
+
+    try:
+        visum = visum_instance if visum_instance is not None else globals().get("Visum")
+        if visum is None:
+            raise RuntimeError("Nessuna istanza Visum disponibile")
+
+        # Carica remap
+        if isinstance(capacity_remap, str):
+            # Path a CSV
+            import pandas as _pd_cap
+            remap_df = _pd_cap.read_csv(capacity_remap, sep=";")
+            c_index_map = {}
+            for _, row in remap_df.iterrows():
+                c_index_map[int(row["base_type"])] = int(row["c_index_new"])
+        elif isinstance(capacity_remap, dict):
+            c_index_map = {int(k): int(v) for k, v in capacity_remap.items()}
+        else:
+            result["message"] = "capacity_remap deve essere dict o path CSV"
+            return result
+
+        print("\n" + "=" * 70)
+        print("APPLICAZIONE CAPACITA' OTTIMALI A VISUM")
+        print("=" * 70)
+        print("Tipi da aggiornare: {}".format(len(c_index_map)))
+
+        CAP_PCT = {0: -25, 1: -20, 2: -15, 3: -10, 4: -5,
+                   5: 0, 6: 5, 7: 10, 8: 15, 9: 20}
+
+        for bt, ci in sorted(c_index_map.items()):
+            print("  Base {:3d}: C_index={} (cap {:+d}%)".format(bt, ci, CAP_PCT.get(ci, 0)))
+
+        # Bulk-leggi TypeNo con GetMultiAttValues (molto piu' veloce)
+        all_links = visum.Net.Links.GetAll
+        link_types = visum.Net.Links.GetMultiAttValues("TypeNo")
+        n_total = len(link_types)
+        result["n_links_total"] = n_total
+        changed = 0
+
+        for i in range(n_total):
+            type_no = int(link_types[i][1])
+            if type_no >= 1000:
+                base = type_no // 100
+                v_idx = (type_no % 100) // 10
+            else:
+                base = type_no
+                v_idx = 5
+
+            if base not in c_index_map:
+                continue
+
+            new_c = c_index_map[base]
+            new_type_no = base * 100 + v_idx * 10 + new_c
+
+            if new_type_no != type_no:
+                idx_1based = int(link_types[i][0])
+                all_links[idx_1based - 1].SetAttValue("TypeNo", new_type_no)
+                changed += 1
+                if base not in result["types_changed"]:
+                    result["types_changed"][base] = {"count": 0, "c_index": new_c}
+                result["types_changed"][base]["count"] += 1
+
+        result["n_links_changed"] = changed
+        result["status"] = "success"
+        result["message"] = "{} link aggiornati".format(changed)
+
+        print("\n{} {} link TypeNo aggiornati su {} totali".format(
+            "OK", changed, n_total))
+        print("=" * 70)
+
+    except Exception as e:
+        result["message"] = "Errore: {}".format(str(e))
+        print("x {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+
+    return result
+
+
+def run_capacity_optimization(
+        observed_times_csv,
+        network_export_dir=None,
+        output_dir=None,
+        conda_env=None,
+        assignment_variant=2,
+        vc_threshold=0.6,
+        speed_delta_pct=25.0,
+        n_iterations=5,
+        od_col_orig="from_O",
+        od_col_dest="to_D",
+        od_col_time="observed_time",
+        visum_instance=None):
+    """
+    Workflow completo ottimizzazione capacita':
+      1. Esegui assegnazione PrT + skim TCur in Visum
+      2. Esporta rete carica in shapefile (con TCur, Vol, Cap)
+      3. Lancia ottimizzazione BVLS esterna (subprocess)
+      4. Applica capacita' ottimali a Visum (cambio TypeNo)
+      5. Riesegui assegnazione per verificare miglioramento
+
+    Args:
+        observed_times_csv (str): CSV tempi osservati [from_O, to_D, observed_time (min)]
+        network_export_dir (str|None): Cartella export shapefile (default: auto)
+        output_dir (str|None): Cartella output risultati (default: auto)
+        conda_env (str|None): Conda environment per subprocess
+        assignment_variant (int): Variante assegnazione (default: 2 = Equilibrium)
+        vc_threshold (float): Soglia v/c per archi congestionati (default: 0.6)
+        speed_delta_pct (float): Max variazione % (default: 25.0)
+        n_iterations (int): Max iterazioni BVLS (default: 5)
+        visum_instance: Istanza Visum COM
+
+    Returns:
+        dict con status, RMSE, risultati per ogni fase
+
+    Esempio dalla console Visum:
+        >>> exec(open(r"H:\\visum-thinker-mcp-server\\import-osm-network.py", encoding='utf-8').read())
+        >>> result = run_capacity_optimization(
+        ...     observed_times_csv=r"H:\\data\\observed_times.csv",
+        ...     conda_env=r"H:\\go\\network_builder\\.env"
+        ... )
+    """
+    result = {
+        "status": "failed",
+        "message": "",
+        "assignment": None,
+        "export": None,
+        "optimization": None,
+        "apply": None,
+    }
+
+    try:
+        visum = visum_instance if visum_instance is not None else globals().get("Visum")
+        if visum is None:
+            raise RuntimeError("Nessuna istanza Visum disponibile")
+
+        # Directories default
+        if network_export_dir is None:
+            network_export_dir = str(Path(observed_times_csv).parent / "net_export_loaded")
+        if output_dir is None:
+            output_dir = str(Path(observed_times_csv).parent / "capacity_optimization")
+
+        print("\n" + "=" * 70)
+        print("WORKFLOW OTTIMIZZAZIONE CAPACITA'")
+        print("=" * 70)
+        print("CSV osservati:   {}".format(observed_times_csv))
+        print("Export rete:     {}".format(network_export_dir))
+        print("Output:          {}".format(output_dir))
+
+        # FASE 1: Setup procedure + assegnazione + skim
+        print("\n" + "=" * 70)
+        print("FASE 1: INIT + ASSEGNAZIONE PrT + SKIM TCur")
+        print("=" * 70)
+
+        # Pulisci sequenza procedure esistente
+        operations = visum.Procedures.Operations
+        existing_count = 0
+        for i in range(1, 10001):
+            try:
+                operations.ItemByKey(i)
+                existing_count = i
+            except Exception:
+                break
+        for i in range(existing_count, 0, -1):
+            try:
+                operations.RemoveOperation(i)
+            except Exception:
+                pass
+        print("Sequenza procedure pulita")
+
+        # Trova DSeg con matrice di domanda
+        dseg_codes = []
+        for matrix in visum.Net.Matrices.GetAll:
+            try:
+                dseg_code = matrix.AttValue("DSegCode")
+                if dseg_code and str(dseg_code).strip():
+                    dseg_code = str(dseg_code).strip()
+                    try:
+                        visum.Net.DemandSegments.ItemByKey(dseg_code)
+                        if dseg_code not in dseg_codes:
+                            dseg_codes.append(dseg_code)
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
+        if not dseg_codes:
+            result["message"] = "Nessun demand segment con matrice di domanda"
+            print("x {}".format(result["message"]))
+            return result
+
+        print("DSeg trovati: {}".format(", ".join(dseg_codes)))
+        pos = 1
+
+        # Op 1: Initialize Assignment (tipo 9) - cancella risultati precedenti
+        op_init = operations.AddOperation(pos)
+        op_init.SetAttValue("OPERATIONTYPE", 9)
+        print("Pos {}: Initialize Assignment (tipo 9)".format(pos))
+        pos += 1
+
+        # Op 2: Assegnazione PrT (tipo 101)
+        op_assign = operations.AddOperation(pos)
+        op_assign.SetAttValue("OPERATIONTYPE", 101)
+        assign_params = op_assign.PrTAssignmentParameters
+        assign_params.SetAttValue("DSegSet", ",".join(dseg_codes))
+        assign_params.SetAttValue("PrTAssignmentVariant", assignment_variant)
+        print("Pos {}: PrT Assignment (variante {}, DSeg={})".format(
+            pos, assignment_variant, ",".join(dseg_codes)))
+        pos += 1
+
+        # Op 3+: Skim TCur per ogni DSeg
+        for dseg_code in dseg_codes:
+            op_skim = operations.AddOperation(pos)
+            op_skim.SetAttValue("OPERATIONTYPE", 103)
+            skim_params = op_skim.PrTSkimMatrixParameters
+            skim_params.SetAttValue("DSeg", dseg_code)
+            skim_params.SetAttValue("SearchCriterion", 1)
+            skim_params.SetAttValue("UseExistingPaths", True)
+            skim_tcur = skim_params.SingleSkimMatrixParameters("TCur")
+            skim_tcur.SetAttValue("Calculate", True)
+            skim_tcur.SetAttValue("SaveToFile", False)
+            print("Pos {}: Skim TCur (DSeg={})".format(pos, dseg_code))
+            pos += 1
+
+        # Esegui tutta la sequenza
+        print("\nEsecuzione: Init + Assegnazione + Skim...")
+        visum.Procedures.Execute()
+        print("OK Assegnazione completata")
+
+        result["assignment"] = {
+            "status": "success",
+            "dseg_list": dseg_codes,
+            "message": "Init + Assegnazione + Skim completati"
+        }
+
+        # FASE 2: Esportazione rete carica
+        print("\n" + "=" * 70)
+        print("FASE 2: ESPORTAZIONE RETE CARICA")
+        print("=" * 70)
+        r_export = export_loaded_network(
+            network_export_dir, visum_instance=visum)
+        result["export"] = r_export
+
+        if r_export["status"] != "success":
+            result["message"] = "Errore esportazione: {}".format(r_export["message"])
+            print("x {}".format(result["message"]))
+            return result
+
+        # FASE 3: Ottimizzazione esterna
+        print("\n" + "=" * 70)
+        print("FASE 3: OTTIMIZZAZIONE BVLS (SUBPROCESS)")
+        print("=" * 70)
+        config_file = create_capacity_optimization_config(
+            network_dir=network_export_dir,
+            observed_times_csv=observed_times_csv,
+            output_dir=output_dir,
+            file_prefix="loaded",
+            od_col_orig=od_col_orig,
+            od_col_dest=od_col_dest,
+            od_col_time=od_col_time,
+            vc_threshold=vc_threshold,
+            speed_delta_pct=speed_delta_pct,
+            n_iterations=n_iterations)
+
+        r_opt = run_capacity_optimization_subprocess(
+            config_file,
+            conda_env=conda_env,
+            visum_instance=None)  # non applicare ancora
+        result["optimization"] = r_opt
+
+        if r_opt["status"] != "success":
+            result["message"] = "Errore ottimizzazione: {}".format(r_opt["message"])
+            print("x {}".format(result["message"]))
+            return result
+
+        # FASE 4: Applica TypeNo ottimali per-link (come ottimizzazione a flusso nullo)
+        print("\n" + "=" * 70)
+        print("FASE 4: APPLICAZIONE TYPENO OTTIMALI A VISUM (per-link)")
+        print("=" * 70)
+        links_remapped_csv = r_opt.get("links_remapped_csv", "")
+        if not links_remapped_csv:
+            links_remapped_csv = str(Path(output_dir) / "links_remapped.csv")
+
+        if Path(links_remapped_csv).exists():
+            r_apply = apply_typeno_remap_to_visum(
+                links_remapped_csv, Visum=visum)
+            result["apply"] = r_apply
+        else:
+            r_apply = None
+            print("  [WARN] links_remapped.csv non trovato: {}".format(links_remapped_csv))
+
+        # FASE 5: Riesegui assegnazione per verifica
+        print("\n" + "=" * 70)
+        print("FASE 5: VERIFICA - RIESECUZIONE ASSEGNAZIONE")
+        print("=" * 70)
+        print("Esecuzione assegnazione con capacita' aggiornate...")
+        visum.Procedures.Execute()
+        print("OK Assegnazione di verifica completata")
+
+        result["status"] = "success"
+        result["message"] = "Workflow capacita' completato"
+
+        print("\n" + "=" * 70)
+        print("WORKFLOW COMPLETATO")
+        print("=" * 70)
+        if r_apply:
+            print("Link aggiornati: {}".format(r_apply.get("n_links_changed", 0)))
+        print("Output: {}".format(output_dir))
+        print("=" * 70)
+
+    except Exception as e:
+        result["message"] = "Errore: {}".format(str(e))
+        print("x {}".format(result["message"]))
+        import traceback
+        traceback.print_exc()
+
+    return result
