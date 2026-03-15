@@ -6451,9 +6451,9 @@ def export_loaded_network(output_dir, visum_instance=None):
             """
             para = visum.IO.CreateExportShapeFilePara()
             para.ObjectType = obj_type
-            # NON usare AddKeyColumns() - aggiunge troppe colonne e puo'
-            # causare problemi. Aggiungiamo solo quelle che servono.
-            para.AddKeyColumns()
+            # NON usare AddKeyColumns() - aggiunge troppe colonne duplicate.
+            # Aggiungiamo solo quelle che servono.
+            para.ClearLayout()
             for col in columns:
                 try:
                     para.AddColumn(col)
@@ -6499,14 +6499,21 @@ def export_loaded_network(output_dir, visum_instance=None):
             print("  [WARN] Nessun TSys funziona con TCur_PrTSys, uso default: 'C'")
 
         # Attributi link (inclusi risultati assegnazione)
+        # Direzione diretta + reverse (R\...) per avere entrambe le direzioni
         tcur_attr = "TCur_PrTSys({})".format(prt_tsys_code)
-        print("  Attributo TCur: '{}'".format(tcur_attr))
+        r_tcur_attr = "R\\{}".format(tcur_attr)
+        print("  Attributo TCur: '{}' (reverse: '{}')".format(tcur_attr, r_tcur_attr))
         link_attrs = [
             "No", "FromNodeNo", "ToNodeNo",
             "TypeNo", "Length", "NumLanes",
             "v0PrT", "CapPrT",
             tcur_attr,
             "VolVehPrT(AP)",
+            # Reverse direction
+            "R\\TypeNo", "R\\Length",
+            "R\\v0PrT", "R\\CapPrT",
+            r_tcur_attr,
+            "R\\VolVehPrT(AP)",
         ]
 
         # Visum appende automaticamente il suffisso del tipo oggetto al nome file:

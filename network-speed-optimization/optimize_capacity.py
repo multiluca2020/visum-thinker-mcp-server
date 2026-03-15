@@ -160,10 +160,26 @@ def load_shapefile_as_dataframe(filepath, description=""):
         print("  [!] {} non trovato: {}".format(description, filepath))
         return None
 
+    def _dedup_columns(df):
+        """Rimuove colonne duplicate (Visum shapefile puo' avere duplicati)."""
+        seen = set()
+        keep = []
+        for i, col in enumerate(df.columns):
+            if col not in seen:
+                seen.add(col)
+                keep.append(i)
+        if len(keep) < len(df.columns):
+            n_dup = len(df.columns) - len(keep)
+            df = df.iloc[:, keep]
+            print("    ({} colonne duplicate rimosse)".format(n_dup))
+        return df
+
     try:
         import geopandas as gpd
         df = gpd.read_file(str(filepath))
-        print("  {} caricato: {} righe (geopandas)".format(description, len(df)))
+        df = _dedup_columns(df)
+        print("  {} caricato: {} righe, {} colonne (geopandas)".format(
+            description, len(df), len(df.columns)))
         return df
     except Exception:
         pass
@@ -174,7 +190,9 @@ def load_shapefile_as_dataframe(filepath, description=""):
         fields = [f[0] for f in sf.fields[1:]]
         records = [r.record for r in sf.shapeRecords()]
         df = pd.DataFrame(records, columns=fields)
-        print("  {} caricato: {} righe (pyshp)".format(description, len(df)))
+        df = _dedup_columns(df)
+        print("  {} caricato: {} righe, {} colonne (pyshp)".format(
+            description, len(df), len(df.columns)))
         return df
     except Exception as e:
         print("  [!] Errore caricamento {}: {}".format(description, e))
@@ -213,8 +231,11 @@ def speed_to_kmh(val):
 
 
 def tcur_to_minutes(val):
-    """Converti TCur Visum in minuti. Visum esporta SEMPRE in secondi."""
+    """Converti TCur Visum in minuti. Visum esporta SEMPRE in secondi.
+    Valori sentinella (>= 99999s) ritornano -1 (non percorribile)."""
     v = parse_visum_value(val)
+    if v >= 99999:
+        return -1.0
     return v / 60.0
 
 
@@ -330,7 +351,11 @@ def build_graph(links_df, connectors_df, centroids_df, config):
         print("         Per avere TCur reverse, riesportare con AddKeyColumns()")
 
     def _add_link(fn, tn, length, v0, lt, tcur_val, vol, cap):
-        """Aggiunge un arco al grafo. Ritorna True se aggiunto."""
+        """Aggiunge un arco al grafo. Ritorna True se aggiunto, False se scartato."""
+        nonlocal n_sentinel
+        if tcur_val < 0:
+            n_sentinel += 1
+            return False  # TCur sentinella: direzione non percorribile
         if v0 > 0 and length > 0:
             t0 = (length / 1000.0 / v0) * 60.0
         else:
@@ -351,6 +376,7 @@ def build_graph(links_df, connectors_df, centroids_df, config):
     skipped = 0
     n_reverse = 0
     n_reverse_tcur_from_t0 = 0
+    n_sentinel = 0  # TCur sentinella (non percorribili)
 
     for idx, row in links_df.iterrows():
         try:
@@ -395,7 +421,7 @@ def build_graph(links_df, connectors_df, centroids_df, config):
                     if r_tcur_col:
                         r_tcur = tcur_to_minutes(row[r_tcur_col])
                     else:
-                        r_tcur = 0.0  # verra' sostituito con T0 nel _add_link
+                        r_tcur = 0.0  # nessuna colonna R_TCUR -> T0
                         n_reverse_tcur_from_t0 += 1
                     if _add_link(tn, fn, r_length, r_v0, r_lt, r_tcur, r_vol, r_cap):
                         n_reverse += 1
@@ -403,10 +429,12 @@ def build_graph(links_df, connectors_df, centroids_df, config):
 
                     # Log primi 3 reverse per verifica
                     if n_reverse <= 3:
+                        r_raw = row[r_tcur_col] if r_tcur_col else "N/A"
                         r_vcur_check = (r_length / 1000.0) / (r_tcur / 60.0) if r_tcur > 0 and r_length > 0 else r_v0
                         print("    Rev#{}: {}->{}  Type={}  L={:.0f}m  V0={:.1f}km/h  "
-                              "TCur={:.4f}min{}  Vcur={:.1f}km/h  Vol={:.0f}  Cap={:.0f}".format(
+                              "TCur_raw={}  TCur={:.4f}min{}  Vcur={:.1f}km/h  Vol={:.0f}  Cap={:.0f}".format(
                                   n_reverse, tn, fn, r_lt, r_length, r_v0,
+                                  r_raw,
                                   r_tcur, " (=T0)" if not r_tcur_col else "",
                                   r_vcur_check, r_vol, r_cap))
 
@@ -417,8 +445,10 @@ def build_graph(links_df, connectors_df, centroids_df, config):
     n_direct = link_count - n_reverse
     print("  Archi rete aggiunti: {}  (diretti: {}, reverse: {}, saltati: {})".format(
         link_count, n_direct, n_reverse, skipped))
+    if n_sentinel > 0:
+        print("  Archi non percorribili (TCur sentinella) esclusi: {}".format(n_sentinel))
     if n_reverse_tcur_from_t0 > 0:
-        print("  [WARN] {} archi reverse senza TCur (usato T0)".format(n_reverse_tcur_from_t0))
+        print("  [WARN] {} archi reverse senza colonna R_TCUR (usato T0)".format(n_reverse_tcur_from_t0))
 
     # Connettori
     connector_count = 0
