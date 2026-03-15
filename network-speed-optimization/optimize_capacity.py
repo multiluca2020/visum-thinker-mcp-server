@@ -213,12 +213,9 @@ def speed_to_kmh(val):
 
 
 def tcur_to_minutes(val):
-    """Converti TCur Visum in minuti. Visum esporta in secondi di default."""
+    """Converti TCur Visum in minuti. Visum esporta SEMPRE in secondi."""
     v = parse_visum_value(val)
-    # Se il valore e' > 300, probabilmente e' in secondi
-    if v > 300:
-        return v / 60.0
-    return v
+    return v / 60.0
 
 
 # =============================================================================
@@ -301,10 +298,61 @@ def build_graph(links_df, connectors_df, centroids_df, config):
         print("[ERR] Colonna TCur non trovata! Colonne: {}".format(list(links_df.columns)))
         sys.exit(1)
 
+    # Colonne reverse (Visum esporta R_* per la direzione inversa del link)
+    # Elenca tutte le colonne R_* disponibili
+    all_r_cols = [c for c in links_df.columns if c.upper().startswith("R_")]
+    print("\n  Colonne R_* nello shapefile ({}):\n    {}".format(
+        len(all_r_cols), all_r_cols if all_r_cols else "(nessuna)"))
+
+    # Cerca esplicitamente colonne che iniziano con "R_" per evitare match falsi
+    def _find_reverse_col(name, prefix_patterns):
+        """Cerca colonne reverse: solo quelle che iniziano con R_."""
+        for pat in prefix_patterns:
+            pat_up = pat.upper()
+            for col in links_df.columns:
+                col_up = col.upper()
+                col_base = col_up.split("~")[0]
+                if col_base == pat_up or col_up.startswith(pat_up):
+                    print("    R_{}: '{}' -> match '{}'".format(name, pat, col))
+                    return col
+        print("    R_{}: non trovata (cercato: {})".format(name, prefix_patterns))
+        return None
+
+    r_tcur_col = _find_reverse_col("TCur", ["R_TCUR_PRT", "R_TCUR_PR", "R_TCUR"])
+    r_vol_col  = _find_reverse_col("Vol",  ["R_VOLVEHPRT", "R_VOLVEH", "R_VOLVE"])
+    r_cap_col  = _find_reverse_col("Cap",  ["R_CAPPRT", "R_CAP"])
+    r_v0_col   = _find_reverse_col("V0",   ["R_V0PRT", "R_V0"])
+    r_len_col  = _find_reverse_col("Len",  ["R_LENGTH", "R_LEN"])
+    r_type_col = _find_reverse_col("Type", ["R_TYPENO", "R_TYPE"])
+
+    if r_type_col and not r_tcur_col:
+        print("\n  [WARN] Colonna R_TCUR non trovata! TCur reverse = T0 (no congestione)")
+        print("         Per avere TCur reverse, riesportare con AddKeyColumns()")
+
+    def _add_link(fn, tn, length, v0, lt, tcur_val, vol, cap):
+        """Aggiunge un arco al grafo. Ritorna True se aggiunto."""
+        if v0 > 0 and length > 0:
+            t0 = (length / 1000.0 / v0) * 60.0
+        else:
+            t0 = 0.001
+        tcur_m = tcur_val
+        if tcur_m <= 0:
+            tcur_m = t0
+        vcur = (length / 1000.0) / (tcur_m / 60.0) if tcur_m > 0 and length > 0 else v0
+        vc_ratio = vol / cap if cap > 0 else 0.0
+        G.add_edge(fn, tn,
+                   tcur=tcur_m, t0=t0, length=length,
+                   v0prt=v0, vcur=vcur, linktype=lt,
+                   vol=vol, cap=cap, vc_ratio=vc_ratio,
+                   is_connector=False)
+        return True
+
     link_count = 0
     skipped = 0
+    n_reverse = 0
+    n_reverse_tcur_from_t0 = 0
 
-    for _, row in links_df.iterrows():
+    for idx, row in links_df.iterrows():
         try:
             fn = int(row[from_col]) if from_col else None
             tn = int(row[to_col])   if to_col   else None
@@ -312,6 +360,7 @@ def build_graph(links_df, connectors_df, centroids_df, config):
                 skipped += 1
                 continue
 
+            # Direzione diretta (FROM -> TO)
             length = length_to_meters(row[len_col]) if len_col else 0.0
             v0     = speed_to_kmh(row[v0_col])      if v0_col  else 50.0
             lt     = int(row[type_col])              if type_col else 0
@@ -319,39 +368,57 @@ def build_graph(links_df, connectors_df, centroids_df, config):
             vol    = parse_visum_value(row[vol_col])  if vol_col else 0.0
             cap    = parse_visum_value(row[cap_col])  if cap_col else 1.0
 
-            # T0 calcolato
-            if v0 > 0 and length > 0:
-                t0 = (length / 1000.0 / v0) * 60.0
-            else:
-                t0 = 0.001
+            if _add_link(fn, tn, length, v0, lt, tcur, vol, cap):
+                link_count += 1
 
-            # TCur: usa valore esportato; se 0, usa T0
-            if tcur <= 0:
-                tcur = t0
+            # Log primi 3 link per verifica
+            if link_count <= 3:
+                vcur_check = (length / 1000.0) / (tcur / 60.0) if tcur > 0 and length > 0 else v0
+                print("    Link#{}: {}->{}  Type={}  L={:.0f}m  V0={:.1f}km/h  "
+                      "TCur_raw={}  TCur={:.4f}min  Vcur={:.1f}km/h  Vol={:.0f}  Cap={:.0f}".format(
+                          link_count, fn, tn, lt, length, v0,
+                          row[tcur_col] if tcur_col else "?",
+                          tcur, vcur_check, vol, cap))
 
-            # Velocita' congestionata
-            vcur = (length / 1000.0) / (tcur / 60.0) if tcur > 0 and length > 0 else v0
+            # Direzione reverse (TO -> FROM) dalle colonne R_*
+            if r_type_col:
+                try:
+                    r_lt = int(row[r_type_col])
+                except (TypeError, ValueError):
+                    r_lt = None
+                if r_lt is not None and r_lt > 0:
+                    r_length = length_to_meters(row[r_len_col]) if r_len_col else length
+                    r_v0 = speed_to_kmh(row[r_v0_col]) if r_v0_col else v0
+                    r_vol = parse_visum_value(row[r_vol_col]) if r_vol_col else 0.0
+                    r_cap = parse_visum_value(row[r_cap_col]) if r_cap_col else cap
+                    # TCur reverse: dalla colonna R_TCUR
+                    if r_tcur_col:
+                        r_tcur = tcur_to_minutes(row[r_tcur_col])
+                    else:
+                        r_tcur = 0.0  # verra' sostituito con T0 nel _add_link
+                        n_reverse_tcur_from_t0 += 1
+                    if _add_link(tn, fn, r_length, r_v0, r_lt, r_tcur, r_vol, r_cap):
+                        n_reverse += 1
+                        link_count += 1
 
-            # v/c ratio
-            vc_ratio = vol / cap if cap > 0 else 0.0
+                    # Log primi 3 reverse per verifica
+                    if n_reverse <= 3:
+                        r_vcur_check = (r_length / 1000.0) / (r_tcur / 60.0) if r_tcur > 0 and r_length > 0 else r_v0
+                        print("    Rev#{}: {}->{}  Type={}  L={:.0f}m  V0={:.1f}km/h  "
+                              "TCur={:.4f}min{}  Vcur={:.1f}km/h  Vol={:.0f}  Cap={:.0f}".format(
+                                  n_reverse, tn, fn, r_lt, r_length, r_v0,
+                                  r_tcur, " (=T0)" if not r_tcur_col else "",
+                                  r_vcur_check, r_vol, r_cap))
 
-            G.add_edge(fn, tn,
-                       tcur=tcur,
-                       t0=t0,
-                       length=length,
-                       v0prt=v0,
-                       vcur=vcur,
-                       linktype=lt,
-                       vol=vol,
-                       cap=cap,
-                       vc_ratio=vc_ratio,
-                       is_connector=False)
-            link_count += 1
         except (TypeError, ValueError, KeyError):
             skipped += 1
             continue
 
-    print("  Archi rete aggiunti: {}  (saltati: {})".format(link_count, skipped))
+    n_direct = link_count - n_reverse
+    print("  Archi rete aggiunti: {}  (diretti: {}, reverse: {}, saltati: {})".format(
+        link_count, n_direct, n_reverse, skipped))
+    if n_reverse_tcur_from_t0 > 0:
+        print("  [WARN] {} archi reverse senza TCur (usato T0)".format(n_reverse_tcur_from_t0))
 
     # Connettori
     connector_count = 0

@@ -6453,7 +6453,7 @@ def export_loaded_network(output_dir, visum_instance=None):
             para.ObjectType = obj_type
             # NON usare AddKeyColumns() - aggiunge troppe colonne e puo'
             # causare problemi. Aggiungiamo solo quelle che servono.
-            para.ClearLayout()
+            para.AddKeyColumns()
             for col in columns:
                 try:
                     para.AddColumn(col)
